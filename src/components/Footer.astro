@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import Ticker from './Ticker.astro';
+import { localePath, t, type Locale } from '../i18n';
+import { SITE } from '../config/site';
+import lockup from '../assets/branding/mn-visual-lockup.png';
+
+const { locale } = Astro.props as { locale: Locale };
+const s = t(locale);
+const hasContact = Boolean(SITE.email || SITE.whatsapp || SITE.phone || SITE.socials.length);
+const links = [
+  ['/films/', s.nav.films],
+  ['/photography/', s.nav.photography],
+  ['/#services', s.nav.services],
+  ['/advice/', s.nav.advice],
+  ['/coaching/', s.nav.coaching],
+  ['/contact/', s.nav.contact],
+];
+---
+<Ticker items={[s.hero.role, ...s.services.items.map((i) => i.title)]} />
+<footer class="site-foot">
+  <a class="site-foot__mark" href={localePath(locale)} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
+    <Image src={lockup} alt="" width={440} format="webp" quality={90} loading="lazy" />
+  </a>
+  <nav class="site-foot__nav" aria-label={s.footer.explore}>
+    {links.map(([href, label]) => <a href={localePath(locale, href)}>{label}</a>)}
+  </nav>
+  {hasContact && (
+    <div class="site-foot__contact">
+      {SITE.email && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
+      {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} rel="noopener">{s.contact.whatsapp}</a>}
+      {SITE.phone && <a class="latin" href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>}
+      {SITE.socials.map((social) => <a href={social.href} rel="noopener">{social.label}</a>)}
+    </div>
+  )}
+  <p>© <span class="latin">{new Date().getFullYear()} {SITE.name}</span>. {s.footer.rights}</p>
+</footer>

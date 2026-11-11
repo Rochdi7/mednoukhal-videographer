@@ -1,0 +1,61 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import { ALBUMS } from '../../data/photos';
+import { SITE } from '../../config/site';
+import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
+import { abs, breadcrumbNode, creatorNode } from '../../utils/seo';
+import { resolveAlbums } from '../../utils/albums';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const site = Astro.site;
+const albums = await resolveAlbums();
+
+const gallery = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  name: s.photo.title,
+  url: abs(site, localePath(locale, '/photography/')),
+  inLanguage: locale,
+  image: albums.flatMap((album) =>
+    album.photos.map((photo) => ({
+      '@type': 'ImageObject',
+      contentUrl: abs(site, photo.full.src),
+      description: photo.alt[locale],
+      creator: creatorNode,
+      creditText: SITE.name,
+      copyrightHolder: creatorNode,
+    })),
+  ),
+};
+const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.photography, path: localePath(locale, '/photography/') }]);
+---
+<Base locale={locale} title={s.meta.photoTitle} description={s.meta.photoDesc} path="/photography/" image={ALBUMS[1].photos[0].image} jsonLd={[gallery, crumbs]}>
+  <header class="page-head wrap">
+    <p class="eyebrow">{s.photo.eyebrow}</p>
+    <h1 class="h-xl">{s.photo.title}</h1>
+    <p class="lead">{s.photo.lead}</p>
+  </header>
+  <div class="wrap" style="padding-block-end:var(--section)">
+    {albums.map((album) => (
+      <section class="album" aria-labelledby={`album-${album.slug}`}>
+        <div class="album__head">
+          <h2 class="album__title" id={`album-${album.slug}`}>{album.title[locale]}</h2>
+          <span class="album__count"><span class="tnum">{album.photos.length}</span> {s.photo.photos}</span>
+        </div>
+        <div class="album__grid">
+          {album.photos.map((photo) => (
+            <a class="print" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
+              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 620px) 50vw, 25vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={72} />
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  <Lightbox locale={locale} />
+</Base>

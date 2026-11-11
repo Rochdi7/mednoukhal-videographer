@@ -1,0 +1,24 @@
+---
+import { Picture } from 'astro:assets';
+import { Play } from '@lucide/astro';
+import { aspectLabel, formatDuration, type Film } from '../data/films';
+import { localePath, t, type Locale } from '../i18n';
+
+interface Props { film: Film; locale: Locale }
+const { film, locale } = Astro.props;
+const s = t(locale);
+const title = film.title[locale];
+const href = localePath(locale, `/films/${film.slug}/`);
+const data = JSON.stringify({ src: film.src, title, href, width: film.width, height: film.height });
+---
+<a class="film" href={href} data-film={data} data-orient={film.height > film.width ? 'vertical' : undefined}>
+  <div class="film__frame">
+    <Picture src={film.poster} formats={['avif', 'webp']} widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="(max-width: 760px) 100vw, 46vw" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} />
+    <div class="film__play" aria-hidden="true"><span><Play strokeWidth={1.25} /></span></div>
+  </div>
+  <div class="film__cap">
+    <h2 class="film__title">{title}</h2>
+    <span class="film__meta tnum latin">{formatDuration(film.duration)} · {aspectLabel(film.width, film.height)}</span>
+  </div>
+  <span class="sr-only">{s.film.watch}</span>
+</a>

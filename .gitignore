@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+media-source/
+*.log
+
+# raw masters (inputs to scripts/process-media.mjs)
+wetransfer__*/
+preview.mp4
+chrome_*.mp4
+lemon_milk.zip

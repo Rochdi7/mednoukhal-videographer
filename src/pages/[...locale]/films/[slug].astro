@@ -1,0 +1,78 @@
+---
+import { getImage } from 'astro:assets';
+import { ArrowRight } from '@lucide/astro';
+import Base from '../../../layouts/Base.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { ALL_FILMS, aspectLabel, formatDuration, isoDuration, type Film } from '../../../data/films';
+import { SITE } from '../../../config/site';
+import { LOCALES, localeParam, localePath, t, type Locale } from '../../../i18n';
+import { abs, breadcrumbNode, creatorNode } from '../../../utils/seo';
+
+export const getStaticPaths = () =>
+  LOCALES.flatMap((locale) =>
+    ALL_FILMS.map((film, i) => ({
+      params: { locale: localeParam(locale), slug: film.slug },
+      props: { locale, film, next: ALL_FILMS[(i + 1) % ALL_FILMS.length] },
+    })),
+  );
+
+const { locale, film, next } = Astro.props as { locale: Locale; film: Film; next: Film };
+const s = t(locale);
+const site = Astro.site;
+const title = film.title[locale];
+const description = film.description[locale];
+const path = `/films/${film.slug}/`;
+const poster = await getImage({ src: film.poster, width: Math.min(1920, film.poster.width), format: 'webp', quality: 74 });
+const ogThumb = await getImage({ src: film.poster, width: 1200, format: 'jpg', quality: 80 });
+
+const video = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: title,
+  description,
+  thumbnailUrl: abs(site, ogThumb.src),
+  contentUrl: abs(site, film.src),
+  uploadDate: film.uploadDate,
+  duration: isoDuration(film.duration),
+  width: film.width,
+  height: film.height,
+  inLanguage: locale,
+  creator: creatorNode,
+  creditText: SITE.name,
+  copyrightHolder: creatorNode,
+};
+const crumbs = [
+  { name: s.nav.home, path: localePath(locale) },
+  { name: s.nav.films, path: localePath(locale, '/films/') },
+  { name: title, path: localePath(locale, path) },
+];
+const portrait = film.height > film.width;
+---
+<Base locale={locale} title={`${title} · ${s.film.categoryValue}`} description={description} path={path} image={film.poster} type="video.other" jsonLd={[video, breadcrumbNode(site, crumbs)]}>
+  <article class="film-page wrap">
+    <Breadcrumbs label={s.nav.breadcrumb} items={[{ name: s.nav.home, href: localePath(locale) }, { name: s.nav.films, href: localePath(locale, '/films/') }, { name: title }]} />
+    <div class="film-page__player">
+      <video controls playsinline preload="none" poster={poster.src} width={film.width} height={film.height} style={portrait ? 'width:auto' : undefined} aria-label={title}>
+        <source src={film.src} type="video/mp4" />
+        {s.film.noVideo}
+      </video>
+    </div>
+    <div class="film-page__info">
+      <div class="film-page__text">
+        <h1 class="h-lg">{title}</h1>
+        <p>{description}</p>
+      </div>
+      <dl class="spec">
+        <div><dt>{s.film.by}</dt><dd><span class="latin">{SITE.name}</span></dd></div>
+        <div><dt>{s.film.category}</dt><dd>{s.film.categoryValue}</dd></div>
+        <div><dt>{s.film.duration}</dt><dd class="tnum latin">{formatDuration(film.duration)}</dd></div>
+        <div><dt>{s.film.format}</dt><dd><span class="tnum latin">{aspectLabel(film.width, film.height)}</span> · {portrait ? s.film.portrait : s.film.landscape}</dd></div>
+      </dl>
+    </div>
+    <a class="next-film" href={localePath(locale, `/films/${next.slug}/`)}>
+      <span><small>{s.film.more}</small><strong>{next.title[locale]}</strong></span>
+      <ArrowRight class="flip-rtl" strokeWidth={1} aria-hidden="true" />
+    </a>
+  </article>
+  <div style="height:var(--section)"></div>
+</Base>

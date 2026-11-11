@@ -1,0 +1,57 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import Field from './Field.astro';
+import { t, type Locale } from '../i18n';
+
+type Kind = 'project' | 'photoshoot' | 'coaching' | 'consultation';
+interface Props { locale: Locale; initial?: Kind; only?: Kind[] }
+const { locale, initial = 'project', only } = Astro.props;
+const f = t(locale).form;
+const kinds: Kind[] = only ?? ['project', 'photoshoot', 'coaching', 'consultation'];
+const SLOTS = ['09:00-10:00', '11:00-12:00', '14:00-15:00', '16:00-17:00'];
+---
+<div data-enquiry-root>
+  <form data-enquiry novalidate action="/api/contact.php" method="post" data-errors={JSON.stringify(f.errors)} data-sending={f.sending}>
+    <fieldset>
+      <legend class="kinds-legend">{f.need}</legend>
+      <div class="kinds">
+        {kinds.map((k) => <label><input type="radio" name="kind" value={k} checked={k === initial} />{f.kinds[k]}</label>)}
+      </div>
+    </fieldset>
+    <div class="form-grid">
+      <Field name="name" label={f.name}><input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" /></Field>
+      <Field name="email" label={f.email}><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160" dir="ltr" /></Field>
+      <Field name="phone" label={f.phone}><input id="f-phone" name="phone" type="tel" autocomplete="tel" required pattern="[+0-9 ().\-]{6,25}" dir="ltr" /></Field>
+      <Field name="city" label={f.city} forKinds="project photoshoot"><input id="f-city" name="city" type="text" autocomplete="address-level2" required maxlength="80" /></Field>
+      <Field name="project_type" label={f.projectType} forKinds="project">
+        <select id="f-project_type" name="project_type" required><option value="">{f.choose}</option>{Object.entries(f.projectTypes).map(([v, l]) => <option value={v}>{l}</option>)}</select>
+      </Field>
+      <Field name="shoot_type" label={f.shootType} forKinds="photoshoot">
+        <select id="f-shoot_type" name="shoot_type" required><option value="">{f.choose}</option>{Object.entries(f.shootTypes).map(([v, l]) => <option value={v}>{l}</option>)}</select>
+      </Field>
+      <Field name="level" label={f.level} forKinds="coaching">
+        <select id="f-level" name="level" required><option value="">{f.choose}</option>{Object.entries(f.levels).map(([v, l]) => <option value={v}>{l}</option>)}</select>
+      </Field>
+      <Field name="date" label={f.date} forKinds="photoshoot consultation"><input id="f-date" name="date" type="date" required /></Field>
+      <Field name="slot" label={f.slot} forKinds="photoshoot consultation">
+        <select id="f-slot" name="slot" required dir="ltr"><option value="">{f.choose}</option>{SLOTS.map((s) => <option value={s}>{s.replace('-', ' – ')}</option>)}</select>
+      </Field>
+      <Field name="description" label={f.description} forKinds="project" wide><textarea id="f-description" name="description" required maxlength="4000" placeholder={f.descriptionHint}></textarea></Field>
+      <Field name="message" label={f.message} optional={f.optional} forKinds="photoshoot coaching consultation" wide><textarea id="f-message" name="message" maxlength="4000"></textarea></Field>
+    </div>
+    <div class="hp" aria-hidden="true"><label>{f.honeypot}<input type="text" name="company" tabindex="-1" autocomplete="off" /></label></div>
+    <input type="hidden" name="started" value="" />
+    <input type="hidden" name="locale" value={locale} />
+    <div class="form-foot">
+      <button class="btn" type="submit"><span data-submit-label>{f.submit}</span><ArrowRight class="flip-rtl" aria-hidden="true" /></button>
+      <p class="form-status" data-status role="alert"></p>
+    </div>
+    <noscript><p class="form-noscript">{f.noscript}</p></noscript>
+  </form>
+  <div class="form-success" data-success tabindex="-1" hidden>
+    <h2>{f.successTitle}</h2>
+    <p>{f.successText}</p>
+    <button class="link" type="button" data-again>{f.another}</button>
+  </div>
+</div>
+<script src="../scripts/form.ts"></script>

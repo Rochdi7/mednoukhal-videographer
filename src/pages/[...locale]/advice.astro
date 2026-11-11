@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { Play } from '@lucide/astro';
+import Base from '../../layouts/Base.astro';
+import advice from '../../data/advice.json';
+import { COACHING_FILM } from '../../data/films';
+import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
+import { breadcrumbNode } from '../../utils/seo';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const thumbs = import.meta.glob<{ default: ImageMetadata }>('/src/assets/advice/*.jpg', { eager: true });
+const crumbs = breadcrumbNode(Astro.site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.advice, path: localePath(locale, '/advice/') }]);
+---
+<Base locale={locale} title={s.meta.adviceTitle} description={s.meta.adviceDesc} path="/advice/" jsonLd={[crumbs]}>
+  <header class="page-head wrap">
+    <p class="eyebrow">{s.advice.eyebrow}</p>
+    <h1 class="h-xl">{s.advice.title}</h1>
+    <p class="lead">{s.advice.lead}</p>
+  </header>
+  <div class="wrap" style="padding-block-end:var(--section)">
+    <div class="advice-grid">
+      {advice.map((video) => (
+        <article class="advice-card" data-reveal>
+          <button class="advice-card__frame" type="button" data-video={COACHING_FILM.src} data-title={video.title} aria-label={`${s.advice.play} ${video.title}`}>
+            <Image src={thumbs[`/src/assets/advice/${video.id}.jpg`].default} alt="" width={480} format="webp" loading="lazy" decoding="async" />
+            <span class="film__play" aria-hidden="true"><span><Play strokeWidth={1.25} /></span></span>
+          </button>
+          <h2 dir="auto">{video.title}</h2>
+        </article>
+      ))}
+    </div>
+  </div>
+  <script src="../../scripts/advice.ts"></script>
+</Base>

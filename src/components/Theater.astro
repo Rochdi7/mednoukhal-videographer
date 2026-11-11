@@ -1,0 +1,24 @@
+---
+import { ChevronLeft, ChevronRight, X } from '@lucide/astro';
+import { t, type Locale } from '../i18n';
+
+const { locale } = Astro.props as { locale: Locale };
+const s = t(locale);
+---
+<dialog class="theater" data-theater aria-label={s.film.player}>
+  <div class="theater__bar">
+    <h2 class="theater__title" data-theater-title></h2>
+    <button class="icon-btn" type="button" data-theater-close aria-label={s.film.close}><X aria-hidden="true" /></button>
+  </div>
+  <div class="theater__stage">
+    <video data-theater-video controls playsinline preload="metadata">{s.film.noVideo}</video>
+  </div>
+  <div class="theater__foot">
+    <p><a data-theater-link href="#">{s.film.page}</a></p>
+    <div class="theater__nav" data-theater-nav>
+      <button class="icon-btn" type="button" data-theater-prev aria-label={s.film.prev}><ChevronLeft class="flip-rtl" aria-hidden="true" /></button>
+      <button class="icon-btn" type="button" data-theater-next aria-label={s.film.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
+    </div>
+  </div>
+</dialog>
+<script src="../scripts/theater.ts"></script>

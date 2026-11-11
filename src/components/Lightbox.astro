@@ -1,0 +1,24 @@
+---
+import { ChevronLeft, ChevronRight, X } from '@lucide/astro';
+import { t, type Locale } from '../i18n';
+
+const { locale } = Astro.props as { locale: Locale };
+const s = t(locale);
+---
+<dialog class="lightbox" data-lightbox aria-label={s.photo.lightbox} data-of={s.photo.of} data-open-label={s.photo.open}>
+  <div class="lightbox__bar">
+    <div class="lightbox__where">
+      <h2 class="lightbox__album" data-lightbox-album></h2>
+      <span class="lightbox__count tnum" data-lightbox-count aria-live="polite"></span>
+    </div>
+    <button class="icon-btn" type="button" data-lightbox-close aria-label={s.photo.close}><X aria-hidden="true" /></button>
+  </div>
+  <div class="lightbox__stage" data-lightbox-stage>
+    <img data-lightbox-img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" />
+    <button class="icon-btn lightbox__prev" type="button" data-lightbox-prev aria-label={s.photo.prev}><ChevronLeft class="flip-rtl" aria-hidden="true" /></button>
+    <button class="icon-btn lightbox__next" type="button" data-lightbox-next aria-label={s.photo.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
+  </div>
+  <div class="lightbox__thumbs" data-lightbox-thumbs></div>
+  <p class="lightbox__cap"><span data-lightbox-cap></span></p>
+</dialog>
+<script src="../scripts/lightbox.ts"></script>

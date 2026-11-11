@@ -1,0 +1,24 @@
+/* Scroll animation states. The behaviour lives in scripts/motion.ts, and nothing here hides content without it. */
+.m-pre { opacity: 0; }
+
+/* Headings: each word rises from behind its own mask */
+.m-w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-block: 0.14em; margin-block: -0.14em; }
+.m-wi { display: inline-block; transform-origin: 0 100%; }
+.m-wi:dir(rtl) { transform-origin: 100% 100%; }
+.m-wi.m-pre { opacity: 1; transform: translateY(118%); }
+
+.m-bar { position: fixed; inset: 0 0 auto; z-index: 150; height: 2px; background: var(--accent-fill); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.m-bar:dir(rtl) { transform-origin: right; }
+
+.m-veil { position: absolute; inset: 0; z-index: 1; background: #000; opacity: 0; pointer-events: none; }
+.hero__media { will-change: transform; }
+
+/* The header steps aside on the way down and returns on the way up */
+.site-head { transition: background-color 0.3s, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+.site-head.m-hide:not(:focus-within) { transform: translateY(-100%); }
+
+/* Above-the-fold headings wait for the script, with a timed fallback if it never runs */
+@media (prefers-reduced-motion: no-preference) {
+  .js:not(.m-ready) .page-head > * { opacity: 0; animation: m-safety 0s 1.5s forwards; }
+}
+@keyframes m-safety { to { opacity: 1; } }

@@ -1,0 +1,75 @@
+---
+import '../styles/global.css';
+import '../styles/motion.css';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import heroImage from '../assets/hero/hero.jpg';
+import { LOCALES, dir, localePath, t, type Locale } from '../i18n';
+import { SITE } from '../config/site';
+import { abs } from '../utils/seo';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  path: string; // path without the locale prefix
+  image?: ImageMetadata;
+  jsonLd?: object[];
+  hero?: boolean;
+  noindex?: boolean;
+  type?: 'website' | 'video.other';
+}
+
+const { locale, title, description, path, image = heroImage, jsonLd = [], hero = false, noindex = false, type = 'website' } = Astro.props;
+const site = Astro.site;
+const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const canonical = abs(site, localePath(locale, path));
+const og = await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 });
+const ogUrl = abs(site, og.src);
+const ogLocale = { en: 'en_US', fr: 'fr_FR', ar: 'ar_MA' }[locale];
+const fonts = locale === 'ar'
+  ? ['lemonmilk-medium', 'ibm-plex-sans-arabic-arabic-400-normal']
+  : ['lemonmilk-medium', 'lemonmilk-light', 'inter-latin-400-normal'];
+const strings = t(locale);
+---
+<!doctype html>
+<html lang={locale} dir={dir(locale)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {!noindex && LOCALES.map((l) => <link rel="alternate" hreflang={l} href={abs(site, localePath(l, path))} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={abs(site, path)} />}
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {fonts.map((f) => <link rel="preload" href={`/fonts/${f}.woff2`} as="font" type="font/woff2" crossorigin />)}
+    <slot name="head" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    {jsonLd.map((node) => <script type="application/ld+json" set:html={JSON.stringify(node)} />)}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body data-hero={hero ? '' : undefined}>
+    <a class="skip" href="#main">{strings.skip}</a>
+    <div class="grain" aria-hidden="true"></div>
+    <Header locale={locale} path={path} />
+    <main id="main"><slot /></main>
+    <Footer locale={locale} />
+    <script src="../scripts/site.ts"></script>
+    <script src="../scripts/motion.ts"></script>
+  </body>
+</html>

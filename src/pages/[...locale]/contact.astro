@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import EnquiryForm from '../../components/EnquiryForm.astro';
+import { SITE } from '../../config/site';
+import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
+import { breadcrumbNode, personNode } from '../../utils/seo';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const site = Astro.site;
+const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.contact, path: localePath(locale, '/contact/') }]);
+const hasDirect = Boolean(SITE.email || SITE.whatsapp || SITE.phone);
+---
+<Base locale={locale} title={s.meta.contactTitle} description={s.meta.contactDesc} path="/contact/" jsonLd={[personNode(site, locale), crumbs]}>
+  <div class="wrap page-head">
+    <div class="contact-grid">
+      <div class="contact-grid__intro">
+        <p class="eyebrow">{s.contact.eyebrow}</p>
+        <h1 class="h-lg" style="margin-block:14px 18px">{s.contact.title}</h1>
+        <p class="lead">{s.contact.lead}</p>
+        {hasDirect && (
+          <dl class="channels">
+            {SITE.email && <div><dt>{s.contact.email}</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></div>}
+            {SITE.whatsapp && <div><dt>{s.contact.whatsapp}</dt><dd><a class="latin" href={`https://wa.me/${SITE.whatsapp}`} rel="noopener">+{SITE.whatsapp}</a></dd></div>}
+            {SITE.phone && <div><dt>{s.contact.phone}</dt><dd><a class="latin" href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a></dd></div>}
+          </dl>
+        )}
+      </div>
+      <div class="contact-grid__form"><EnquiryForm locale={locale} /></div>
+    </div>
+  </div>
+</Base>

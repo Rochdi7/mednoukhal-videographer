@@ -1,0 +1,175 @@
+---
+import { Image, Picture, getImage } from 'astro:assets';
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play, Volume2, VolumeX } from '@lucide/astro';
+import Base from '../../layouts/Base.astro';
+import Theater from '../../components/Theater.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Ticker from '../../components/Ticker.astro';
+import CurveCarousel from '../../components/CurveCarousel.astro';
+import lockup from '../../assets/branding/mn-visual-lockup.png';
+import { COACHING_FILM, FILMS } from '../../data/films';
+import { SITE } from '../../config/site';
+import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
+import { personNode, websiteNode } from '../../utils/seo';
+import { resolveAlbums } from '../../utils/albums';
+import heroImage from '../../assets/hero/hero.jpg';
+import heroPortrait from '../../assets/hero/hero-portrait.jpg';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const p = (path: string) => localePath(locale, path);
+
+const heroLandscape = await getImage({ src: heroImage, width: 1920, format: 'webp', quality: 72 });
+const heroMobile = await getImage({ src: heroPortrait, width: 720, format: 'webp', quality: 68 });
+const albums = await resolveAlbums();
+// One photo from each album in turn, so neighbouring cards in the curved row differ.
+const mixedPhotos = Array.from({ length: Math.max(...albums.map((a) => a.photos.length)) }).flatMap((_, i) => albums.flatMap((a) => (a.photos[i] ? [a.photos[i]] : [])));
+
+const serviceKinds = ['project', 'project', 'project', 'project', 'project', 'photoshoot'];
+---
+<Base locale={locale} title={s.meta.homeTitle} description={s.meta.homeDesc} path="/" hero jsonLd={[websiteNode(Astro.site, locale), personNode(Astro.site, locale)]}>
+  <Fragment slot="head">
+    <link rel="preload" as="image" href={heroLandscape.src} type="image/webp" media="(min-width: 701px), (orientation: landscape)" fetchpriority="high" />
+    <link rel="preload" as="image" href={heroMobile.src} type="image/webp" media="(max-width: 700px) and (orientation: portrait)" fetchpriority="high" />
+  </Fragment>
+
+  <section class="hero" id="home" aria-labelledby="hero-title">
+    <div class="hero__media">
+      <picture>
+        <source media="(max-width: 700px) and (orientation: portrait)" srcset={heroMobile.src} type="image/webp" />
+        <img src={heroLandscape.src} width="1920" height="1080" alt="" fetchpriority="high" decoding="async" />
+      </picture>
+      <video data-hero-video autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+        <source media="(max-width: 700px) and (orientation: portrait)" src="/media/videos/hero-portrait.mp4" type="video/mp4" />
+        <source src="/media/videos/hero-1080.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="hero__inner">
+      <h1 id="hero-title"><Image class="hero__logo" src={lockup} alt={SITE.logoAlt} width={1040} format="webp" quality={90} loading="eager" fetchpriority="high" /><span class="sr-only"> {SITE.name}: {s.hero.sr}</span></h1>
+      <div class="hero__rule" aria-hidden="true"></div>
+      <p class="hero__role">{s.hero.role}</p>
+      <div class="hero__btns">
+        <a class="btn" href={`${p('/contact/')}?type=project`}>{s.hero.project}</a>
+        <a class="btn btn--ghost" href={`${p('/coaching/')}?type=coaching#request`}>{s.hero.coaching}</a>
+      </div>
+    </div>
+    <button class="hero__pause" type="button" data-hero-pause data-pause={s.hero.pause} data-resume={s.hero.resume} aria-label={s.hero.pause}>
+      <Pause data-icon-pause aria-hidden="true" /><Play data-icon-play aria-hidden="true" />
+    </button>
+    <a class="hero__scroll" href="#showcase">{s.hero.scroll}</a>
+  </section>
+
+  <Ticker items={[s.hero.role, ...s.services.items.map((i) => i.title)]} />
+
+  <section class="section wrap" id="showcase" aria-labelledby="showcase-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{s.showcase.eyebrow}</p>
+        <h2 class="h-lg" id="showcase-title">{s.showcase.title}</h2>
+      </div>
+      <div class="filters" role="group" aria-label={s.showcase.filter}>
+        <button type="button" data-filter="all" aria-pressed="true">{s.showcase.all}</button>
+        <button type="button" data-filter="films" aria-pressed="false">{s.showcase.films}</button>
+        <button type="button" data-filter="photo" aria-pressed="false">{s.showcase.photo}</button>
+      </div>
+    </div>
+
+    <div class="carousel" data-carousel data-autoplay data-panel="films">
+      <div class="carousel__head">
+        <h3>{s.showcase.films}</h3>
+        <a class="link" href={p('/films/')}><span>{s.showcase.moreFilms}</span><ArrowRight class="flip-rtl" aria-hidden="true" /></a>
+      </div>
+      <div class="carousel__view">
+        <button class="carousel__arrow carousel__arrow--prev" type="button" data-prev aria-label={s.showcase.prev}><ChevronLeft class="flip-rtl" aria-hidden="true" /></button>
+        <button class="carousel__arrow carousel__arrow--next" type="button" data-next aria-label={s.showcase.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
+        <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.films}>
+          {FILMS.map((film) => (
+            <article class="tile tile--film" data-src={film.src} data-orient={film.height > film.width ? 'vertical' : undefined}>
+              <a class="tile__open" href={p(`/films/${film.slug}/`)} data-film={JSON.stringify({ src: film.src, title: film.title[locale], href: p(`/films/${film.slug}/`), width: film.width, height: film.height })} aria-label={`${s.film.watch}: ${film.title[locale]}`}>
+                <Picture src={film.poster} formats={['avif', 'webp']} widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="min(1040px, 90vw)" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} />
+              </a>
+              <span class="tile__live" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="tile__label">{film.title[locale]}</span>
+              <button class="tile__sound" type="button" data-sound data-on={s.film.soundOn} data-off={s.film.soundOff} aria-label={s.film.soundOn}>
+                <VolumeX data-icon-off aria-hidden="true" /><Volume2 data-icon-on aria-hidden="true" />
+              </button>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel carousel--tilt" data-carousel data-drag data-panel="photo">
+      <div class="carousel__head">
+        <h3>{s.showcase.photo}</h3>
+        <a class="link" href={p('/photography/')}><span>{s.showcase.morePhotos}</span><ArrowRight class="flip-rtl" aria-hidden="true" /></a>
+      </div>
+      <div class="carousel__view">
+        <button class="carousel__arrow carousel__arrow--prev" type="button" data-prev aria-label={s.showcase.prev}><ChevronLeft class="flip-rtl" aria-hidden="true" /></button>
+        <button class="carousel__arrow carousel__arrow--next" type="button" data-next aria-label={s.showcase.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
+        <div class="giant" aria-hidden="true">
+          <div class="giant__row" data-text={`${SITE.logoAlt} — ${s.showcase.photo} — ${SITE.logoAlt} — ${s.showcase.photo} — `}></div>
+          <div class="giant__row giant__row--back" data-text={`${s.hero.role} — ${s.hero.role} — ${s.hero.role} — `}></div>
+        </div>
+        <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.photo}>
+          {albums.flatMap((album) => album.photos.map((photo) => (
+            <a class="tile tile--photo" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
+              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="min(560px, 74vw)" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={70} />
+              <span class="tile__label">{album.title[locale]}</span>
+            </a>
+          )))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="about" aria-labelledby="about-title">
+    <div class="about">
+      <h2 class="latin" id="about-title">{SITE.name}</h2>
+      <p>{s.about.p1}</p>
+    </div>
+  </section>
+
+  <section class="wrap" id="services" aria-labelledby="services-title" style="padding-block-end:var(--section)">
+    <div class="center-head">
+      <p class="eyebrow">{s.services.eyebrow}</p>
+      <h2 class="h-lg" id="services-title">{s.services.title}</h2>
+      <p class="lead">{s.services.sub}</p>
+    </div>
+    <div class="expertise">
+      {s.services.items.map((item, i) => (
+        <article class="expertise__item" data-spot>
+          <p class="eyebrow">{s.services.production}</p>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+          <a class="link" href={`${p('/contact/')}?type=${serviceKinds[i]}`}><span>{s.services.learnMore}<span class="sr-only">: {item.title}</span></span></a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section wrap booking" id="booking" aria-labelledby="booking-title">
+    <div class="center-head" style="margin-block-end:40px">
+      <p class="eyebrow">{s.booking.eyebrow}</p>
+      <h2 class="h-lg" id="booking-title">{s.booking.title}</h2>
+    </div>
+    <div class="booking__video" data-booking-video data-src={COACHING_FILM.src}>
+      <Picture src={COACHING_FILM.poster} formats={['avif', 'webp']} widths={[640, 1200]} sizes="(max-width: 800px) 90vw, 760px" alt="" loading="lazy" decoding="async" quality={68} />
+      <button class="sound-toggle" type="button" data-booking-sound data-on={s.film.soundOn} data-off={s.film.soundOff}>
+        <VolumeX data-icon-off aria-hidden="true" /><Volume2 data-icon-on aria-hidden="true" /><span>{s.film.soundOn}</span>
+      </button>
+    </div>
+    <div class="booking__btns">
+      <a class="btn" href={`${p('/coaching/')}?type=coaching#request`}>{s.booking.coaching}</a>
+      <a class="btn btn--ghost" href={`${p('/coaching/')}?type=consultation#request`}>{s.booking.consult}</a>
+    </div>
+  </section>
+
+  <CurveCarousel locale={locale} photos={mixedPhotos} />
+
+  <Theater locale={locale} />
+  <Lightbox locale={locale} />
+  <script src="../../scripts/home.ts"></script>
+</Base>

@@ -1,0 +1,9 @@
+---
+interface Props { name: string; label: string; optional?: string; forKinds?: string; wide?: boolean }
+const { name, label, optional, forKinds, wide } = Astro.props;
+---
+<div class:list={['field', { 'field--wide': wide }]} data-for={forKinds} data-field={name}>
+  <label for={`f-${name}`}>{label}{optional && <small> ({optional})</small>}</label>
+  <slot />
+  <p class="field__error" id={`err-${name}`} hidden></p>
+</div>

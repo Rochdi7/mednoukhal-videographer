@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import FilmCard from '../../../components/FilmCard.astro';
+import Theater from '../../../components/Theater.astro';
+import { ALL_FILMS, SHOWREEL } from '../../../data/films';
+import { localePath, localeStaticPaths, t, type Locale } from '../../../i18n';
+import { breadcrumbNode, personNode } from '../../../utils/seo';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const site = Astro.site;
+---
+<Base locale={locale} title={s.meta.filmsTitle} description={s.meta.filmsDesc} path="/films/" image={SHOWREEL.poster} jsonLd={[personNode(site, locale), breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.films, path: localePath(locale, '/films/') }])]}>
+  <header class="page-head wrap">
+    <p class="eyebrow">{s.films.eyebrow}</p>
+    <h1 class="h-xl">{s.films.title}</h1>
+    <p class="lead">{s.films.lead}</p>
+  </header>
+  <section class="wrap film-grid" style="padding-block-end:var(--section)" aria-label={s.films.title}>
+    {ALL_FILMS.map((film) => <FilmCard film={film} locale={locale} />)}
+  </section>
+  <Theater locale={locale} />
+</Base>

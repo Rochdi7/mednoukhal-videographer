@@ -1,0 +1,17 @@
+---
+// Marquee: two rows of big display type gliding in opposite directions. Words alternate solid and outlined, separated by
+// orange sparks; the second row starts offset so the rows never line up. Each row holds two copies for a seamless loop.
+const { items } = Astro.props as { items: string[] };
+const rows = [items, [...items.slice(Math.ceil(items.length / 2)), ...items.slice(0, Math.ceil(items.length / 2))]];
+---
+<div class="ticker" aria-hidden="true">
+  {rows.map((row, r) => (
+    <div class:list={['ticker__track', { 'ticker__track--back': r === 1 }]}>
+      {[0, 1].map(() => (
+        <div class="ticker__set">
+          {row.map((item, i) => <span class:list={{ 'is-outline': (i + r) % 2 === 1 }}>{item}</span>)}
+        </div>
+      ))}
+    </div>
+  ))}
+</div>

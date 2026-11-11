@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import { Menu, X } from '@lucide/astro';
+import { LOCALES, LOCALE_NAMES, LOCALE_FLAGS, localePath, t, type Locale } from '../i18n';
+import { SITE } from '../config/site';
+import mark from '../assets/branding/mn-visual-mark.png';
+
+const { locale, path } = Astro.props as { locale: Locale; path: string };
+const s = t(locale);
+const start = [
+  ['/', s.nav.home],
+  ['/#services', s.nav.services],
+  ['/#showcase', s.nav.portfolio],
+];
+const end = [
+  ['/advice/', s.nav.advice],
+  ['/coaching/', s.nav.coaching],
+  ['/contact/', s.nav.contact],
+];
+const menuLinks = [start[0], ['/films/', s.nav.films], ['/photography/', s.nav.photography], start[1], ...end];
+const isCurrent = (href: string) => (!href.includes('#') && (href === '/' ? path === '/' : path.startsWith(href)) ? { 'aria-current': 'page' as const } : {});
+const langs = LOCALES.map((l) => ({ l, href: localePath(l, path), current: l === locale ? { 'aria-current': 'true' as const } : {} }));
+---
+<header class="site-head" data-head>
+  <nav class="site-nav" aria-label={s.nav.main}>
+    {start.map(([href, label]) => <a href={localePath(locale, href)} {...isCurrent(href)}>{label}</a>)}
+  </nav>
+  <a class="wordmark" href={localePath(locale)} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
+    <Image src={mark} alt="" width={120} format="webp" quality={90} loading="eager" />
+  </a>
+  <nav class="site-nav site-nav--end" aria-label={s.nav.main}>
+    {end.map(([href, label]) => <a href={localePath(locale, href)} {...isCurrent(href)}>{label}</a>)}
+    <div class="lang" role="group" aria-label={s.nav.language}>
+      {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} title={LOCALE_NAMES[l]} aria-label={LOCALE_NAMES[l]} {...current}><img src={LOCALE_FLAGS[l]} alt="" width="24" height="18" /></a>)}
+    </div>
+  </nav>
+  <button class="menu-btn" type="button" data-menu-open aria-label={s.nav.menu}><Menu aria-hidden="true" /></button>
+</header>
+<dialog class="menu" data-menu aria-label={s.nav.main}>
+  <div class="menu__top">
+    <a class="wordmark" href={localePath(locale)} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
+      <Image src={mark} alt="" width={120} format="webp" quality={90} />
+    </a>
+    <button class="menu__close" type="button" data-menu-close aria-label={s.nav.close}><X aria-hidden="true" /></button>
+  </div>
+  <nav class="menu__links">
+    {menuLinks.map(([href, label]) => <a href={localePath(locale, href)} data-menu-link>{label}</a>)}
+  </nav>
+  <div class="lang" role="group" aria-label={s.nav.language}>
+    {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} title={LOCALE_NAMES[l]} aria-label={LOCALE_NAMES[l]} {...current}><img src={LOCALE_FLAGS[l]} alt="" width="24" height="18" /></a>)}
+  </div>
+</dialog>
