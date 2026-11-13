@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+import { cms, cmsImage } from './cms';
 import sol from '../assets/clients/sol-by-melia.png';
 import blokk from '../assets/clients/le-blokk.png';
 import maisonArabe from '../assets/clients/la-maison-arabe.png';
@@ -17,7 +18,7 @@ export interface Client {
   tone?: boolean;
 }
 
-export const CLIENTS: Client[] = [
+const LOCAL_CLIENTS: Client[] = [
   { name: 'Sol by Meliá', logo: sol },
   { name: 'Le Blokk, dîner spectacle', logo: blokk, tone: true },
   { name: 'La Maison Arabe Marrakech', logo: maisonArabe },
@@ -28,3 +29,8 @@ export const CLIENTS: Client[] = [
   { name: 'El Rssouh', logo: rssouh },
   { name: 'Association des Étudiants ISPITS Marrakech', logo: aei },
 ];
+
+// Clients from the dashboard replace the list above as soon as there is at least one.
+export const CLIENTS: Client[] = cms?.clients.length
+  ? cms.clients.filter((c) => c.logo).map((c) => ({ name: c.name, logo: cmsImage(c.logo!), tone: !!c.tone }))
+  : LOCAL_CLIENTS;

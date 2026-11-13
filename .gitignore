@@ -9,3 +9,14 @@ wetransfer_*/
 preview.mp4
 chrome_*.mp4
 lemon_milk.zip
+
+# deploy package
+mednoukhal-site.zip
+
+# Dashboard: local login and content, uploads, and what the build copies from the dashboard (scripts/cms-sync.mjs)
+.env
+mn-config.php
+mn-data/
+public/media/library/
+src/data/cms.json
+src/assets/cms/

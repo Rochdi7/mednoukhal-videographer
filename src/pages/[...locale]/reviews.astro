@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import Reviews from '../../components/Reviews.astro';
+import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
+import { breadcrumbNode, personNode } from '../../utils/seo';
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.props.locale as Locale;
+const s = t(locale);
+const site = Astro.site;
+const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.reviews, path: localePath(locale, '/reviews/') }]);
+---
+<Base locale={locale} title={s.meta.reviewsTitle} description={s.meta.reviewsDesc} path="/reviews/" jsonLd={[personNode(site, locale), crumbs]}>
+  <header class="page-head wrap">
+    <p class="eyebrow">{s.reviews.eyebrow}</p>
+    <h1 class="h-xl">{s.reviews.title}</h1>
+    <p class="lead">{s.reviews.lead}</p>
+  </header>
+  <div class="reviews-page">
+    <Reviews locale={locale} head={false} />
+  </div>
+</Base>

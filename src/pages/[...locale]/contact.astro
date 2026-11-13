@@ -1,34 +1,77 @@
 ---
+// Contact: the brief on one side, the form on the other.
+// Left (sticky on desktop): heading, then the direct lines as cards — email, and one card for the number with
+// both WhatsApp and call actions (it is the same number), then the social channels.
+// Right: the enquiry form inside a framed panel with viewfinder corners.
+import { ArrowUpRight, Mail, Phone } from '@lucide/astro';
 import Base from '../../layouts/Base.astro';
 import EnquiryForm from '../../components/EnquiryForm.astro';
 import { SITE } from '../../config/site';
 import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
 import { breadcrumbNode, personNode } from '../../utils/seo';
+import { brandIcon } from '../../utils/icons';
 
 export const getStaticPaths = localeStaticPaths;
 
 const locale = Astro.props.locale as Locale;
 const s = t(locale);
+const c = s.contact;
 const site = Astro.site;
 const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.contact, path: localePath(locale, '/contact/') }]);
-const hasDirect = Boolean(SITE.email || SITE.whatsapp || SITE.phone);
+const wa = SITE.whatsapp ? `https://wa.me/${SITE.whatsapp}` : null;
+const tel = SITE.phone ? `tel:${SITE.phone.replace(/\s/g, '')}` : null;
+const number = SITE.phone ?? (SITE.whatsapp ? `+${SITE.whatsapp}` : null);
+const hasDirect = Boolean(SITE.email || wa || tel);
 ---
 <Base locale={locale} title={s.meta.contactTitle} description={s.meta.contactDesc} path="/contact/" jsonLd={[personNode(site, locale), crumbs]}>
-  <div class="wrap page-head">
-    <div class="contact-grid">
-      <div class="contact-grid__intro">
-        <p class="eyebrow">{s.contact.eyebrow}</p>
-        <h1 class="h-lg" style="margin-block:14px 18px">{s.contact.title}</h1>
-        <p class="lead">{s.contact.lead}</p>
-        {hasDirect && (
-          <dl class="channels">
-            {SITE.email && <div><dt>{s.contact.email}</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></div>}
-            {SITE.whatsapp && <div><dt>{s.contact.whatsapp}</dt><dd><a class="latin" href={`https://wa.me/${SITE.whatsapp}`} rel="noopener">+{SITE.whatsapp}</a></dd></div>}
-            {SITE.phone && <div><dt>{s.contact.phone}</dt><dd><a class="latin" href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a></dd></div>}
-          </dl>
-        )}
-      </div>
-      <div class="contact-grid__form"><EnquiryForm locale={locale} /></div>
+  <div class="wrap page-head contact">
+    <div class="contact__intro">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1 class="contact__title">{c.title}</h1>
+      <p class="lead">{c.lead}</p>
+
+      {hasDirect && (
+        <div class="contact__direct">
+          <h2 class="contact__label">{c.directTitle}</h2>
+          <ul class="contact__cards">
+            {SITE.email && (
+              <li>
+                <a class="channel" href={`mailto:${SITE.email}`}>
+                  <span class="channel__icon"><Mail aria-hidden="true" /></span>
+                  <span class="channel__body"><small>{c.email}</small><strong class="latin">{SITE.email}</strong></span>
+                  <ArrowUpRight class="channel__go flip-rtl" aria-hidden="true" />
+                </a>
+              </li>
+            )}
+            {number && (wa || tel) && (
+              <li class="channel channel--multi">
+                <span class="channel__icon"><Fragment set:html={brandIcon('whatsapp')} /></span>
+                <span class="channel__body"><small>{[wa && c.whatsapp, tel && c.phone].filter(Boolean).join(' · ')}</small><strong class="latin">{number}</strong></span>
+                <span class="channel__actions">
+                  {wa && <a class="chip" href={wa} target="_blank" rel="noopener" aria-label={`${c.whatsapp}: ${number}`}><Fragment set:html={brandIcon('whatsapp')} />{c.chat}</a>}
+                  {tel && <a class="chip" href={tel} aria-label={`${c.phone}: ${number}`}><Phone aria-hidden="true" />{c.call}</a>}
+                </span>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+
+      {SITE.socials.length > 0 && (
+        <div class="contact__social">
+          <h2 class="contact__label">{s.footer.follow}</h2>
+          <ul>
+            {SITE.socials.map((social) => (
+              <li><a href={social.href} target="_blank" rel="noopener me" aria-label={`${social.label} ${social.handle}`} title={social.label}><Fragment set:html={brandIcon(social.icon)} /></a></li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    <div class="contact__panel">
+      <span class="contact__corner" aria-hidden="true"></span>
+      <EnquiryForm locale={locale} />
     </div>
   </div>
 </Base>

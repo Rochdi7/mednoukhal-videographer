@@ -12,8 +12,8 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
-      i18n: { defaultLocale: 'fr', locales: { en: 'en', fr: 'fr', ar: 'ar' } },
+      filter: (page) => !page.includes('/404') && !page.includes('/admin'),
+      i18n: { defaultLocale: 'en', locales: { en: 'en', fr: 'fr', ar: 'ar' } },
     }),
   ],
 });

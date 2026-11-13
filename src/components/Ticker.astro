@@ -1,12 +1,21 @@
 ---
 // Marquee: two rows of big display type gliding in opposite directions. Words alternate solid and outlined, separated by
 // orange sparks; the second row starts offset so the rows never line up. Each row holds two copies for a seamless loop.
+// The motion is a plain CSS animation on the compositor: nothing on the main thread touches it, so it stays smooth
+// while the page scrolls.
 const { items } = Astro.props as { items: string[] };
-const rows = [items, [...items.slice(Math.ceil(items.length / 2)), ...items.slice(0, Math.ceil(items.length / 2))]];
+// "Videography · Photography" becomes two words, so the only separators are the sparks.
+const words = items.flatMap((item) => item.split(/\s*[·•]\s*/)).filter(Boolean);
+// An even count keeps solid and outlined words alternating across the loop seam.
+const base = words.length % 2 ? [...words, ...words] : words;
+const half = Math.ceil(base.length / 2);
+const rows = [base, [...base.slice(half), ...base.slice(0, half)]];
+// Same speed whatever the word count: about 9s per word on the front row, a little slower behind.
+const time = (r: number) => `${(base.length * (r ? 11 : 9)).toFixed(0)}s`;
 ---
 <div class="ticker" aria-hidden="true">
   {rows.map((row, r) => (
-    <div class:list={['ticker__track', { 'ticker__track--back': r === 1 }]}>
+    <div class:list={['ticker__track', { 'ticker__track--back': r === 1 }]} style={`--ticker-time:${time(r)}`}>
       {[0, 1].map(() => (
         <div class="ticker__set">
           {row.map((item, i) => <span class:list={{ 'is-outline': (i + r) % 2 === 1 }}>{item}</span>)}

@@ -3,21 +3,21 @@ import { Image } from 'astro:assets';
 import { ArrowRight, Menu, X } from '@lucide/astro';
 import { LOCALES, LOCALE_NAMES, LOCALE_FLAGS, localePath, t, type Locale } from '../i18n';
 import { SITE } from '../config/site';
-import mark from '../assets/branding/mn-visual-mark.png';
+import { LOGO_MARK as mark } from '../config/site';
 
 const { locale, path } = Astro.props as { locale: Locale; path: string };
 const s = t(locale);
 const start = [
   ['/', s.nav.home],
-  ['/#services', s.nav.services],
-  ['/#showcase', s.nav.portfolio],
+  ['/films/', s.nav.films],
+  ['/photography/', s.nav.albums],
 ];
 const end = [
-  ['/advice/', s.nav.advice],
-  ['/coaching/', s.nav.coaching],
+  ['/#services', s.nav.services],
+  ['/reviews/', s.nav.reviews],
   ['/contact/', s.nav.contact],
 ];
-const menuLinks = [start[0], ['/films/', s.nav.films], ['/photography/', s.nav.photography], start[1], ...end];
+const menuLinks = [...start, ...end];
 const isCurrent = (href: string) => (!href.includes('#') && (href === '/' ? path === '/' : path.startsWith(href)) ? { 'aria-current': 'page' as const } : {});
 const langs = LOCALES.map((l) => ({ l, href: localePath(l, path), current: l === locale ? { 'aria-current': 'true' as const } : {} }));
 ---
@@ -53,7 +53,7 @@ const langs = LOCALES.map((l) => ({ l, href: localePath(l, path), current: l ===
     ))}
   </nav>
   <div class="menu__foot">
-    <a class="btn menu__cta" href={`${localePath(locale, '/contact/')}?type=project`} data-menu-link>{s.hero.project}</a>
+    <a class="btn menu__cta" href={localePath(locale, '/contact/')} data-menu-link>{s.hero.project}</a>
     <div class="lang" role="group" aria-label={s.nav.language}>
       {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} {...current}><img src={LOCALE_FLAGS[l]} alt="" width="20" height="15" /><span>{LOCALE_NAMES[l]}</span></a>)}
     </div>

@@ -1,17 +1,26 @@
 import type { ImageMetadata } from 'astro';
 import type { Localized } from '../i18n';
+import { cms, cmsImage, cmsLocalized } from './cms';
 
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.jpg', { eager: true });
 
 export interface Photo {
   image: ImageMetadata;
   alt: Localized;
+  focus?: string; // CSS object-position, from the focus point set in the dashboard
 }
 
 export interface Album {
   slug: string;
   title: Localized;
   photos: Photo[];
+  category?: string; // slug of a PhotoCategory
+  onHome?: boolean; // used in the homepage photo carousels
+}
+
+export interface PhotoCategory {
+  slug: string;
+  title: Localized;
 }
 
 const photo = (slug: string, n: number, en: string, fr: string, ar: string): Photo => ({
@@ -20,7 +29,7 @@ const photo = (slug: string, n: number, en: string, fr: string, ar: string): Pho
 });
 
 // Albums and captions describe what each photograph shows.
-export const ALBUMS: Album[] = [
+const LOCAL_ALBUMS: Album[] = [
   {
     slug: 'portraits',
     title: { en: 'Portraits', fr: 'Portraits', ar: 'بورتريه' },
@@ -68,3 +77,19 @@ export const ALBUMS: Album[] = [
     ],
   },
 ];
+
+// Albums published in the dashboard replace the ones above as soon as there is at least one.
+export const ALBUMS: Album[] = cms?.albums.length
+  ? cms.albums.map((a) => ({
+      slug: a.slug,
+      title: cmsLocalized(a.title),
+      category: a.category,
+      onHome: a.onHome !== false,
+      photos: a.photos.map((p) => ({ image: cmsImage(p), alt: cmsLocalized(p.alt, { en: '', fr: '', ar: '' }), focus: p.focus })),
+    }))
+  : LOCAL_ALBUMS;
+
+// Only categories that hold at least one album are listed on the site.
+export const PHOTO_CATEGORIES: PhotoCategory[] = (cms?.photoCategories ?? [])
+  .map((c) => ({ slug: c.slug, title: cmsLocalized(c.title) }))
+  .filter((c) => ALBUMS.some((a) => a.category === c.slug));

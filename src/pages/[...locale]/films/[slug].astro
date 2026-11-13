@@ -7,6 +7,7 @@ import { ALL_FILMS, aspectLabel, formatDuration, isoDuration, type Film } from '
 import { SITE } from '../../../config/site';
 import { LOCALES, localeParam, localePath, t, type Locale } from '../../../i18n';
 import { abs, breadcrumbNode, creatorNode } from '../../../utils/seo';
+import { blur } from '../../../utils/placeholder';
 
 export const getStaticPaths = () =>
   LOCALES.flatMap((locale) =>
@@ -23,6 +24,7 @@ const title = film.title[locale];
 const description = film.description[locale];
 const path = `/films/${film.slug}/`;
 const poster = await getImage({ src: film.poster, width: Math.min(1920, film.poster.width), format: 'webp', quality: 74 });
+const posterPh = await blur(film.poster);
 const ogThumb = await getImage({ src: film.poster, width: 1200, format: 'jpg', quality: 80 });
 
 const video = {
@@ -49,10 +51,12 @@ const crumbs = [
 const portrait = film.height > film.width;
 ---
 <Base locale={locale} title={`${title} · ${s.film.categoryValue}`} description={description} path={path} image={film.poster} type="video.other" jsonLd={[video, breadcrumbNode(site, crumbs)]}>
+  <!-- The poster is the first thing on screen: fetch it with the page, not after the player is laid out. -->
+  <link slot="head" rel="preload" as="image" href={poster.src} type="image/webp" fetchpriority="high" />
   <article class="film-page wrap">
     <Breadcrumbs label={s.nav.breadcrumb} items={[{ name: s.nav.home, href: localePath(locale) }, { name: s.nav.films, href: localePath(locale, '/films/') }, { name: title }]} />
     <div class="film-page__player">
-      <video controls playsinline preload="none" poster={poster.src} width={film.width} height={film.height} style={portrait ? 'width:auto' : undefined} aria-label={title}>
+      <video controls playsinline preload="none" poster={poster.src} width={film.width} height={film.height} style={portrait ? `width:auto;${posterPh}` : posterPh} aria-label={title}>
         <source src={film.src} type="video/mp4" />
         {s.film.noVideo}
       </video>

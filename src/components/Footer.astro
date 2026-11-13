@@ -1,37 +1,94 @@
 ---
+// Footer as the "end credits" of the page:
+// 1. a closing call to action (big email link, start-a-project and WhatsApp buttons),
+// 2. credits in four columns: brand, pages, direct contact, social channels,
+// 3. a bottom bar with copyright, developer credit and a "back to top" rewind,
+// with a giant outlined MN VISUAL title sinking off the bottom edge like a closing card.
 import { Image } from 'astro:assets';
+import { ArrowUp, ArrowUpRight, Mail, Phone } from '@lucide/astro';
 import Ticker from './Ticker.astro';
 import { localePath, t, type Locale } from '../i18n';
-import { SITE } from '../config/site';
-import lockup from '../assets/branding/mn-visual-lockup.png';
+import { LOGO, SITE } from '../config/site';
+import { brandIcon } from '../utils/icons';
 
 const { locale } = Astro.props as { locale: Locale };
 const s = t(locale);
-const hasContact = Boolean(SITE.email || SITE.whatsapp || SITE.phone || SITE.socials.length);
+const f = s.footer;
+const p = (path: string) => localePath(locale, path);
 const links = [
   ['/films/', s.nav.films],
-  ['/photography/', s.nav.photography],
+  ['/photography/', s.nav.albums],
   ['/#services', s.nav.services],
-  ['/advice/', s.nav.advice],
-  ['/coaching/', s.nav.coaching],
+  ['/reviews/', s.nav.reviews],
   ['/contact/', s.nav.contact],
 ];
+const wa = SITE.whatsapp ? `https://wa.me/${SITE.whatsapp}` : null;
+const tel = SITE.phone ? `tel:${SITE.phone.replace(/\s/g, '')}` : null;
+const icon = brandIcon;
 ---
 <Ticker items={[s.hero.role, ...s.services.items.map((i) => i.title)]} />
 <footer class="site-foot">
-  <a class="site-foot__mark" href={localePath(locale)} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
-    <Image src={lockup} alt="" width={440} format="webp" quality={90} loading="lazy" />
-  </a>
-  <nav class="site-foot__nav" aria-label={s.footer.explore}>
-    {links.map(([href, label]) => <a href={localePath(locale, href)}>{label}</a>)}
-  </nav>
-  {hasContact && (
-    <div class="site-foot__contact">
-      {SITE.email && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
-      {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} rel="noopener">{s.contact.whatsapp}</a>}
-      {SITE.phone && <a class="latin" href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>}
-      {SITE.socials.map((social) => <a href={social.href} rel="noopener">{social.label}</a>)}
+  <section class="site-foot__cta wrap" aria-labelledby="foot-cta-title">
+    <p class="eyebrow"><span class="site-foot__rec" dir="ltr" aria-hidden="true"><i></i>REC</span>{f.eyebrow}</p>
+    <h2 class="site-foot__title" id="foot-cta-title">{f.title}</h2>
+    {SITE.email && (
+      <a class="site-foot__mail" href={`mailto:${SITE.email}`}>
+        <span class="latin">{SITE.email}</span>
+        <ArrowUpRight class="flip-rtl" aria-hidden="true" />
+      </a>
+    )}
+    <div class="site-foot__actions">
+      <a class="btn" href={p('/contact/')}>{s.curve.cta}</a>
+      {wa && <a class="btn btn--ghost site-foot__wa" href={wa} target="_blank" rel="noopener"><Fragment set:html={icon('whatsapp')} />{f.whatsapp}</a>}
     </div>
-  )}
-  <p>© <span class="latin">{new Date().getFullYear()} {SITE.name}</span>. {s.footer.rights}</p>
+  </section>
+
+  <div class="site-foot__grid wrap">
+    <div class="site-foot__brand">
+      <a class="site-foot__mark" href={p('/')} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
+        <Image src={LOGO} alt="" width={Math.min(320, LOGO.width)} format="webp" quality={90} loading="lazy" />
+      </a>
+      <p>{s.hero.role}</p>
+    </div>
+
+    <nav class="site-foot__col" aria-labelledby="foot-explore">
+      <h2 class="site-foot__label" id="foot-explore">{f.explore}</h2>
+      <ul>{links.map(([href, label]) => <li><a href={p(href)}>{label}</a></li>)}</ul>
+    </nav>
+
+    {(SITE.email || wa || tel) && (
+      <div class="site-foot__col">
+        <h2 class="site-foot__label">{f.contact}</h2>
+        <ul class="site-foot__list">
+          {SITE.email && <li><a href={`mailto:${SITE.email}`}><Mail aria-hidden="true" /><span class="latin">{SITE.email}</span></a></li>}
+          {wa && <li><a href={wa} target="_blank" rel="noopener" aria-label={`${s.contact.whatsapp}: ${SITE.phone ?? SITE.whatsapp}`}><Fragment set:html={icon('whatsapp')} /><span class="latin">{SITE.phone ?? `+${SITE.whatsapp}`}</span></a></li>}
+          {tel && <li><a href={tel} aria-label={`${s.contact.phone}: ${SITE.phone}`}><Phone aria-hidden="true" /><span>{s.contact.phone}</span></a></li>}
+        </ul>
+      </div>
+    )}
+
+    {SITE.socials.length > 0 && (
+      <div class="site-foot__col">
+        <h2 class="site-foot__label">{f.follow}</h2>
+        <ul class="site-foot__social">
+          {SITE.socials.map((social) => (
+            <li>
+              <a href={social.href} target="_blank" rel="noopener me">
+                <span class="site-foot__icon"><Fragment set:html={icon(social.icon)} /></span>
+                <span class="site-foot__net"><strong>{social.label}</strong><small class="latin">{social.handle}</small></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div class="site-foot__bar wrap">
+    <p>© <span class="latin">{new Date().getFullYear()} {SITE.displayName}</span>. {f.rights}</p>
+    <p>{f.developed} <a class="site-foot__dev" href={SITE.developer.href} target="_blank" rel="noopener"><span class="latin">{SITE.developer.name}</span></a></p>
+    <a class="site-foot__top" href="#">{f.top}<ArrowUp aria-hidden="true" /></a>
+  </div>
+
+  <p class="site-foot__giant latin" aria-hidden="true">{SITE.logoAlt}</p>
 </footer>

@@ -1,0 +1,942 @@
+{
+  "settings": {
+    "name": "Mednoukhal",
+    "jobTitle": "Videographer and Photographer",
+    "logoAlt": "MN Visual",
+    "email": "mednoukhal00@gmail.com",
+    "whatsapp": "212624084279",
+    "phone": "+212 624 084 279",
+    "socials": [
+      {
+        "id": "social-01n",
+        "label": "Instagram",
+        "handle": "@med_noukhal",
+        "href": "https://www.instagram.com/med_noukhal/",
+        "icon": "instagram"
+      },
+      {
+        "id": "social-01o",
+        "label": "YouTube",
+        "handle": "@mednoukhal",
+        "href": "https://www.youtube.com/@mednoukhal",
+        "icon": "youtube"
+      },
+      {
+        "id": "social-01p",
+        "label": "Threads",
+        "handle": "@med_noukhal",
+        "href": "https://www.threads.com/@med_noukhal",
+        "icon": "threads"
+      }
+    ],
+    "logo": {
+      "path": "/media/seed/branding/logo.png",
+      "width": 1578,
+      "height": 883
+    },
+    "logoMark": {
+      "path": "/media/seed/branding/mark.png",
+      "width": 559,
+      "height": 552
+    },
+    "logoWordmark": {
+      "path": "/media/seed/branding/wordmark.png",
+      "width": 2400,
+      "height": 477
+    }
+  },
+  "home": {
+    "videos": [
+      {
+        "id": "hero-01q",
+        "video": {
+          "path": "/media/videos/hero-1080.mp4",
+          "width": 1820,
+          "height": 1024,
+          "duration": 14
+        },
+        "videoMobile": {
+          "path": "/media/videos/hero-portrait.mp4",
+          "width": 576,
+          "height": 1024,
+          "duration": 14
+        }
+      }
+    ],
+    "poster": {
+      "path": "/media/seed/hero/poster.jpg",
+      "width": 1820,
+      "height": 1024
+    },
+    "posterMobile": {
+      "path": "/media/seed/hero/poster-portrait.jpg",
+      "width": 576,
+      "height": 1024
+    },
+    "aboutPhoto": {
+      "path": "/media/seed/hero/about.jpg",
+      "width": 1820,
+      "height": 1024,
+      "focus": "50% 40%"
+    }
+  },
+  "texts": {},
+  "curve": {
+    "items": []
+  },
+  "filmCategories": [
+    {
+      "id": "fc-000",
+      "slug": "commercials",
+      "title": {
+        "en": "Commercials",
+        "fr": "Publicités",
+        "ar": "إعلانات"
+      }
+    },
+    {
+      "id": "fc-001",
+      "slug": "brand-films",
+      "title": {
+        "en": "Brand films",
+        "fr": "Films de marque",
+        "ar": "أفلام العلامات التجارية"
+      }
+    },
+    {
+      "id": "fc-002",
+      "slug": "music-videos",
+      "title": {
+        "en": "Music videos",
+        "fr": "Clips musicaux",
+        "ar": "كليبات موسيقية"
+      }
+    },
+    {
+      "id": "fc-003",
+      "slug": "documentaries",
+      "title": {
+        "en": "Documentaries",
+        "fr": "Documentaires",
+        "ar": "أفلام وثائقية"
+      }
+    }
+  ],
+  "films": [
+    {
+      "id": "film-007",
+      "slug": "showreel",
+      "title": {
+        "en": "Showreel",
+        "fr": "Bande démo",
+        "ar": "الشريط التعريفي"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-000",
+      "featured": true,
+      "onHome": false,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/showreel.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-008",
+      "slug": "project-01",
+      "title": {
+        "en": "Project 01",
+        "fr": "Projet 01",
+        "ar": "مشروع 01"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-000",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-01.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-009",
+      "slug": "project-02",
+      "title": {
+        "en": "Project 02",
+        "fr": "Projet 02",
+        "ar": "مشروع 02"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-001",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-02.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00a",
+      "slug": "project-03",
+      "title": {
+        "en": "Project 03",
+        "fr": "Projet 03",
+        "ar": "مشروع 03"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-002",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-03.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00b",
+      "slug": "project-04",
+      "title": {
+        "en": "Project 04",
+        "fr": "Projet 04",
+        "ar": "مشروع 04"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-003",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-04.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00c",
+      "slug": "project-05",
+      "title": {
+        "en": "Project 05",
+        "fr": "Projet 05",
+        "ar": "مشروع 05"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-000",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-05.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00d",
+      "slug": "project-06",
+      "title": {
+        "en": "Project 06",
+        "fr": "Projet 06",
+        "ar": "مشروع 06"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-001",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-06.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00e",
+      "slug": "project-07",
+      "title": {
+        "en": "Project 07",
+        "fr": "Projet 07",
+        "ar": "مشروع 07"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-002",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-07.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    },
+    {
+      "id": "film-00f",
+      "slug": "project-08",
+      "title": {
+        "en": "Project 08",
+        "fr": "Projet 08",
+        "ar": "مشروع 08"
+      },
+      "description": {
+        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
+        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
+        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+      },
+      "categoryId": "fc-003",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-09",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/films/project-08.jpg",
+        "width": 1820,
+        "height": 1024
+      }
+    }
+  ],
+  "photoCategories": [
+    {
+      "id": "pc-004",
+      "slug": "portraits-fashion",
+      "title": {
+        "en": "Portraits & Fashion",
+        "fr": "Portraits & Mode",
+        "ar": "بورتريه وأزياء"
+      }
+    },
+    {
+      "id": "pc-005",
+      "slug": "hospitality",
+      "title": {
+        "en": "Hospitality & Food",
+        "fr": "Hôtellerie & Gastronomie",
+        "ar": "الضيافة وفن الطهي"
+      }
+    },
+    {
+      "id": "pc-006",
+      "slug": "craft-performance",
+      "title": {
+        "en": "Craft & Performance",
+        "fr": "Artisanat & Spectacle",
+        "ar": "الحرف والعروض"
+      }
+    }
+  ],
+  "albums": [
+    {
+      "id": "album-00k",
+      "slug": "portraits",
+      "title": {
+        "en": "Portraits",
+        "fr": "Portraits",
+        "ar": "بورتريه"
+      },
+      "categoryId": "pc-004",
+      "onHome": true,
+      "photos": [
+        {
+          "id": "ph-00g",
+          "path": "/media/seed/albums/portraits/01.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A smiling woman with long brown hair in a cream shirt, seated at a table outdoors.",
+            "fr": "Une femme souriante aux longs cheveux bruns, en chemise crème, assise à une table en extérieur.",
+            "ar": "امرأة مبتسمة بشعر بني طويل وقميص كريمي تجلس إلى طاولة في الهواء الطلق."
+          }
+        },
+        {
+          "id": "ph-00h",
+          "path": "/media/seed/albums/portraits/02.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A woman with curly blonde hair holding half a grapefruit over one eye, palm trees behind her.",
+            "fr": "Une femme aux cheveux blonds bouclés tenant un demi-pamplemousse devant un œil, des palmiers derrière elle.",
+            "ar": "امرأة بشعر أشقر مجعد تضع نصف حبة جريب فروت أمام عينها وخلفها أشجار النخيل."
+          }
+        },
+        {
+          "id": "ph-00i",
+          "path": "/media/seed/albums/portraits/03.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A smiling young girl in a white T-shirt holding a soft toy.",
+            "fr": "Une petite fille souriante en t-shirt blanc tenant une peluche.",
+            "ar": "طفلة مبتسمة بقميص أبيض تحمل دمية محشوة."
+          }
+        },
+        {
+          "id": "ph-00j",
+          "path": "/media/seed/albums/portraits/04.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A family on a terrace balcony beneath a reed canopy, palm trees beyond.",
+            "fr": "Une famille sur le balcon d'une terrasse, sous un auvent de roseaux, des palmiers au loin.",
+            "ar": "عائلة على شرفة تحت مظلة من القصب وأشجار النخيل في الأفق."
+          }
+        }
+      ]
+    },
+    {
+      "id": "album-00o",
+      "slug": "caftan",
+      "title": {
+        "en": "Caftan",
+        "fr": "Caftan",
+        "ar": "القفطان"
+      },
+      "categoryId": "pc-004",
+      "onHome": true,
+      "photos": [
+        {
+          "id": "ph-00l",
+          "path": "/media/seed/albums/caftan/01.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A seated woman in a pale gold caftan with an embroidered belt, her hands resting on her knee.",
+            "fr": "Une femme assise en caftan or pâle à ceinture brodée, les mains posées sur le genou.",
+            "ar": "امرأة جالسة بقفطان ذهبي فاتح وحزام مطرز ويداها على ركبتها."
+          }
+        },
+        {
+          "id": "ph-00m",
+          "path": "/media/seed/albums/caftan/02.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A woman in a long beige robe and nude heels seated on a white sofa.",
+            "fr": "Une femme en longue robe beige et talons nude assise sur un canapé blanc.",
+            "ar": "امرأة بعباءة بيج طويلة وكعب عالٍ تجلس على أريكة بيضاء."
+          }
+        },
+        {
+          "id": "ph-00n",
+          "path": "/media/seed/albums/caftan/03.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A hand decorated with henna resting on an open newspaper, a white robe at the wrist.",
+            "fr": "Une main ornée de henné posée sur un journal ouvert, la manche d'un peignoir blanc au poignet.",
+            "ar": "يد مزينة بالحناء على جريدة مفتوحة وكم رداء أبيض عند المعصم."
+          }
+        }
+      ]
+    },
+    {
+      "id": "album-00s",
+      "slug": "table",
+      "title": {
+        "en": "At the Table",
+        "fr": "À table",
+        "ar": "على المائدة"
+      },
+      "categoryId": "pc-005",
+      "onHome": true,
+      "photos": [
+        {
+          "id": "ph-00p",
+          "path": "/media/seed/albums/table/01.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A cocktail garnished with pineapple on a candlelit table, blue lights glowing behind it.",
+            "fr": "Un cocktail garni d'ananas sur une table aux chandelles, des lumières bleues en arrière-plan.",
+            "ar": "كوكتيل مزين بالأناناس على طاولة تضيئها الشموع وخلفه أضواء زرقاء."
+          }
+        },
+        {
+          "id": "ph-00q",
+          "path": "/media/seed/albums/table/02.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A plated main course with vegetables on a white dish, on a dark table at night.",
+            "fr": "Un plat principal aux légumes dans une assiette blanche, sur une table sombre de nuit.",
+            "ar": "طبق رئيسي بالخضار في صحن أبيض على طاولة داكنة ليلاً."
+          }
+        },
+        {
+          "id": "ph-00r",
+          "path": "/media/seed/albums/table/03.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "Two hands raising glasses of an orange drink against a clear blue sky.",
+            "fr": "Deux mains levant des verres d'une boisson orange sur un ciel bleu dégagé.",
+            "ar": "يدان ترفعان كأسين من مشروب برتقالي أمام سماء زرقاء صافية."
+          }
+        }
+      ]
+    },
+    {
+      "id": "album-00x",
+      "slug": "interiors",
+      "title": {
+        "en": "Interiors",
+        "fr": "Intérieurs",
+        "ar": "الفضاءات الداخلية"
+      },
+      "categoryId": "pc-005",
+      "onHome": true,
+      "photos": [
+        {
+          "id": "ph-00t",
+          "path": "/media/seed/albums/interiors/01.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A reflecting pool between stone columns, beneath a skylight and a tall library.",
+            "fr": "Un bassin entre des colonnes de pierre, sous une verrière et une haute bibliothèque.",
+            "ar": "حوض مائي بين أعمدة حجرية تحت كوة زجاجية ومكتبة عالية."
+          }
+        },
+        {
+          "id": "ph-00u",
+          "path": "/media/seed/albums/interiors/02.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A golden seated Buddha among plants in a hall with stone columns.",
+            "fr": "Un bouddha doré assis parmi les plantes dans une salle à colonnes de pierre.",
+            "ar": "تمثال بوذا ذهبي جالس بين النباتات في قاعة بأعمدة حجرية."
+          }
+        },
+        {
+          "id": "ph-00v",
+          "path": "/media/seed/albums/interiors/03.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A woman reading a magazine in a white bed against a blue wall.",
+            "fr": "Une femme lisant un magazine dans un lit blanc, devant un mur bleu.",
+            "ar": "امرأة تقرأ مجلة على سرير أبيض أمام جدار أزرق."
+          }
+        },
+        {
+          "id": "ph-00w",
+          "path": "/media/seed/albums/interiors/04.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A woven basket filled with Morocco travel guides and magazines.",
+            "fr": "Un panier tressé rempli de guides de voyage et de magazines sur le Maroc.",
+            "ar": "سلة منسوجة مليئة بأدلة سفر ومجلات عن المغرب."
+          }
+        }
+      ]
+    },
+    {
+      "id": "album-010",
+      "slug": "craft",
+      "title": {
+        "en": "Craft & Performance",
+        "fr": "Artisanat et spectacle",
+        "ar": "حرف وعروض"
+      },
+      "categoryId": "pc-006",
+      "onHome": true,
+      "photos": [
+        {
+          "id": "ph-00y",
+          "path": "/media/seed/albums/craft/01.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A potter in a blue apron shaping clay on a wheel, on a terrace beneath a reed canopy.",
+            "fr": "Un potier en tablier bleu façonnant l'argile sur un tour, sur une terrasse sous un auvent de roseaux.",
+            "ar": "خزّاف بمئزر أزرق يشكل الطين على الدولاب في شرفة تحت مظلة من القصب."
+          }
+        },
+        {
+          "id": "ph-00z",
+          "path": "/media/seed/albums/craft/02.jpg",
+          "width": 1600,
+          "height": 2400,
+          "alt": {
+            "en": "A performer in a ruffled dress raising a flaming torch in blue smoke.",
+            "fr": "Une artiste en robe à volants levant une torche enflammée dans une fumée bleue.",
+            "ar": "مؤدية بفستان مكشكش ترفع شعلة نار وسط دخان أزرق."
+          }
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "id": "client-011",
+      "name": "Sol by Meliá",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/sol-by-melia.png",
+        "width": 527,
+        "height": 400
+      }
+    },
+    {
+      "id": "client-012",
+      "name": "Le Blokk, dîner spectacle",
+      "tone": true,
+      "logo": {
+        "path": "/media/seed/clients/le-blokk-di-ner-spectacle.png",
+        "width": 789,
+        "height": 400
+      }
+    },
+    {
+      "id": "client-013",
+      "name": "La Maison Arabe Marrakech",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/la-maison-arabe-marrakech.png",
+        "width": 340,
+        "height": 256
+      }
+    },
+    {
+      "id": "client-014",
+      "name": "TH Events",
+      "tone": true,
+      "logo": {
+        "path": "/media/seed/clients/th-events.png",
+        "width": 655,
+        "height": 400
+      }
+    },
+    {
+      "id": "client-015",
+      "name": "Rue Chic",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/rue-chic.png",
+        "width": 800,
+        "height": 398
+      }
+    },
+    {
+      "id": "client-016",
+      "name": "The House of the Calligraphy",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/the-house-of-the-calligraphy.png",
+        "width": 380,
+        "height": 400
+      }
+    },
+    {
+      "id": "client-017",
+      "name": "212 Communication",
+      "tone": true,
+      "logo": {
+        "path": "/media/seed/clients/212-communication.png",
+        "width": 800,
+        "height": 391
+      }
+    },
+    {
+      "id": "client-018",
+      "name": "El Rssouh",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/el-rssouh.png",
+        "width": 281,
+        "height": 400
+      }
+    },
+    {
+      "id": "client-019",
+      "name": "Association des Étudiants ISPITS Marrakech",
+      "tone": false,
+      "logo": {
+        "path": "/media/seed/clients/association-des-e-tudiants-ispits-marrakech.png",
+        "width": 676,
+        "height": 366
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "id": "review-01a",
+      "clientId": "client-011",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Hotel · Marrakech",
+        "fr": "Hôtel · Marrakech",
+        "ar": "فندق · مراكش"
+      },
+      "quote": "Un travail soigné du début à la fin. Les vidéos de l'hôtel ont tout de suite trouvé leur place sur nos réseaux et nos équipes les utilisent encore aujourd'hui.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01b",
+      "clientId": "client-012",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Dinner show",
+        "fr": "Dîner spectacle",
+        "ar": "عشاء استعراضي"
+      },
+      "quote": "Filmer un spectacle en direct n'est pas simple. Il a su capter l'énergie de la scène sans jamais gêner les artistes ni le public. Le résultat est bluffant.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01c",
+      "clientId": "client-013",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Hotel & restaurant",
+        "fr": "Hôtel & restaurant",
+        "ar": "فندق ومطعم"
+      },
+      "quote": "Very professional and easy to work with. He understood the spirit of the house straight away and the photographs show it exactly as our guests experience it.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01d",
+      "clientId": "client-014",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Events",
+        "fr": "Événementiel",
+        "ar": "تنظيم الفعاليات"
+      },
+      "quote": "Réactif, ponctuel et discret le jour J. Les montages ont été livrés dans les délais, avec une vraie qualité cinéma. Nous travaillons avec lui sur chaque événement.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01e",
+      "clientId": "client-015",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Fashion brand",
+        "fr": "Marque de mode",
+        "ar": "علامة أزياء"
+      },
+      "quote": "Des visuels produits élégants qui ont fait la différence sur notre boutique en ligne. Il a l'œil pour la lumière et le détail.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01f",
+      "clientId": "client-016",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Art & craft",
+        "fr": "Art & artisanat",
+        "ar": "فن وحرف"
+      },
+      "quote": "تعامل راقٍ واحترافية عالية. نقل جمال الخط العربي بالصورة والفيديو بإحساس فني كبير، وأنصح به بشدة.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01g",
+      "clientId": "client-017",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Communication agency",
+        "fr": "Agence de communication",
+        "ar": "وكالة تواصل"
+      },
+      "quote": "Un partenaire fiable pour nos clients. Il comprend vite un brief, propose des idées et livre des images qui servent vraiment la marque.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01h",
+      "clientId": "client-018",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Brand",
+        "fr": "Marque",
+        "ar": "علامة تجارية"
+      },
+      "quote": "Great communication throughout the project and a real eye for detail. The final film went beyond what we had imagined. Highly recommended.",
+      "rating": 5,
+      "placeholder": true
+    },
+    {
+      "id": "review-01i",
+      "clientId": "client-019",
+      "name": "",
+      "logo": null,
+      "sector": {
+        "en": "Student association",
+        "fr": "Association étudiante",
+        "ar": "جمعية طلابية"
+      },
+      "quote": "Il a couvert notre événement avec beaucoup de professionnalisme. Les étudiants ont adoré la vidéo souvenir, partagée des centaines de fois.",
+      "rating": 5,
+      "placeholder": true
+    }
+  ],
+  "advice": [
+    {
+      "id": "advice-01j",
+      "title": "Advice video 01",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/advice/preview-01.jpg",
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "id": "advice-01k",
+      "title": "Advice video 02",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/advice/preview-02.jpg",
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "id": "advice-01l",
+      "title": "Advice video 03",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/advice/preview-03.jpg",
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "id": "advice-01m",
+      "title": "Advice video 04",
+      "video": {
+        "path": "/media/videos/preview.mp4",
+        "width": 1820,
+        "height": 1024,
+        "duration": 18
+      },
+      "poster": {
+        "path": "/media/seed/advice/preview-04.jpg",
+        "width": 1280,
+        "height": 720
+      }
+    }
+  ]
+}

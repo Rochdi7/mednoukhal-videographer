@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import FilmCard from '../../../components/FilmCard.astro';
 import Theater from '../../../components/Theater.astro';
-import { ALL_FILMS, SHOWREEL } from '../../../data/films';
+import { ALL_FILMS, FILM_CATEGORIES, SHOWREEL } from '../../../data/films';
 import { localePath, localeStaticPaths, t, type Locale } from '../../../i18n';
 import { breadcrumbNode, personNode } from '../../../utils/seo';
 
@@ -11,15 +11,36 @@ export const getStaticPaths = localeStaticPaths;
 const locale = Astro.props.locale as Locale;
 const s = t(locale);
 const site = Astro.site;
+// The showreel opens the grid as the wide banner; without one, every film joins the pattern.
+const reel = SHOWREEL.featured ? SHOWREEL : null;
+const projects = ALL_FILMS.filter((film) => film !== reel);
+const categoryName = new Map(FILM_CATEGORIES.map((c) => [c.slug, c.title[locale]]));
+const countIn = (slug: string) => projects.filter((film) => film.category === slug).length;
 ---
 <Base locale={locale} title={s.meta.filmsTitle} description={s.meta.filmsDesc} path="/films/" image={SHOWREEL.poster} jsonLd={[personNode(site, locale), breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.films, path: localePath(locale, '/films/') }])]}>
-  <header class="page-head wrap">
-    <p class="eyebrow">{s.films.eyebrow}</p>
-    <h1 class="h-xl">{s.films.title}</h1>
-    <p class="lead">{s.films.lead}</p>
+  <header class="page-head wrap films-head">
+    <div>
+      <p class="eyebrow">{s.films.eyebrow}</p>
+      <h1 class="h-xl">{s.films.title}</h1>
+      <p class="lead">{s.films.lead}</p>
+    </div>
+    <p class="films-head__count" aria-hidden="true"><span class="latin tnum">{String(ALL_FILMS.length).padStart(2, '0')}</span>{s.films.count.replace('{n} ', '')}</p>
   </header>
+  {FILM_CATEGORIES.length > 1 && (
+    <div class="wrap">
+      <div class="filters cat-filters" role="group" aria-label={s.showcase.filter} data-cat-filter=".film-grid .film:not(.film--feature)">
+        <button type="button" data-filter="all" aria-pressed="true">{s.showcase.all} <span class="tnum latin">{projects.length}</span></button>
+        {FILM_CATEGORIES.map((c) => <button type="button" data-filter={c.slug} aria-pressed="false">{c.title[locale]} <span class="tnum latin">{countIn(c.slug)}</span></button>)}
+      </div>
+    </div>
+  )}
+  <!-- Editorial grid: the reel opens it full width, then the projects alternate size, shape and height on 12 columns.
+       data-slot (0-7) picks each film's place in the pattern; the category filter renumbers it for the films left in view. -->
   <section class="wrap film-grid" style="padding-block-end:var(--section)" aria-label={s.films.title}>
-    {ALL_FILMS.map((film) => <FilmCard film={film} locale={locale} />)}
+    {reel && <FilmCard film={reel} locale={locale} index={0} feature category={categoryName.get(reel.category ?? '')} />}
+    {projects.map((film, i) => <FilmCard film={film} locale={locale} index={i + 1} slot={i % 8} category={categoryName.get(film.category ?? '')} />)}
   </section>
   <Theater locale={locale} />
+  <script src="../../../scripts/films.ts"></script>
+  <script src="../../../scripts/cat-filter.ts"></script>
 </Base>

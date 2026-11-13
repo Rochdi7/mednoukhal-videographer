@@ -1,0 +1,64 @@
+# Builds the site and uploads it to Hostinger.
+# Runs on every push to main, when "Publish" is pressed in the dashboard (/admin sends a "cms-publish"
+# repository_dispatch event), and on demand from the Actions tab. Setup: docs/dashboard.md.
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [cms-publish]
+  workflow_dispatch:
+
+# Several publishes in a row queue a single follow-up build instead of racing each other on the server.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Downloaded dashboard photos and Astro's optimised images are kept between runs, so a rebuild only
+      # fetches and resizes what changed.
+      - uses: actions/cache@v6
+        with:
+          path: |
+            src/assets/cms
+            node_modules/.astro
+          key: media-${{ github.run_id }}
+          restore-keys: media-
+
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          # The dashboard's saved content, read from the live site with the deploy token.
+          CMS_URL: ${{ vars.CMS_URL }}
+          CMS_TOKEN: ${{ secrets.CMS_TOKEN }}
+
+      # Uploads only files that changed since the last deploy (tracked in .ftp-deploy-sync-state.json on the server).
+      - name: Upload to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SERVER_DIR || './public_html/' }}
+          # Never touch what only exists on the server: its settings (api/config.php) and the dashboard uploads.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            api/config.php
+            media/library/**

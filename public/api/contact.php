@@ -48,29 +48,17 @@ if ($started <= 0 || $elapsedMs < 2500 || $elapsedMs > 86400000) {
 }
 
 // Validate everything on the server, whatever the browser checked.
-$options = [
-    'project_type' => ['advertising' => 'Advertising', 'brand' => 'Brand content', 'digital' => 'Digital media', 'music' => 'Music video', 'documentary' => 'Documentary', 'other' => 'Other'],
-    'shoot_type' => ['portrait' => 'Luxury / portrait', 'product' => 'Product / e-commerce', 'event' => 'Event', 'other' => 'Other'],
-    'level' => ['beginner' => 'Beginner', 'intermediate' => 'Intermediate', 'expert' => 'Expert'],
-    'slot' => ['09:00-10:00' => '09:00-10:00', '11:00-12:00' => '11:00-12:00', '14:00-15:00' => '14:00-15:00', '16:00-17:00' => '16:00-17:00'],
-];
-$kinds = [
-    'project' => ['label' => 'Project', 'required' => ['city', 'project_type', 'description'], 'optional' => []],
-    'photoshoot' => ['label' => 'Photoshoot', 'required' => ['city', 'shoot_type', 'date', 'slot'], 'optional' => ['message']],
-    'coaching' => ['label' => '1-1 Coaching', 'required' => ['level'], 'optional' => ['message']],
-    'consultation' => ['label' => 'Consultation', 'required' => ['date', 'slot'], 'optional' => ['message']],
-];
-$labels = ['city' => 'City', 'project_type' => 'Project type', 'shoot_type' => 'Type of shoot', 'level' => 'Level', 'date' => 'Preferred date', 'slot' => 'Time slot', 'description' => 'Description', 'message' => 'Message'];
-
-$kind = field('kind', 20);
-if (!isset($kinds[$kind])) {
-    respond(422, ['ok' => false, 'code' => 'server']);
+// The service is the label of one of the site's services (they are edited in the dashboard), or "Other".
+$errors = [];
+$service = single_line(field('service', 120));
+if ($service === '') {
+    $errors['service'] = 'required';
 }
 
-$errors = [];
 $name = single_line(field('name', 100));
 $email = single_line(field('email', 160));
 $phone = single_line(field('phone', 25));
+$message = field('message', 4000);
 
 if (strlen($name) < 2) {
     $errors['name'] = 'required';
@@ -85,34 +73,8 @@ if ($phone === '') {
 } elseif (!preg_match('/^[+0-9 ().\-]{6,25}$/', $phone)) {
     $errors['phone'] = 'phone';
 }
-
-$details = [];
-foreach (array_merge($kinds[$kind]['required'], $kinds[$kind]['optional']) as $key) {
-    $long = in_array($key, ['description', 'message'], true);
-    $value = field($key, $long ? 4000 : 120);
-    $required = in_array($key, $kinds[$kind]['required'], true);
-    if ($value === '') {
-        if ($required) {
-            $errors[$key] = 'required';
-        }
-        continue;
-    }
-    if (isset($options[$key])) {
-        if (!isset($options[$key][$value])) {
-            $errors[$key] = 'required';
-            continue;
-        }
-        $value = $options[$key][$value];
-    }
-    if ($key === 'date') {
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
-        // One day of leniency covers visitors in time zones ahead of the server.
-        if (!$date || $date->format('Y-m-d') !== $value || $date < new DateTimeImmutable('yesterday')) {
-            $errors[$key] = 'date';
-            continue;
-        }
-    }
-    $details[$labels[$key]] = $long ? $value : single_line($value);
+if (mb_strlen($message) < 2) {
+    $errors['message'] = 'required';
 }
 
 if ($errors) {
@@ -139,17 +101,15 @@ if (count($hits) >= 5) {
 }
 
 $lines = [
-    'Type: ' . $kinds[$kind]['label'],
+    'Service: ' . $service,
     'Name: ' . $name,
     'Email: ' . $email,
     'Phone: ' . $phone,
     'Language: ' . single_line(field('locale', 5)),
 ];
-foreach ($details as $label => $value) {
-    $lines[] = $label . ': ' . $value;
-}
+$lines[] = 'Message: ' . $message;
 $body = implode("\n", $lines) . "\n";
-$subject = 'Website enquiry: ' . $kinds[$kind]['label'] . ' from ' . $name;
+$subject = 'Website enquiry: ' . $service . ' from ' . $name;
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 $headers = implode("\r\n", [
     'From: Mednoukhal website <' . $from . '>',

@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Lightbox from '../../components/Lightbox.astro';
-import { ALBUMS } from '../../data/photos';
+import { ALBUMS, PHOTO_CATEGORIES } from '../../data/photos';
 import { SITE } from '../../config/site';
 import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
 import { abs, breadcrumbNode, creatorNode } from '../../utils/seo';
@@ -14,6 +14,8 @@ const locale = Astro.props.locale as Locale;
 const s = t(locale);
 const site = Astro.site;
 const albums = await resolveAlbums();
+const categoryName = new Map(PHOTO_CATEGORIES.map((c) => [c.slug, c.title[locale]]));
+const countIn = (slug: string) => albums.filter((album) => album.category === slug).length;
 
 const gallery = {
   '@context': 'https://schema.org',
@@ -34,23 +36,29 @@ const gallery = {
 };
 const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.photography, path: localePath(locale, '/photography/') }]);
 ---
-<Base locale={locale} title={s.meta.photoTitle} description={s.meta.photoDesc} path="/photography/" image={ALBUMS[1].photos[0].image} jsonLd={[gallery, crumbs]}>
+<Base locale={locale} title={s.meta.photoTitle} description={s.meta.photoDesc} path="/photography/" image={(ALBUMS[1] ?? ALBUMS[0]).photos[0].image} jsonLd={[gallery, crumbs]}>
   <header class="page-head wrap">
     <p class="eyebrow">{s.photo.eyebrow}</p>
     <h1 class="h-xl">{s.photo.title}</h1>
     <p class="lead">{s.photo.lead}</p>
   </header>
   <div class="wrap" style="padding-block-end:var(--section)">
+    {PHOTO_CATEGORIES.length > 1 && (
+      <div class="filters cat-filters" role="group" aria-label={s.showcase.filter} data-cat-filter=".album">
+        <button type="button" data-filter="all" aria-pressed="true">{s.showcase.all} <span class="tnum latin">{albums.length}</span></button>
+        {PHOTO_CATEGORIES.map((c) => <button type="button" data-filter={c.slug} aria-pressed="false">{c.title[locale]} <span class="tnum latin">{countIn(c.slug)}</span></button>)}
+      </div>
+    )}
     {albums.map((album) => (
-      <section class="album" aria-labelledby={`album-${album.slug}`}>
+      <section class="album" aria-labelledby={`album-${album.slug}`} data-cat={album.category}>
         <div class="album__head">
-          <h2 class="album__title" id={`album-${album.slug}`}>{album.title[locale]}</h2>
+          <h2 class="album__title" id={`album-${album.slug}`}>{categoryName.has(album.category ?? '') && <span class="film__cat">{categoryName.get(album.category ?? '')}</span>}{album.title[locale]}</h2>
           <span class="album__count"><span class="tnum">{album.photos.length}</span> {s.photo.photos}</span>
         </div>
         <div class="album__grid">
           {album.photos.map((photo) => (
             <a class="print" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
-              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 620px) 50vw, 25vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={72} />
+              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 620px) 50vw, 25vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={72} style={photo.ph} />
             </a>
           ))}
         </div>
@@ -58,4 +66,5 @@ const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale
     ))}
   </div>
   <Lightbox locale={locale} />
+  <script src="../../scripts/cat-filter.ts"></script>
 </Base>

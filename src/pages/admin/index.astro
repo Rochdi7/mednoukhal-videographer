@@ -1,0 +1,25 @@
+---
+// The dashboard. Everything happens in the browser (src/scripts/admin/), talking to /api/admin/api.php on the server.
+// The built-in texts are embedded so the Texts editor can show them and save only what changes.
+import { strings } from '../../i18n/strings';
+import '../../styles/admin.css';
+
+const defaults = JSON.stringify(strings).replace(/</g, '\\u003c');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="same-origin" />
+    <title>Dashboard · Mednoukhal</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body>
+    <div id="app" class="boot"><p>Loading…</p></div>
+    <noscript><p class="boot">The dashboard needs JavaScript.</p></noscript>
+    <script type="application/json" id="defaults" set:html={defaults} />
+    <script src="../../scripts/admin/main.ts"></script>
+  </body>
+</html>

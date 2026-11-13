@@ -6,7 +6,7 @@ import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Preloader from '../components/Preloader.astro';
-import heroImage from '../assets/hero/hero.jpg';
+import { HERO } from '../data/home';
 import { LOCALES, dir, localePath, t, type Locale } from '../i18n';
 import { SITE } from '../config/site';
 import { abs } from '../utils/seo';
@@ -23,7 +23,7 @@ interface Props {
   type?: 'website' | 'video.other';
 }
 
-const { locale, title, description, path, image = heroImage, jsonLd = [], hero = false, noindex = false, type = 'website' } = Astro.props;
+const { locale, title, description, path, image = HERO.poster, jsonLd = [], hero = false, noindex = false, type = 'website' } = Astro.props;
 const site = Astro.site;
 const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 const canonical = abs(site, localePath(locale, path));

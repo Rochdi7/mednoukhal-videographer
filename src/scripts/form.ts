@@ -1,4 +1,6 @@
-// Shows the fields each enquiry type needs, validates in place, and posts to the PHP endpoint.
+// One enquiry form: validates in place and posts to the PHP endpoint. ?service= in the URL pre-selects the service.
+import { enhanceSelect } from './select';
+
 type Errors = Record<string, string>;
 
 const form = document.querySelector<HTMLFormElement>('[data-enquiry]');
@@ -12,7 +14,6 @@ if (form) {
   const idleLabel = label.textContent ?? '';
   const errors = JSON.parse(form.dataset.errors!) as Errors;
   const started = form.elements.namedItem('started') as HTMLInputElement;
-  const dateInput = form.querySelector<HTMLInputElement>('#f-date')!;
   type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
   const controls = () => [...form.querySelectorAll<Control>('.form-grid input, .form-grid select, .form-grid textarea')].filter((c) => !c.disabled);
 
@@ -21,25 +22,13 @@ if (form) {
   };
   stamp();
 
-  const pad = (n: number) => String(n).padStart(2, '0');
-  const now = new Date();
-  dateInput.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-
-  const requested = new URLSearchParams(location.search).get('type');
-  const preselect = requested ? form.querySelector<HTMLInputElement>(`input[name="kind"][value="${CSS.escape(requested)}"]`) : null;
-  if (preselect) preselect.checked = true;
-
-  const syncKind = () => {
-    const kind = (form.querySelector<HTMLInputElement>('input[name="kind"]:checked') as HTMLInputElement).value;
-    form.querySelectorAll<HTMLElement>('[data-for]').forEach((field) => {
-      const active = field.dataset.for!.split(' ').includes(kind);
-      field.hidden = !active;
-      field.querySelectorAll<Control>('input, select, textarea').forEach((c) => (c.disabled = !active));
-    });
-    status.textContent = '';
+  const serviceSelect = form.querySelector<HTMLSelectElement>('#f-service')!;
+  const requested = new URLSearchParams(location.search).get('service');
+  const preselect = () => {
+    if (requested && [...serviceSelect.options].some((o) => o.value === requested)) serviceSelect.value = requested;
   };
-  form.querySelectorAll('input[name="kind"]').forEach((r) => r.addEventListener('change', syncKind));
-  syncKind();
+  preselect();
+  form.querySelectorAll<HTMLSelectElement>('.field select').forEach(enhanceSelect);
 
   const setError = (name: string, message: string) => {
     const control = form.querySelector<Control>(`[name="${name}"]`);
@@ -65,7 +54,6 @@ if (form) {
     return '';
   };
 
-  controls().forEach(() => {});
   form.addEventListener('input', (e) => {
     const c = e.target as Control;
     if (c.getAttribute('aria-invalid') === 'true') setError(c.name, messageFor(c));
@@ -117,8 +105,8 @@ if (form) {
 
   root.querySelector('[data-again]')!.addEventListener('click', () => {
     form.reset();
-    if (preselect) preselect.checked = true;
-    syncKind();
+    preselect();
+    serviceSelect.dispatchEvent(new Event('change'));
     stamp();
     reset();
     success.hidden = true;

@@ -1,0 +1,79 @@
+---
+// Client reviews as a "projection wall": three columns of review cards drift up and down at different speeds,
+// fading out at the top and bottom of the frame. The left and right edges sink into a lens vignette with an orange
+// light leak drifting through it, so the wall reads like footage on a monitor.
+// Every column carries the whole list (each starting at a different review), so tablets (2 columns) and phones
+// (1 column) still show every review. The moving wall is decorative (aria-hidden); screen readers get the plain list.
+import { Image } from 'astro:assets';
+import { ArrowRight } from '@lucide/astro';
+import { reviews } from '../data/reviews';
+import { localePath, t, type Locale } from '../i18n';
+
+interface Props { locale: Locale; head?: boolean }
+const { locale, head = true } = Astro.props;
+const s = t(locale).reviews;
+const stars = (n: number) => s.rating.replace('{n}', String(n));
+
+// Column k starts k thirds into the list, so side-by-side columns never show the same review at the same height.
+const n = reviews.length;
+const columns = [0, 1, 2].map((k) => {
+  const start = Math.round((k * n) / 3);
+  return reviews.map((_, i) => reviews[(start + i) % n]);
+});
+const speeds = ['72s', '88s', '64s'];
+---
+<section class:list={['reviews', { 'section': head }]} id="reviews" aria-labelledby={head ? 'reviews-title' : undefined} aria-label={head ? undefined : s.list}>
+  {head && (
+    <div class="wrap center-head">
+      <p class="eyebrow">{s.eyebrow}</p>
+      <h2 class="h-lg" id="reviews-title">{s.title}</h2>
+      <p class="lead">{s.lead}</p>
+    </div>
+  )}
+
+  <ul class="sr-only" aria-label={s.list}>
+    {reviews.map((r) => (
+      <li><blockquote dir="auto">{r.quote}</blockquote> — {r.brand.name}, {r.sector[locale]}. {stars(r.rating)}.</li>
+    ))}
+  </ul>
+
+  <div class="reviews__stage" data-reviews>
+    <div class="reviews__cols" aria-hidden="true">
+      {columns.map((col, k) => (
+        <div class="reviews__col" style={`--dur:${speeds[k]}`}>
+          <div class="reviews__track">
+            {[0, 1].map(() => (
+              <div class="reviews__set">
+                {col.map((review) => (
+                  <article class="review">
+                    <header class="review__head">
+                      <span class:list={['review__logo', { 'is-tone': review.brand.tone }]}>
+                        <Image src={review.brand.logo} alt="" width={Math.min(160, review.brand.logo.width)} format="webp" quality={80} loading="lazy" decoding="async" data-early />
+                      </span>
+                      <span class="review__who">
+                        <strong dir="auto">{review.brand.name}</strong>
+                        <small>{review.sector[locale]}</small>
+                      </span>
+                      <span class="review__mark"></span>
+                    </header>
+                    <span class="review__stars" style={`--n:${review.rating}`}></span>
+                    <p class="review__quote" dir="auto">{review.quote}</p>
+                  </article>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Cinematic edges: vignette + light leak on each side -->
+    <span class="reviews__edge reviews__edge--start" aria-hidden="true"><i class="reviews__leak"></i></span>
+    <span class="reviews__edge reviews__edge--end" aria-hidden="true"><i class="reviews__leak"></i></span>
+  </div>
+
+  <div class="wrap reviews__foot">
+    <a class="link" href={localePath(locale, '/contact/')}><span>{s.cta}</span><ArrowRight class="flip-rtl" aria-hidden="true" /></a>
+  </div>
+</section>
+

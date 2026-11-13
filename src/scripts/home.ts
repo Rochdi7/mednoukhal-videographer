@@ -1,35 +1,42 @@
-// Homepage behaviour: hero pause control, portfolio filter, carousels and the booking film.
+// Homepage behaviour: hero loop, portfolio filter and carousels.
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scrollMode: ScrollBehavior = calm ? 'auto' : 'smooth';
-// Data saver or a slow connection: no video starts on its own (hero loop, film previews, booking film).
+// Data saver or a slow connection: no video starts on its own (hero loop, film previews).
 // Each one can still be played on request.
 const net = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
 const lean = !!net?.saveData || /2g|3g/.test(net?.effectiveType ?? '');
 
 // --- Hero: the loop starts after the page has loaded, then fades in over the matching still ---
 const hero = document.querySelector<HTMLVideoElement>('[data-hero-video]');
-const pause = document.querySelector<HTMLButtonElement>('[data-hero-pause]');
-if (hero && pause) {
+if (hero) {
   hero.addEventListener('playing', () => hero.classList.add('is-on'), { once: true });
-  // Lean connections keep the still; the play button still starts the loop on request.
-  const start = () => {
-    if (!lean) hero.play().catch(() => {});
-  };
+  // Always loops (muted, no controls); it just waits for the load event so it never competes with the first paint.
+  const start = () => hero.play().catch(() => {});
   if (document.readyState === 'complete') start();
   else window.addEventListener('load', start, { once: true });
-  pause.addEventListener('click', () => {
-    if (hero.paused) hero.play().catch(() => {});
-    else hero.pause();
-  });
+  // If the browser refuses to play (e.g. low-power mode), the REC light stops blinking over the still.
   const hud = document.querySelector<HTMLElement>('[data-hero-hud]');
-  const sync = () => {
-    pause.classList.toggle('is-paused', hero.paused);
-    hud?.classList.toggle('is-paused', hero.paused);
-    pause.setAttribute('aria-label', (hero.paused ? pause.dataset.resume : pause.dataset.pause) ?? '');
-  };
+  const sync = () => hud?.classList.toggle('is-paused', hero.paused);
   hero.addEventListener('play', sync);
   hero.addEventListener('pause', sync);
-  if (lean) sync(); // show the play icon, since nothing is playing
+
+  // Several films (set in the dashboard): each plays to its end, then the next one fades in, round and round.
+  // Phones held upright get a film's portrait version when it has one.
+  const playlist = JSON.parse(hero.dataset.heroPlaylist ?? '[]') as { src: string; srcMobile?: string }[];
+  if (playlist.length > 1) {
+    const portrait = window.matchMedia('(max-width: 700px) and (orientation: portrait)');
+    let index = 0;
+    hero.addEventListener('ended', () => {
+      index = (index + 1) % playlist.length;
+      const film = playlist[index];
+      hero.classList.add('is-switching');
+      window.setTimeout(() => {
+        hero.src = portrait.matches && film.srcMobile ? film.srcMobile : film.src;
+        hero.play().catch(() => {});
+      }, 350);
+    });
+    hero.addEventListener('playing', () => hero.classList.remove('is-switching'));
+  }
 }
 
 // --- Hero viewfinder: the timecode follows the clip (HH:MM:SS:FF at 25 fps) and freezes when it pauses ---
@@ -95,10 +102,30 @@ const nearestIndex = (track: HTMLElement, tiles: HTMLElement[]) => {
 document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
   const track = carousel.querySelector<HTMLElement>('[data-track]')!;
   const tiles = [...track.querySelectorAll<HTMLElement>('.tile')];
-  const step = (delta: number) => {
-    const i = (nearestIndex(track, tiles) + delta + tiles.length) % tiles.length;
-    moveTo(track, tiles[i]);
+  // Strip mode (film row, desktop with a mouse): no scrolling; `current` is the wide film and the CSS animates the widths.
+  let strip = false;
+  let current = 0;
+  let onSelect = () => {};
+  const index = () => (strip ? current : nearestIndex(track, tiles));
+  const layout = () => {
+    const first = Math.max(0, Math.min(current - 1, tiles.length - 3));
+    tiles.forEach((tile, i) => {
+      const shown = i >= first && i < first + 3;
+      tile.classList.toggle('is-main', i === current);
+      tile.classList.toggle('is-near', shown && i !== current);
+      tile.classList.toggle('is-lead', i === first);
+    });
   };
+  const select = (i: number) => {
+    if (strip) {
+      current = i;
+      layout();
+      onSelect();
+    } else {
+      moveTo(track, tiles[i]);
+    }
+  };
+  const step = (delta: number) => select((index() + delta + tiles.length) % tiles.length);
   carousel.querySelector('[data-prev]')?.addEventListener('click', () => step(-1));
   carousel.querySelector('[data-next]')?.addEventListener('click', () => step(1));
 
@@ -151,6 +178,48 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
   // Only the video carousel plays. A single tile runs at a time, so the page never loads every film.
   if (!carousel.hasAttribute('data-autoplay')) return;
 
+  // Film strip: hovering (or tabbing to) a side film makes it the wide one. A short delay keeps a mouse passing over from
+  // flipping it. It reacts to real mouse movement only, and waits out the resize: otherwise the tile that slides under a
+  // resting cursor would take over too, and the row would run on to the end by itself.
+  const stripQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 861px)');
+  let hoverTimer = 0;
+  let lockedUntil = 0;
+  const pick = (i: number) => {
+    lockedUntil = performance.now() + 950;
+    select(i);
+  };
+  tiles.forEach((tile, i) => {
+    tile.addEventListener('pointermove', (e) => {
+      if (!strip || e.pointerType !== 'mouse' || i === current || hoverTimer || performance.now() < lockedUntil) return;
+      hoverTimer = window.setTimeout(() => {
+        hoverTimer = 0;
+        if (tile.matches(':hover')) pick(i);
+      }, 130);
+    });
+    tile.addEventListener('pointerleave', () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = 0;
+    });
+    tile.addEventListener('focusin', () => {
+      if (strip && i !== current) select(i);
+    });
+  });
+  const applyMode = () => {
+    const was = strip;
+    strip = stripQuery.matches;
+    if (strip === was) return;
+    if (strip) {
+      current = nearestIndex(track, tiles);
+      track.scrollLeft = 0;
+      layout();
+    } else {
+      tiles.forEach((tile) => tile.classList.remove('is-main', 'is-near', 'is-lead'));
+    }
+    carousel.classList.toggle('is-strip', strip);
+    if (!strip) moveTo(track, tiles[current], 'auto');
+    refresh();
+  };
+
   let active: HTMLElement | null = null;
   let inView = false;
 
@@ -188,7 +257,7 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
   };
 
   const refresh = () => {
-    const next = inView && !carousel.hidden ? tiles[nearestIndex(track, tiles)] : null;
+    const next = inView && !carousel.hidden ? tiles[index()] : null;
     if (next !== active) {
       stop(active);
       active = next;
@@ -217,6 +286,10 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
     { passive: true },
   );
 
+  onSelect = refresh;
+  applyMode();
+  stripQuery.addEventListener('change', applyMode);
+
   tiles.forEach((tile) => {
     const button = soundButton(tile);
     button.addEventListener('click', () => {
@@ -227,39 +300,3 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
     });
   });
 });
-
-// --- Booking film: plays muted while on screen, with a sound toggle ---
-const booking = document.querySelector<HTMLElement>('[data-booking-video]');
-if (booking && lean) booking.querySelector('[data-booking-sound]')?.setAttribute('hidden', ''); // the poster stays; no video to unmute
-if (booking && !lean) {
-  const button = booking.querySelector<HTMLButtonElement>('[data-booking-sound]')!;
-  const label = button.querySelector('span')!;
-  let video: HTMLVideoElement | null = null;
-
-  new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        if (!video) {
-          video = document.createElement('video');
-          video.muted = true;
-          video.loop = true;
-          video.playsInline = true;
-          video.setAttribute('aria-hidden', 'true');
-          video.src = booking.dataset.src!;
-          booking.insertBefore(video, button);
-        }
-        video.play().catch(() => {});
-      } else {
-        video?.pause();
-      }
-    },
-    { threshold: 0.4 },
-  ).observe(booking);
-
-  button.addEventListener('click', () => {
-    if (!video) return;
-    video.muted = !video.muted;
-    button.classList.toggle('is-on', !video.muted);
-    label.textContent = (video.muted ? button.dataset.on : button.dataset.off) ?? '';
-  });
-}

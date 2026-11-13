@@ -2,8 +2,8 @@
 // Client logos as film-strip credits: two strips of 35mm film cross the screen in opposite directions,
 // one logo per frame with edge codes printed above, sprocket holes running with the film.
 // Logos rest in monochrome; hovering a frame lights it and shows the logo in its own colours.
-// Images lazy-load: each img has a fixed height in CSS, so the browser can see it approach the screen before it loads
-// (a 0×0 box is never "near" the viewport, which is why lazy loading once missed them).
+// Logos are small (about 170 KB together), so they load right after the first screen on any connection
+// (data-early, see site.ts) instead of when each frame slides into view. Each img keeps a fixed height in CSS so the frames never jump.
 import { Image } from 'astro:assets';
 import { CLIENTS } from '../data/clients';
 import { t, type Locale } from '../i18n';
@@ -40,7 +40,7 @@ const strips = [
             <div class="strip__set">
               {strip.items.map((c, i) => (
                 <figure class:list={['strip__frame', { 'is-tone': c.tone }]} data-code={code(i)}>
-                  <Image src={c.logo} alt="" width={Math.min(340, c.logo.width)} format="webp" quality={80} loading="lazy" decoding="async" />
+                  <Image src={c.logo} alt="" width={Math.min(340, c.logo.width)} format="webp" quality={80} loading="lazy" decoding="async" data-early />
                 </figure>
               ))}
             </div>

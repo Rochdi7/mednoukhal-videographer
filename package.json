@@ -4,10 +4,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/cms-sync.mjs && astro dev",
+    "build": "node scripts/cms-sync.mjs && astro build",
     "preview": "php -S 127.0.0.1:4321 -t dist",
-    "media": "node scripts/process-media.mjs"
+    "media": "node scripts/process-media.mjs",
+    "cms:sync": "node scripts/cms-sync.mjs",
+    "admin:password": "node scripts/admin-password.mjs",
+    "admin:token": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
+    "admin:local": "node scripts/admin-local.mjs",
+    "cms:seed": "node scripts/cms-seed.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

@@ -153,7 +153,7 @@ function start() {
           .sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
         firstTiles.forEach((tile) => tile.classList.remove('m-pre'));
         onScreen.forEach((tile, i) => {
-          tile.animate([{ opacity: 0, transform: `translateY(90px) rotate(${rtl ? 3 : -3}deg)` }, { opacity: 1, transform: 'none' }], { duration: 1200, delay: i * 110, easing: EASE, fill: 'backwards' });
+          tile.animate([{ opacity: 0, transform: 'translateY(90px)' }, { opacity: 1, transform: 'none' }], { duration: 1200, delay: i * 110, easing: EASE, fill: 'backwards' });
         });
       },
       { rootMargin: '0px 0px -12% 0px' },
@@ -171,13 +171,16 @@ function start() {
   reveal('.album__head .album__count', { from: up(14), duration: 800 });
 
   reveal('.film', { from: up(70), duration: 1100, gap: 110 });
-  reveal('.path', { from: up(50), duration: 1000, gap: 120 });
-  reveal('.coaching-film', { from: { opacity: 0, transform: 'scale(0.94)' }, duration: 1200 });
   reveal('.spec div', { from: up(18), duration: 800, gap: 70 });
   reveal('.next-film', { from: up(40), duration: 1000 });
-  reveal('.kinds-legend, .kinds label, .form-grid .field, .form-foot', { from: up(22), duration: 800, gap: 55 });
+  // Contact: the direct-line cards slide in one after another, the form panel rises behind them.
+  reveal('.contact__cards > li, .contact__social li', { from: up(24), duration: 900, gap: 90 });
+  reveal('.contact__panel', { from: { opacity: 0, transform: 'translateY(50px) scale(0.98)' }, duration: 1200 });
+  reveal('.form-grid .field, .form-foot', { from: up(22), duration: 800, gap: 55 });
 
-  reveal('.booking__btns .btn', { from: up(24), duration: 900, gap: 110 });
+  // Reviews: the wall rises into place, then the controls under it.
+  reveal('.reviews__stage', { from: { opacity: 0, transform: 'translateY(60px) scale(0.97)' }, duration: 1300 });
+  reveal('.reviews__foot > *', { from: up(18), duration: 800 });
 
   // Clients: the count settles in, then the film strips slide in from opposite sides.
   reveal('.clients__count', { from: { opacity: 0, transform: 'translateY(30px) scale(0.9)' }, duration: 1100 });
@@ -206,9 +209,13 @@ function start() {
   reveal('.curve__btn', { from: { opacity: 0, transform: 'scale(0.82)' }, duration: 1000 });
 
   // Footer sits at the very end of the page, so it must trigger without any bottom margin.
+  // The closing title rises in, then the credits roll up column by column.
+  reveal('.site-foot__title, .site-foot__mail', { from: up(40), duration: 1200, gap: 120 });
+  reveal('.site-foot__actions > *', { from: up(20), duration: 900, gap: 110 });
   reveal('.site-foot__mark', { from: { opacity: 0, transform: 'translateY(40px) scale(0.92)' }, duration: 1200, margin: '0px' });
-  reveal('.site-foot__nav a', { from: up(16), duration: 800, gap: 55, margin: '0px' });
-  reveal('.site-foot > p', { from: up(12), duration: 800, gap: 90, margin: '0px' });
+  reveal('.site-foot__col li', { from: up(16), duration: 800, gap: 45, margin: '0px' });
+  reveal('.site-foot__bar > *', { from: up(12), duration: 800, gap: 90, margin: '0px' });
+  reveal('.site-foot__giant', { from: { opacity: 0, transform: 'translateY(60px)' }, duration: 1600, margin: '0px' });
 
   // Hand-drawn arrows draw themselves.
   const drawWatch = new IntersectionObserver(
@@ -295,13 +302,11 @@ function start() {
     });
   }
 
-  // Image carousel: the tilt swings through the row, and the giant words slide apart.
+  // Image carousel: the giant words behind the straight row slide apart as it passes.
   const tiltView = document.querySelector<HTMLElement>('[data-panel="photo"] .carousel__view');
   if (tiltView) {
-    const track = tiltView.querySelector<HTMLElement>('[data-track]')!;
     const rows = $$('.giant__row', tiltView);
     scrub(tiltView, (top, bottom, vh) => [top - vh, bottom], (p) => {
-      track.style.transform = `rotate(${(2 + (0.5 - p) * 4).toFixed(3)}deg)`;
       rows.forEach((row, i) => {
         row.style.translate = `${((p - 0.5) * (i ? 18 : -18)).toFixed(2)}vw 0`;
       });
@@ -322,14 +327,6 @@ function start() {
     }
   }
 
-  // Booking film: pushes in toward the viewer and squares up.
-  const booking = document.querySelector<HTMLElement>('.booking__video');
-  scrub(booking, (top, _b, vh) => [top - vh, top - vh * 0.3], (p) => {
-    if (!booking) return;
-    booking.style.transform = p >= 0.992 ? '' : `scale(${(0.8 + 0.2 * p).toFixed(4)})`;
-    booking.style.borderRadius = `${(30 * (1 - p)).toFixed(1)}px`;
-  });
-
   /* ---------- Frame loop: only runs while something is moving ---------- */
 
   const head = document.querySelector<HTMLElement>('[data-head]');
@@ -338,7 +335,9 @@ function start() {
   bar.setAttribute('aria-hidden', 'true');
   document.body.append(bar);
 
-  const tickers = $$('.ticker__track, .strip__track').flatMap((track) => track.getAnimations());
+  // Only the client film strips react to the scroll. The big type marquee keeps one steady pace: changing a running
+  // animation's playbackRate re-syncs it with the compositor each time, which showed as stutter and sudden bursts.
+  const tickers = $$('.strip__track').flatMap((track) => track.getAnimations());
 
   let vh = window.innerHeight;
   let maxScroll = 1;

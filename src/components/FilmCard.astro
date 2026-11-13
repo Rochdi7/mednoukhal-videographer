@@ -3,21 +3,28 @@ import { Picture } from 'astro:assets';
 import { Play } from '@lucide/astro';
 import { aspectLabel, formatDuration, type Film } from '../data/films';
 import { localePath, t, type Locale } from '../i18n';
+import { blur } from '../utils/placeholder';
 
-interface Props { film: Film; locale: Locale }
-const { film, locale } = Astro.props;
+// category: the category's name in this language, shown above the title. slot: position in the films-page grid pattern.
+interface Props { film: Film; locale: Locale; index?: number; feature?: boolean; category?: string; slot?: number }
+const { film, locale, index, feature = false, category, slot } = Astro.props;
 const s = t(locale);
 const title = film.title[locale];
 const href = localePath(locale, `/films/${film.slug}/`);
+const ph = `${await blur(film.poster, film.focus)}${film.focus ? `;object-position:${film.focus}` : ''}`;
 const data = JSON.stringify({ src: film.src, title, href, width: film.width, height: film.height });
+const widths = [480, 800, 1200, 1600].filter((w) => w <= film.poster.width);
+const sizes = feature ? '90vw' : '(max-width: 900px) 90vw, 60vw';
 ---
-<a class="film" href={href} data-film={data} data-orient={film.height > film.width ? 'vertical' : undefined}>
+<a class:list={['film', { 'film--feature': feature }]} href={href} data-film={data} data-orient={film.height > film.width ? 'vertical' : undefined} data-cat={film.category} data-slot={slot}>
   <div class="film__frame">
-    <Picture src={film.poster} formats={['avif', 'webp']} widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="(max-width: 760px) 100vw, 46vw" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} />
+    <Picture src={film.poster} formats={['avif', 'webp']} widths={widths} sizes={sizes} alt={film.description[locale]} loading={feature ? 'eager' : 'lazy'} decoding="async" quality={68} style={ph} />
+    <span class="film__rec latin" aria-hidden="true"><i></i>REC</span>
     <div class="film__play" aria-hidden="true"><span><Play strokeWidth={1.25} /></span></div>
   </div>
+  {index !== undefined && <span class="film__index latin tnum" aria-hidden="true">{String(index).padStart(2, '0')}</span>}
   <div class="film__cap">
-    <h2 class="film__title">{title}</h2>
+    <h2 class="film__title">{category && <span class="film__cat">{category}</span>}{title}</h2>
     <span class="film__meta tnum latin">{formatDuration(film.duration)} · {aspectLabel(film.width, film.height)}</span>
   </div>
   <span class="sr-only">{s.film.watch}</span>

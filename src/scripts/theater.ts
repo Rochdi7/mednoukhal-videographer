@@ -32,7 +32,7 @@ if (dialog) {
       e.preventDefault();
       index = i;
       // Hand over from any muted carousel preview so two films never play together.
-      document.querySelectorAll<HTMLVideoElement>('.tile__video').forEach((preview) => preview.pause());
+      document.querySelectorAll<HTMLVideoElement>('.tile__video, .film__preview').forEach((preview) => preview.pause());
       dialog.showModal();
       load(films[index]);
     });
