@@ -1,22 +1,60 @@
 // Homepage behaviour: hero pause control, portfolio filter, carousels and the booking film.
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scrollMode: ScrollBehavior = calm ? 'auto' : 'smooth';
+// Data saver or a slow connection: no video starts on its own (hero loop, film previews, booking film).
+// Each one can still be played on request.
+const net = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+const lean = !!net?.saveData || /2g|3g/.test(net?.effectiveType ?? '');
 
-// --- Hero: the video autoplays from the markup; this only drives the pause button ---
+// --- Hero: the loop starts after the page has loaded, then fades in over the matching still ---
 const hero = document.querySelector<HTMLVideoElement>('[data-hero-video]');
 const pause = document.querySelector<HTMLButtonElement>('[data-hero-pause]');
 if (hero && pause) {
-  hero.play().catch(() => {});
+  hero.addEventListener('playing', () => hero.classList.add('is-on'), { once: true });
+  // Lean connections keep the still; the play button still starts the loop on request.
+  const start = () => {
+    if (!lean) hero.play().catch(() => {});
+  };
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, { once: true });
   pause.addEventListener('click', () => {
     if (hero.paused) hero.play().catch(() => {});
     else hero.pause();
   });
+  const hud = document.querySelector<HTMLElement>('[data-hero-hud]');
   const sync = () => {
     pause.classList.toggle('is-paused', hero.paused);
+    hud?.classList.toggle('is-paused', hero.paused);
     pause.setAttribute('aria-label', (hero.paused ? pause.dataset.resume : pause.dataset.pause) ?? '');
   };
   hero.addEventListener('play', sync);
   hero.addEventListener('pause', sync);
+  if (lean) sync(); // show the play icon, since nothing is playing
+}
+
+// --- Hero viewfinder: the timecode follows the clip (HH:MM:SS:FF at 25 fps) and freezes when it pauses ---
+const timecode = document.querySelector<HTMLElement>('[data-hero-tc]');
+if (hero && timecode) {
+  const FPS = 25;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  let shown = -1;
+  let ticking = false;
+  const draw = () => {
+    const t = hero.currentTime;
+    const frame = Math.floor(t * FPS);
+    if (frame !== shown) {
+      shown = frame;
+      timecode.textContent = `${pad(Math.floor(t / 3600))}:${pad(Math.floor(t / 60) % 60)}:${pad(Math.floor(t) % 60)}:${pad(frame % FPS)}`;
+    }
+    ticking = !hero.paused;
+    if (ticking) requestAnimationFrame(draw);
+  };
+  const run = () => {
+    if (!ticking) draw();
+  };
+  hero.addEventListener('playing', run);
+  hero.addEventListener('seeked', run);
+  if (!hero.paused) run();
 }
 
 // --- Filter ---
@@ -155,7 +193,7 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
       stop(active);
       active = next;
     }
-    if (active) {
+    if (active && !lean) {
       active.classList.add('is-active');
       videoFor(active).play().catch(() => {});
     }
@@ -192,7 +230,8 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
 
 // --- Booking film: plays muted while on screen, with a sound toggle ---
 const booking = document.querySelector<HTMLElement>('[data-booking-video]');
-if (booking) {
+if (booking && lean) booking.querySelector('[data-booking-sound]')?.setAttribute('hidden', ''); // the poster stays; no video to unmute
+if (booking && !lean) {
   const button = booking.querySelector<HTMLButtonElement>('[data-booking-sound]')!;
   const label = button.querySelector('span')!;
   let video: HTMLVideoElement | null = null;

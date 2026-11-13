@@ -1,0 +1,52 @@
+---
+// Client logos as film-strip credits: two strips of 35mm film cross the screen in opposite directions,
+// one logo per frame with edge codes printed above, sprocket holes running with the film.
+// Logos rest in monochrome; hovering a frame lights it and shows the logo in its own colours.
+// Images lazy-load: each img has a fixed height in CSS, so the browser can see it approach the screen before it loads
+// (a 0×0 box is never "near" the viewport, which is why lazy loading once missed them).
+import { Image } from 'astro:assets';
+import { CLIENTS } from '../data/clients';
+import { t, type Locale } from '../i18n';
+
+const { locale } = Astro.props as { locale: Locale };
+const s = t(locale).clients;
+const count = String(CLIENTS.length).padStart(2, '0');
+const code = (i: number) => `MN 5219 ▸ ${String(i + 1).padStart(2, '0')}A`;
+// The back strip runs the list from the other end so the two strips never show the same logo side by side.
+const strips = [
+  { cls: 'strip strip--front', items: CLIENTS },
+  { cls: 'strip strip--back', items: [...CLIENTS].reverse() },
+];
+---
+<section class="section clients" id="clients" aria-labelledby="clients-title">
+  <div class="wrap section-head clients__head">
+    <div>
+      <p class="eyebrow">{s.eyebrow}</p>
+      <h2 class="h-lg" id="clients-title">{s.title}</h2>
+      <p class="lead">{s.lead}</p>
+    </div>
+    <p class="clients__count" aria-hidden="true"><span>{count}</span>{s.count}</p>
+  </div>
+
+  <ul class="sr-only" aria-label={s.list}>
+    {CLIENTS.map((c) => <li>{c.name}</li>)}
+  </ul>
+
+  <div class="clients__stage" aria-hidden="true">
+    {strips.map((strip) => (
+      <div class={strip.cls}>
+        <div class="strip__track">
+          {[0, 1].map(() => (
+            <div class="strip__set">
+              {strip.items.map((c, i) => (
+                <figure class:list={['strip__frame', { 'is-tone': c.tone }]} data-code={code(i)}>
+                  <Image src={c.logo} alt="" width={Math.min(340, c.logo.width)} format="webp" quality={80} loading="lazy" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

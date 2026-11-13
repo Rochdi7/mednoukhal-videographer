@@ -6,7 +6,11 @@ import Theater from '../../components/Theater.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import Ticker from '../../components/Ticker.astro';
 import CurveCarousel from '../../components/CurveCarousel.astro';
+import Clients from '../../components/Clients.astro';
 import lockup from '../../assets/branding/mn-visual-lockup.png';
+import mark from '../../assets/branding/mn-visual-mark.png';
+// About photo: a film still for now. Swap in a portrait of Mednoukhal here when one is available.
+import aboutImage from '../../assets/films/coaching-film.jpg';
 import { COACHING_FILM, FILMS } from '../../data/films';
 import { SITE } from '../../config/site';
 import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
@@ -41,8 +45,11 @@ const serviceKinds = ['project', 'project', 'project', 'project', 'project', 'ph
         <source media="(max-width: 700px) and (orientation: portrait)" srcset={heroMobile.src} type="image/webp" />
         <img src={heroLandscape.src} width="1920" height="1080" alt="" fetchpriority="high" decoding="async" />
       </picture>
-      <video data-hero-video autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+      <!-- No autoplay/preload: home.ts starts the loop once the page has loaded, so it never competes with the first paint.
+           The still above is the same frame, so the video fades in over it without a jump. -->
+      <video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1">
         <source media="(max-width: 700px) and (orientation: portrait)" src="/media/videos/hero-portrait.mp4" type="video/mp4" />
+        <source media="(max-width: 1600px)" src="/media/videos/hero-720.mp4" type="video/mp4" />
         <source src="/media/videos/hero-1080.mp4" type="video/mp4" />
       </video>
     </div>
@@ -51,9 +58,24 @@ const serviceKinds = ['project', 'project', 'project', 'project', 'project', 'ph
       <div class="hero__rule" aria-hidden="true"></div>
       <p class="hero__role">{s.hero.role}</p>
       <div class="hero__btns">
-        <a class="btn" href={`${p('/contact/')}?type=project`}>{s.hero.project}</a>
-        <a class="btn btn--ghost" href={`${p('/coaching/')}?type=coaching#request`}>{s.hero.coaching}</a>
+        <a class="cta-rec" href={`${p('/contact/')}?type=project`}>
+          <span class="cta-rec__dot" aria-hidden="true"></span>
+          <span>{s.hero.project}</span>
+          <ArrowRight aria-hidden="true" />
+        </a>
+        <a class="cta-play" href={`${p('/coaching/')}?type=coaching#request`}>
+          <span class="cta-play__ring" aria-hidden="true">
+            <svg class="cta-play__reel" viewBox="0 0 56 56"><circle cx="28" cy="28" r="27" /></svg>
+            <Play fill="currentColor" />
+          </span>
+          <span class="cta-play__label">{s.hero.coaching}</span>
+        </a>
       </div>
+    </div>
+    <!-- Camera viewfinder over the footage: corner brackets, REC light and the clip's running timecode -->
+    <div class="hero__hud" data-hero-hud aria-hidden="true">
+      <p class="hero__rec" dir="ltr"><i></i>REC <span data-hero-tc>00:00:00:00</span></p>
+      <p class="hero__ratio" dir="ltr">16:9</p>
     </div>
     <button class="hero__pause" type="button" data-hero-pause data-pause={s.hero.pause} data-resume={s.hero.resume} aria-label={s.hero.pause}>
       <Pause data-icon-pause aria-hidden="true" /><Play data-icon-play aria-hidden="true" />
@@ -127,10 +149,27 @@ const serviceKinds = ['project', 'project', 'project', 'project', 'project', 'ph
 
   <section class="section wrap" id="about" aria-labelledby="about-title">
     <div class="about">
-      <h2 class="latin" id="about-title">{SITE.name}</h2>
-      <p>{s.about.p1}</p>
+      <div class="about__body">
+        <p class="eyebrow">{s.about.eyebrow}</p>
+        <h2 class="latin" id="about-title">{SITE.name}</h2>
+        <p class="about__text">{s.about.p1}</p>
+        <a class="link" href={`${p('/contact/')}?type=project`}><span>{s.hero.project}</span><ArrowRight class="flip-rtl" aria-hidden="true" /></a>
+      </div>
+      <!-- Arch-framed still with a camera REC tag and a turning "role" ring around the MN mark -->
+      <figure class="about__media">
+        <div class="about__frame">
+          <Picture src={aboutImage} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 760px) 78vw, 440px" alt="" loading="lazy" decoding="async" quality={72} />
+          <span class="about__rec" dir="ltr" aria-hidden="true"><i></i>REC</span>
+        </div>
+        <div class="about__badge" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><defs><path id="about-ring" d="M60 60m-47 0a47 47 0 1 1 94 0a47 47 0 1 1-94 0" /></defs><text><textPath href="#about-ring" textLength="292" lengthAdjust={locale === 'ar' ? 'spacingAndGlyphs' : 'spacing'}>{`${s.hero.role} · `}</textPath></text></svg>
+          <Image src={mark} alt="" width={80} format="webp" quality={90} loading="lazy" />
+        </div>
+      </figure>
     </div>
   </section>
+
+  <Clients locale={locale} />
 
   <section class="wrap" id="services" aria-labelledby="services-title" style="padding-block-end:var(--section)">
     <div class="center-head">

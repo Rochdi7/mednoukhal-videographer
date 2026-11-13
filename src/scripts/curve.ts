@@ -66,12 +66,13 @@ if (root) {
     let pace = 1;
     let target = 1;
     let boost = 0; // scrolling the page adds a push to the row
-    let lastY = window.scrollY;
 
-    window.addEventListener('scroll', () => {
-      boost += (window.scrollY - lastY) * 0.7;
-      lastY = window.scrollY;
-    }, { passive: true });
+    // The scroll distance comes from motion.ts ('mn:scroll'), which reads the position once per frame;
+    // reading it here, after this row's style writes, would force an extra style pass every frame.
+    // Attached only while the row is on screen.
+    const onScroll = (e: Event) => {
+      boost += (e as CustomEvent<number>).detail * 0.7;
+    };
 
     const tick = (now: number) => {
       const elapsed = last ? Math.min(0.05, (now - last) / 1000) : 0;
@@ -90,7 +91,12 @@ if (root) {
         cancelAnimationFrame(frame);
         last = 0;
         root.classList.toggle('is-running', entry.isIntersecting); // layers are only promoted while moving
-        if (entry.isIntersecting) frame = requestAnimationFrame(tick);
+        if (entry.isIntersecting) {
+          document.addEventListener('mn:scroll', onScroll);
+          frame = requestAnimationFrame(tick);
+        } else {
+          document.removeEventListener('mn:scroll', onScroll);
+        }
       },
       { rootMargin: '100px' },
     ).observe(stage);

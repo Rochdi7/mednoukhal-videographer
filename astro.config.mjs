@@ -13,7 +13,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/404'),
-      i18n: { defaultLocale: 'en', locales: { en: 'en', fr: 'fr', ar: 'ar' } },
+      i18n: { defaultLocale: 'fr', locales: { en: 'en', fr: 'fr', ar: 'ar' } },
     }),
   ],
 });

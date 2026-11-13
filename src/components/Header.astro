@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { Menu, X } from '@lucide/astro';
+import { ArrowRight, Menu, X } from '@lucide/astro';
 import { LOCALES, LOCALE_NAMES, LOCALE_FLAGS, localePath, t, type Locale } from '../i18n';
 import { SITE } from '../config/site';
 import mark from '../assets/branding/mn-visual-mark.png';
@@ -44,9 +44,18 @@ const langs = LOCALES.map((l) => ({ l, href: localePath(l, path), current: l ===
     <button class="menu__close" type="button" data-menu-close aria-label={s.nav.close}><X aria-hidden="true" /></button>
   </div>
   <nav class="menu__links">
-    {menuLinks.map(([href, label]) => <a href={localePath(locale, href)} data-menu-link>{label}</a>)}
+    {menuLinks.map(([href, label], i) => (
+      <a href={localePath(locale, href)} data-menu-link style={`--i:${i}`} {...isCurrent(href)}>
+        <span class="menu__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <span>{label}</span>
+        <ArrowRight class="menu__go flip-rtl" aria-hidden="true" />
+      </a>
+    ))}
   </nav>
-  <div class="lang" role="group" aria-label={s.nav.language}>
-    {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} title={LOCALE_NAMES[l]} aria-label={LOCALE_NAMES[l]} {...current}><img src={LOCALE_FLAGS[l]} alt="" width="24" height="18" /></a>)}
+  <div class="menu__foot">
+    <a class="btn menu__cta" href={`${localePath(locale, '/contact/')}?type=project`} data-menu-link>{s.hero.project}</a>
+    <div class="lang" role="group" aria-label={s.nav.language}>
+      {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} {...current}><img src={LOCALE_FLAGS[l]} alt="" width="20" height="15" /><span>{LOCALE_NAMES[l]}</span></a>)}
+    </div>
   </div>
 </dialog>

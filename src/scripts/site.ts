@@ -1,12 +1,15 @@
 // Header state, mobile menu and scroll reveals. Loaded on every page.
 const head = document.querySelector<HTMLElement>('[data-head]');
+// The header turns solid once the page has scrolled 60px. A 1px marker at that depth is watched instead of
+// reading scrollY on every scroll event, which would force a style recalculation mid-frame.
 if (head) {
-  const update = () => {
-    head.classList.toggle('is-stuck', window.scrollY > 60);
-  };
-  update();
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update, { passive: true });
+  const mark = document.createElement('div');
+  mark.setAttribute('aria-hidden', 'true');
+  mark.style.cssText = 'position:absolute;top:60px;left:0;width:1px;height:1px;pointer-events:none;visibility:hidden';
+  document.body.prepend(mark);
+  new IntersectionObserver(([entry]) => {
+    head.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0);
+  }).observe(mark);
 }
 
 const menu = document.querySelector<HTMLDialogElement>('[data-menu]');
@@ -25,6 +28,17 @@ document.querySelectorAll<HTMLElement>('[data-spot]').forEach((card) => {
     card.style.setProperty('--my', `${e.clientY - r.top}px`);
   });
 });
+
+// Endless decorative animations (marquees, film strips, REC light, button light leaks) pause while off screen,
+// so a phone only spends frames on what can actually be seen.
+const looping = document.querySelectorAll<HTMLElement>('.hero, .ticker, .clients__stage, .btn');
+if (looping.length && 'IntersectionObserver' in window) {
+  const idle = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.target.classList.toggle('is-offscreen', !e.isIntersecting)),
+    { rootMargin: '120px' },
+  );
+  looping.forEach((el) => idle.observe(el));
+}
 
 const revealed = document.querySelectorAll<HTMLElement>('[data-reveal]');
 if ('IntersectionObserver' in window) {

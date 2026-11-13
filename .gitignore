@@ -5,7 +5,7 @@ media-source/
 *.log
 
 # raw masters (inputs to scripts/process-media.mjs)
-wetransfer__*/
+wetransfer_*/
 preview.mp4
 chrome_*.mp4
 lemon_milk.zip

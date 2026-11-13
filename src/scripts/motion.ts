@@ -7,13 +7,26 @@ const root = document.documentElement;
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // If anything here ever fails, the content must still be visible.
-try {
-  if (!calm) start();
-} catch (error) {
-  document.querySelectorAll('.m-pre').forEach((el) => el.classList.remove('m-pre'));
-  console.error(error);
+let begun = false;
+const begin = () => {
+  if (begun) return;
+  begun = true;
+  try {
+    if (!calm) start();
+  } catch (error) {
+    document.querySelectorAll('.m-pre').forEach((el) => el.classList.remove('m-pre'));
+    console.error(error);
+  }
+  root.classList.add('m-ready');
+};
+
+// While the preloader covers the page, entrance animations would play unseen; start them as it clears.
+if (root.classList.contains('is-loading') && document.querySelector('[data-preloader]')) {
+  document.addEventListener('mn:reveal', begin, { once: true });
+  setTimeout(begin, 9000);
+} else {
+  begin();
 }
-root.classList.add('m-ready');
 
 function start() {
   const rtl = root.dir === 'rtl';
@@ -116,6 +129,9 @@ function start() {
   reveal('.lead, .curve__lead, .film-page__text p, .film__cap', { from: up(26), duration: 1100, gap: 80 });
   reveal('.carousel__head', { from: up(20), duration: 900 });
   reveal('.filters button', { from: up(16), duration: 800, gap: 70 });
+  // About photo: the arch wipes open from the bottom while the still settles from a push-in.
+  reveal('.about__frame', { from: { clipPath: 'inset(100% 0 0 0)' }, duration: 1400, inner: { selector: 'img', from: { transform: 'scale(1.3)' }, duration: 1700 } });
+  reveal('.about__badge', { from: { opacity: 0, transform: 'scale(0.6) rotate(-90deg)' }, duration: 1200 });
 
   // Service cards tip up toward the viewer, rippling across the grid.
   reveal('.expertise__item', { from: { opacity: 0, transform: 'perspective(900px) translateY(70px) rotateX(-16deg)' }, duration: 1150, gap: 110 });
@@ -163,6 +179,27 @@ function start() {
 
   reveal('.booking__btns .btn', { from: up(24), duration: 900, gap: 110 });
 
+  // Clients: the count settles in, then the film strips slide in from opposite sides.
+  reveal('.clients__count', { from: { opacity: 0, transform: 'translateY(30px) scale(0.9)' }, duration: 1100 });
+  // Animates `translate` (not `transform`) and leaves the end frame implicit, so each strip keeps its CSS tilt and opacity.
+  const stage = document.querySelector('.clients__stage');
+  if (stage) {
+    const strips = $$('.strip', stage);
+    strips.forEach((strip) => strip.classList.add('m-pre'));
+    const stripWatch = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        stripWatch.disconnect();
+        strips.forEach((strip, i) => {
+          strip.classList.remove('m-pre');
+          strip.animate([{ opacity: 0, translate: `${i ? 14 : -14}vw 0`, offset: 0 }], { duration: 1600, delay: i * 140, easing: EASE, fill: 'backwards' });
+        });
+      },
+      { rootMargin: NEAR },
+    );
+    stripWatch.observe(stage);
+  }
+
   // Closing section
   reveal('.curve__stage', { from: { opacity: 0, transform: 'translateY(70px) scale(0.96)' }, duration: 1300 });
   reveal('.curve__note', { from: { opacity: 0, transform: 'translateY(14px) rotate(-10deg) scale(0.9)' }, duration: 900, gap: 200 });
@@ -207,11 +244,12 @@ function start() {
     b: number;
     now: number;
     shown: number;
+    on: boolean; // measured in layout(), never in tick(): reading layout there would force a reflow every frame
   }
 
   const scrubs: Scrub[] = [];
   const scrub = (measure: HTMLElement | null, range: Scrub['range'], apply: Scrub['apply']) => {
-    if (measure) scrubs.push({ measure, range, apply, a: 0, b: 1, now: -1, shown: -1 });
+    if (measure) scrubs.push({ measure, range, apply, a: 0, b: 1, now: -1, shown: -1, on: false });
   };
 
   // Hero: the footage drifts closer while the logo lifts away and the frame sinks to black.
@@ -220,6 +258,7 @@ function start() {
     const media = hero.querySelector<HTMLElement>('.hero__media')!;
     const inner = hero.querySelector<HTMLElement>('.hero__inner')!;
     const cue = hero.querySelector<HTMLElement>('.hero__scroll');
+    const hud = hero.querySelector<HTMLElement>('.hero__hud');
     const veil = document.createElement('div');
     veil.className = 'm-veil';
     media.after(veil);
@@ -229,6 +268,7 @@ function start() {
       inner.style.opacity = clamp(1 - p * 1.7).toFixed(3);
       veil.style.opacity = (0.92 * p).toFixed(3);
       if (cue) cue.style.opacity = clamp(1 - p * 6).toFixed(3);
+      if (hud) hud.style.opacity = clamp(1 - p * 2.5).toFixed(3);
     });
 
     // Stops decoding the loop once it is out of sight, and resumes only if it was playing.
@@ -269,7 +309,7 @@ function start() {
   }
 
   // About: the words light up as they are read. The starting level keeps every word legible (4.5:1 or better).
-  const aboutText = document.querySelector<HTMLElement>('.about p');
+  const aboutText = document.querySelector<HTMLElement>('.about__text');
   if (aboutText) {
     const words = toWords(aboutText, null, 'm-rw');
     if (words.length) {
@@ -298,12 +338,15 @@ function start() {
   bar.setAttribute('aria-hidden', 'true');
   document.body.append(bar);
 
-  const tickers = $$('.ticker__track').flatMap((track) => track.getAnimations());
+  const tickers = $$('.ticker__track, .strip__track').flatMap((track) => track.getAnimations());
 
   let vh = window.innerHeight;
   let maxScroll = 1;
   let frame = 0;
-  let lastY = window.scrollY;
+  // Read once per scroll event, before any rAF callback writes styles; tick() and other scripts use this value.
+  // Reading scrollY after a style write forces the browser to recompute styles mid-frame.
+  let scrollPos = window.scrollY;
+  let lastY = scrollPos;
   let heading = 0;
   let rate = 1;
   let shownRate = 1;
@@ -311,9 +354,10 @@ function start() {
   const layout = () => {
     vh = window.innerHeight;
     maxScroll = Math.max(1, root.scrollHeight - vh);
-    const y = window.scrollY;
+    const y = (scrollPos = window.scrollY);
     for (const s of scrubs) {
-      if (!s.measure.offsetWidth) continue; // filtered out for now
+      s.on = s.measure.offsetWidth > 0; // false while filtered out
+      if (!s.on) continue;
       const r = s.measure.getBoundingClientRect();
       [s.a, s.b] = s.range(r.top + y, r.bottom + y, vh);
     }
@@ -321,13 +365,15 @@ function start() {
 
   const tick = () => {
     frame = 0;
-    const y = window.scrollY;
+    const y = scrollPos;
     const delta = y - lastY;
     lastY = y;
     let moving = false;
+    // The curved photo row takes its scroll push from here instead of reading the scroll position itself.
+    if (delta) document.dispatchEvent(new CustomEvent('mn:scroll', { detail: delta }));
 
     for (const s of scrubs) {
-      if (!s.measure.offsetWidth) continue;
+      if (!s.on) continue;
       const target = clamp((y - s.a) / (s.b - s.a || 1));
       s.now = s.now < 0 ? target : s.now + (target - s.now) * 0.14;
       if (Math.abs(target - s.now) < 0.0006) s.now = target;
@@ -366,7 +412,10 @@ function start() {
 
   layout();
   tick();
-  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('scroll', () => {
+    scrollPos = window.scrollY;
+    request();
+  }, { passive: true });
 
   let relayout = 0;
   const later = () => {

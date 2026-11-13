@@ -77,17 +77,24 @@ for (const [album, files] of Object.entries(PHOTOS)) {
 console.log('stills done');
 
 // --- Video deliverables ---
-for (const [name, crop, crf] of [['hero-1080.mp4', null, '23'], ['hero-portrait.mp4', PORTRAIT_CROP, '25']]) {
+// The hero loop sits under a dark gradient and film grain, so it tolerates a higher CRF with no visible loss.
+// Three sizes: phones get the portrait crop, laptops 720p, large screens the full frame (see the <source> media queries).
+for (const [name, vfStart, crf] of [
+  ['hero-1080.mp4', null, '28'],
+  ['hero-720.mp4', 'scale=1280:-2:flags=lanczos', '27'],
+  ['hero-portrait.mp4', PORTRAIT_CROP, '29'],
+]) {
   const out = path.join(VIDEO_OUT, name);
   if (fresh(out)) continue;
   const fades = `fade=t=in:st=0:d=0.6,fade=t=out:st=${HERO_LEN - 0.6}:d=0.6`;
-  const vf = [crop, 'fps=25', fades].filter(Boolean).join(',');
+  const vf = [vfStart, 'fps=25', fades].filter(Boolean).join(',');
   run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(HERO_START), '-t', String(HERO_LEN), '-i', PREVIEW, '-an', '-vf', vf, '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out]);
   console.log('video', name);
 }
 
 const preview = path.join(VIDEO_OUT, 'preview.mp4');
-if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', PREVIEW, '-c', 'copy', '-movflags', '+faststart', preview]);
+// Re-encoded rather than copied: the camera export is Baseline at 6 Mbps; High profile at CRF 23 looks the same at ~65% of the size.
+if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', PREVIEW, '-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', preview]);
 
 const info = JSON.parse(run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height:format=duration', '-of', 'json', preview]));
 fs.writeFileSync(

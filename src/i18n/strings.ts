@@ -19,6 +19,7 @@ const en = {
   hero: { pause: 'Pause background video', resume: 'Play background video', role: 'Photography · Videography', sr: 'Videography and photography', watch: 'Watch the films', project: 'I have a project in mind', coaching: 'Book 1-1 coaching', scroll: 'Scroll' },
   showcase: { prev: 'Previous', next: 'Next', eyebrow: 'Portfolio', title: 'The Cinematic Showcase', filter: 'Filter the portfolio', all: 'All works', films: 'Films & Commercials', photo: 'Luxury Photography', moreFilms: 'All films', morePhotos: 'All photographs' },
   about: { eyebrow: 'About', title: 'A considered way of looking.', p1: 'Mednoukhal is a professional videographer and photographer. Each project is approached the same way: find what matters in the frame, then remove everything that does not.' },
+  clients: { eyebrow: 'Clients', title: 'They trusted me', lead: 'Hotels, stages, events and brands that handed me their image.', count: 'brands', list: 'Clients' },
   services: {
     eyebrow: 'What I do', title: 'Expertise', sub: 'Turning your stories into images that stay.', enquire: 'Enquire', production: 'Production', learnMore: 'Learn more',
     items: [
@@ -88,6 +89,7 @@ const fr: Strings = {
   hero: { pause: 'Mettre la vidéo en pause', resume: 'Lire la vidéo', role: 'Photographie · Vidéographie', sr: 'Vidéographie et photographie', watch: 'Voir les films', project: "J'ai un projet en tête", coaching: 'Réserver le coaching 1-1', scroll: 'Défiler' },
   showcase: { prev: 'Précédent', next: 'Suivant', eyebrow: 'Portfolio', title: 'La Vitrine Cinématographique', filter: 'Filtrer le portfolio', all: 'Tous les projets', films: 'Films & Publicités', photo: 'Photographie de Luxe', moreFilms: 'Tous les films', morePhotos: 'Toutes les photographies' },
   about: { eyebrow: 'À propos', title: 'Une manière attentive de regarder.', p1: "Mednoukhal est vidéaste et photographe professionnel. Chaque projet est abordé de la même façon : trouver ce qui compte dans le cadre, puis retirer tout le reste." },
+  clients: { eyebrow: 'Clients', title: "Ils m'ont fait confiance", lead: "Hôtels, scènes, événements et marques qui m'ont confié leur image.", count: 'marques', list: 'Clients' },
   services: {
     eyebrow: 'Ce que je fais', title: 'Expertises', sub: 'Transformer vos histoires en images qui restent.', enquire: 'Se renseigner', production: 'Production', learnMore: 'En savoir plus',
     items: [
@@ -155,6 +157,7 @@ const ar: Strings = {
   hero: { pause: 'إيقاف الفيديو مؤقتاً', resume: 'تشغيل الفيديو', role: 'تصوير فوتوغرافي · تصوير فيديو', sr: 'تصوير فيديو وتصوير فوتوغرافي', watch: 'شاهد الأفلام', project: 'لدي مشروع', coaching: 'احجز تدريباً فردياً', scroll: 'مرر للأسفل' },
   showcase: { prev: 'السابق', next: 'التالي', eyebrow: 'الأعمال', title: 'المعرض السينمائي', filter: 'تصفية الأعمال', all: 'كل الأعمال', films: 'أفلام وإعلانات', photo: 'تصوير فاخر', moreFilms: 'كل الأفلام', morePhotos: 'كل الصور' },
   about: { eyebrow: 'نبذة', title: 'طريقة متأنية في النظر.', p1: 'Mednoukhal مصور فيديو ومصور فوتوغرافي محترف. يبدأ كل مشروع بالطريقة نفسها: العثور على ما يهم داخل الإطار، ثم إزالة كل ما عداه.' },
+  clients: { eyebrow: 'العملاء', title: 'وثقوا بي', lead: 'فنادق ومسارح وفعاليات وعلامات تجارية أوكلت إليّ صورتها.', count: 'علامة', list: 'العملاء' },
   services: {
     eyebrow: 'ما نقدمه', title: 'الخبرات', sub: 'نحوّل قصصك إلى صور لا تُنسى.', enquire: 'استفسر', production: 'إنتاج', learnMore: 'اعرف المزيد',
     items: [
