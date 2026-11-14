@@ -3,7 +3,7 @@ import type { Localized } from '../i18n';
 import manifest from './media-manifest.json';
 import { cms, cmsImage, cmsLocalized } from './cms';
 
-const posters = import.meta.glob<{ default: ImageMetadata }>('/src/assets/films/*.jpg', { eager: true });
+const posters = import.meta.glob<{ default: ImageMetadata }>('/src/assets/films/*.avif', { eager: true });
 
 export interface Film {
   slug: string;
@@ -11,6 +11,7 @@ export interface Film {
   description: Localized;
   poster: ImageMetadata;
   src: string;
+  preview?: string; // a short 720p cut for the muted previews (homepage carousel, films page hover); the full film otherwise
   width: number;
   height: number;
   duration: number;
@@ -26,31 +27,45 @@ export interface FilmCategory {
   title: Localized;
 }
 
-const { preview } = manifest;
+// The films written in the code. Videos, posters and sizes come from `npm run media` (scripts/process-media.mjs).
+const LOCAL_CATEGORIES: FilmCategory[] = [
+  { slug: 'music-videos', title: { en: 'Music videos', fr: 'Clips musicaux', ar: 'كليبات موسيقية' } },
+  { slug: 'fashion-lifestyle', title: { en: 'Fashion & Lifestyle', fr: 'Mode & Lifestyle', ar: 'الموضة ونمط الحياة' } },
+  { slug: 'travel', title: { en: 'Travel', fr: 'Voyage', ar: 'سفر' } },
+];
 
-// Placeholders: one clip fills every film slot until the real projects are added.
-const DESCRIPTION: Localized = {
-  en: 'A man in a patterned jacket stands on a rocky hilltop and looks out over the city.',
-  fr: 'Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.',
-  ar: 'رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة.',
-};
-const VIDEO = { src: '/media/videos/preview.mp4', width: preview.width, height: preview.height };
-
-const build = (slug: string, title: Localized): Film => ({
+const build = (slug: keyof typeof manifest, category: string, title: Localized, description: Localized, extra: Partial<Film> = {}): Film => ({
   slug,
   title,
-  description: DESCRIPTION,
-  poster: posters[`/src/assets/films/${slug}.jpg`].default,
-  ...VIDEO,
-  duration: preview.duration,
-  uploadDate: preview.uploadDate,
+  description,
+  poster: posters[`/src/assets/films/${slug}.avif`].default,
+  ...manifest[slug],
+  category,
+  onHome: true,
+  ...extra,
 });
 
 const LOCAL_FILMS: Film[] = [
-  { ...build('showreel', { en: 'Showreel', fr: 'Bande démo', ar: 'الشريط التعريفي' }), featured: true, onHome: false },
-  ...Array.from({ length: 8 }, (_, i) => {
-    const n = String(i + 1).padStart(2, '0');
-    return { ...build(`project-${n}`, { en: `Project ${n}`, fr: `Projet ${n}`, ar: `مشروع ${n}` }), onHome: true };
+  // The first hero loop doubles as the showreel: it opens the films page as the wide banner.
+  build('showreel', 'fashion-lifestyle', { en: 'Showreel', fr: 'Bande démo', ar: 'الشريط التعريفي' }, {
+    en: 'A man in a patterned jacket stands on a rocky hilltop and looks out over the city.',
+    fr: 'Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.',
+    ar: 'رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة.',
+  }, { featured: true, onHome: false }),
+  build('naoual-live-on-stage', 'music-videos', { en: 'Naoual — Live on Stage', fr: 'Naoual — Sur scène', ar: 'نوال — على المسرح' }, {
+    en: 'A singer in a Morocco jersey and red fez performs with a troupe of dancers under deep red stage light.',
+    fr: 'Une chanteuse en maillot du Maroc et fez rouge se produit avec une troupe de danseurs sous une lumière rouge profonde.',
+    ar: 'مغنية بقميص المنتخب المغربي وطربوش أحمر تؤدي مع فرقة من الراقصين تحت إضاءة مسرحية حمراء.',
+  }),
+  build('medina-stories', 'fashion-lifestyle', { en: 'Medina Stories', fr: 'Histoires de médina', ar: 'حكايات المدينة العتيقة' }, {
+    en: 'Street food, busy souks and bold patterned looks moving through the ochre alleys of the medina.',
+    fr: 'Cuisine de rue, souks animés et looks aux motifs audacieux dans les ruelles ocre de la médina.',
+    ar: 'أكلات الشارع والأسواق المزدحمة وإطلالات بنقوش جريئة في أزقة المدينة العتيقة.',
+  }),
+  build('essaouira-atlantic-soul', 'travel', { en: 'Essaouira — Atlantic Soul', fr: "Essaouira — L'âme de l'Atlantique", ar: 'الصويرة — روح الأطلسي' }, {
+    en: 'Seagulls over the ramparts, blue doors and a musician in white facing the Atlantic in Essaouira.',
+    fr: "Des mouettes au-dessus des remparts, des portes bleues et un musicien en blanc face à l'Atlantique à Essaouira.",
+    ar: 'نوارس فوق الأسوار وأبواب زرقاء وموسيقي بالأبيض يتأمل المحيط الأطلسي في الصويرة.',
   }),
 ];
 
@@ -83,9 +98,9 @@ export const SHOWREEL: Film = ALL_FILMS[0];
 export const FILMS: Film[] = ALL_FILMS.filter((f) => f.onHome !== false && f !== SHOWREEL);
 
 // Only categories that hold at least one film are listed on the site.
-export const FILM_CATEGORIES: FilmCategory[] = (cms?.filmCategories ?? [])
-  .map((c) => ({ slug: c.slug, title: cmsLocalized(c.title) }))
-  .filter((c) => ALL_FILMS.some((f) => f.category === c.slug));
+// (The showreel opens the films page as a banner outside the filter, so it does not count.)
+export const FILM_CATEGORIES: FilmCategory[] = (CMS_FILMS ? (cms?.filmCategories ?? []).map((c) => ({ slug: c.slug, title: cmsLocalized(c.title) })) : LOCAL_CATEGORIES)
+  .filter((c) => ALL_FILMS.some((f) => f.category === c.slug && !(f === SHOWREEL && f.featured)));
 
 
 export const formatDuration = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;

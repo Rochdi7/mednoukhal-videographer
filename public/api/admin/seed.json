@@ -8,21 +8,21 @@
     "phone": "+212 624 084 279",
     "socials": [
       {
-        "id": "social-01n",
+        "id": "social-01p",
         "label": "Instagram",
         "handle": "@med_noukhal",
         "href": "https://www.instagram.com/med_noukhal/",
         "icon": "instagram"
       },
       {
-        "id": "social-01o",
+        "id": "social-01q",
         "label": "YouTube",
         "handle": "@mednoukhal",
         "href": "https://www.youtube.com/@mednoukhal",
         "icon": "youtube"
       },
       {
-        "id": "social-01p",
+        "id": "social-01r",
         "label": "Threads",
         "handle": "@med_noukhal",
         "href": "https://www.threads.com/@med_noukhal",
@@ -48,7 +48,7 @@
   "home": {
     "videos": [
       {
-        "id": "hero-01q",
+        "id": "hero-01s",
         "video": {
           "path": "/media/videos/hero-1080.mp4",
           "width": 1820,
@@ -60,6 +60,51 @@
           "width": 576,
           "height": 1024,
           "duration": 14
+        }
+      },
+      {
+        "id": "hero-01t",
+        "video": {
+          "path": "/media/videos/hero-naoual-1080.mp4",
+          "width": 1920,
+          "height": 1080,
+          "duration": 15
+        },
+        "videoMobile": {
+          "path": "/media/videos/hero-naoual-portrait.mp4",
+          "width": 576,
+          "height": 1024,
+          "duration": 15
+        }
+      },
+      {
+        "id": "hero-01u",
+        "video": {
+          "path": "/media/videos/hero-medina-1080.mp4",
+          "width": 1920,
+          "height": 1080,
+          "duration": 15
+        },
+        "videoMobile": {
+          "path": "/media/videos/hero-medina-portrait.mp4",
+          "width": 576,
+          "height": 1024,
+          "duration": 15
+        }
+      },
+      {
+        "id": "hero-01v",
+        "video": {
+          "path": "/media/videos/hero-essaouira-1080.mp4",
+          "width": 1920,
+          "height": 1080,
+          "duration": 11
+        },
+        "videoMobile": {
+          "path": "/media/videos/hero-essaouira-portrait.mp4",
+          "width": 576,
+          "height": 1024,
+          "duration": 11
         }
       }
     ],
@@ -87,24 +132,6 @@
   "filmCategories": [
     {
       "id": "fc-000",
-      "slug": "commercials",
-      "title": {
-        "en": "Commercials",
-        "fr": "Publicités",
-        "ar": "إعلانات"
-      }
-    },
-    {
-      "id": "fc-001",
-      "slug": "brand-films",
-      "title": {
-        "en": "Brand films",
-        "fr": "Films de marque",
-        "ar": "أفلام العلامات التجارية"
-      }
-    },
-    {
-      "id": "fc-002",
       "slug": "music-videos",
       "title": {
         "en": "Music videos",
@@ -113,18 +140,27 @@
       }
     },
     {
-      "id": "fc-003",
-      "slug": "documentaries",
+      "id": "fc-001",
+      "slug": "fashion-lifestyle",
       "title": {
-        "en": "Documentaries",
-        "fr": "Documentaires",
-        "ar": "أفلام وثائقية"
+        "en": "Fashion & Lifestyle",
+        "fr": "Mode & Lifestyle",
+        "ar": "الموضة ونمط الحياة"
+      }
+    },
+    {
+      "id": "fc-002",
+      "slug": "travel",
+      "title": {
+        "en": "Travel",
+        "fr": "Voyage",
+        "ar": "سفر"
       }
     }
   ],
   "films": [
     {
-      "id": "film-007",
+      "id": "film-006",
       "slug": "showreel",
       "title": {
         "en": "Showreel",
@@ -136,522 +172,505 @@
         "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
         "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
       },
-      "categoryId": "fc-000",
+      "categoryId": "fc-001",
       "featured": true,
       "onHome": false,
       "date": "2026-11-09",
       "video": {
-        "path": "/media/videos/preview.mp4",
+        "path": "/media/videos/hero-1080.mp4",
         "width": 1820,
         "height": 1024,
-        "duration": 18
+        "duration": 14
       },
       "poster": {
-        "path": "/media/seed/films/showreel.jpg",
+        "path": "/media/seed/films/showreel.avif",
         "width": 1820,
         "height": 1024
+      }
+    },
+    {
+      "id": "film-007",
+      "slug": "naoual-live-on-stage",
+      "title": {
+        "en": "Naoual — Live on Stage",
+        "fr": "Naoual — Sur scène",
+        "ar": "نوال — على المسرح"
+      },
+      "description": {
+        "en": "A singer in a Morocco jersey and red fez performs with a troupe of dancers under deep red stage light.",
+        "fr": "Une chanteuse en maillot du Maroc et fez rouge se produit avec une troupe de danseurs sous une lumière rouge profonde.",
+        "ar": "مغنية بقميص المنتخب المغربي وطربوش أحمر تؤدي مع فرقة من الراقصين تحت إضاءة مسرحية حمراء."
+      },
+      "categoryId": "fc-000",
+      "featured": false,
+      "onHome": true,
+      "date": "2026-11-13",
+      "video": {
+        "path": "/media/videos/naoual-live-on-stage.mp4",
+        "width": 1920,
+        "height": 1080,
+        "duration": 65
+      },
+      "poster": {
+        "path": "/media/seed/films/naoual-live-on-stage.avif",
+        "width": 1920,
+        "height": 1080
       }
     },
     {
       "id": "film-008",
-      "slug": "project-01",
+      "slug": "medina-stories",
       "title": {
-        "en": "Project 01",
-        "fr": "Projet 01",
-        "ar": "مشروع 01"
+        "en": "Medina Stories",
+        "fr": "Histoires de médina",
+        "ar": "حكايات المدينة العتيقة"
       },
       "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+        "en": "Street food, busy souks and bold patterned looks moving through the ochre alleys of the medina.",
+        "fr": "Cuisine de rue, souks animés et looks aux motifs audacieux dans les ruelles ocre de la médina.",
+        "ar": "أكلات الشارع والأسواق المزدحمة وإطلالات بنقوش جريئة في أزقة المدينة العتيقة."
       },
-      "categoryId": "fc-000",
+      "categoryId": "fc-001",
       "featured": false,
       "onHome": true,
-      "date": "2026-11-09",
+      "date": "2026-11-13",
       "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
+        "path": "/media/videos/medina-stories.mp4",
+        "width": 1920,
+        "height": 1080,
+        "duration": 15
       },
       "poster": {
-        "path": "/media/seed/films/project-01.jpg",
-        "width": 1820,
-        "height": 1024
+        "path": "/media/seed/films/medina-stories.avif",
+        "width": 1920,
+        "height": 1080
       }
     },
     {
       "id": "film-009",
-      "slug": "project-02",
+      "slug": "essaouira-atlantic-soul",
       "title": {
-        "en": "Project 02",
-        "fr": "Projet 02",
-        "ar": "مشروع 02"
+        "en": "Essaouira — Atlantic Soul",
+        "fr": "Essaouira — L'âme de l'Atlantique",
+        "ar": "الصويرة — روح الأطلسي"
       },
       "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-001",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-02.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00a",
-      "slug": "project-03",
-      "title": {
-        "en": "Project 03",
-        "fr": "Projet 03",
-        "ar": "مشروع 03"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
+        "en": "Seagulls over the ramparts, blue doors and a musician in white facing the Atlantic in Essaouira.",
+        "fr": "Des mouettes au-dessus des remparts, des portes bleues et un musicien en blanc face à l'Atlantique à Essaouira.",
+        "ar": "نوارس فوق الأسوار وأبواب زرقاء وموسيقي بالأبيض يتأمل المحيط الأطلسي في الصويرة."
       },
       "categoryId": "fc-002",
       "featured": false,
       "onHome": true,
-      "date": "2026-11-09",
+      "date": "2026-11-13",
       "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
+        "path": "/media/videos/essaouira-atlantic-soul.mp4",
+        "width": 1920,
+        "height": 1080,
+        "duration": 11
       },
       "poster": {
-        "path": "/media/seed/films/project-03.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00b",
-      "slug": "project-04",
-      "title": {
-        "en": "Project 04",
-        "fr": "Projet 04",
-        "ar": "مشروع 04"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-003",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-04.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00c",
-      "slug": "project-05",
-      "title": {
-        "en": "Project 05",
-        "fr": "Projet 05",
-        "ar": "مشروع 05"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-000",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-05.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00d",
-      "slug": "project-06",
-      "title": {
-        "en": "Project 06",
-        "fr": "Projet 06",
-        "ar": "مشروع 06"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-001",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-06.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00e",
-      "slug": "project-07",
-      "title": {
-        "en": "Project 07",
-        "fr": "Projet 07",
-        "ar": "مشروع 07"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-002",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-07.jpg",
-        "width": 1820,
-        "height": 1024
-      }
-    },
-    {
-      "id": "film-00f",
-      "slug": "project-08",
-      "title": {
-        "en": "Project 08",
-        "fr": "Projet 08",
-        "ar": "مشروع 08"
-      },
-      "description": {
-        "en": "A man in a patterned jacket stands on a rocky hilltop and looks out over the city.",
-        "fr": "Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.",
-        "ar": "رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة."
-      },
-      "categoryId": "fc-003",
-      "featured": false,
-      "onHome": true,
-      "date": "2026-11-09",
-      "video": {
-        "path": "/media/videos/preview.mp4",
-        "width": 1820,
-        "height": 1024,
-        "duration": 18
-      },
-      "poster": {
-        "path": "/media/seed/films/project-08.jpg",
-        "width": 1820,
-        "height": 1024
+        "path": "/media/seed/films/essaouira-atlantic-soul.avif",
+        "width": 1920,
+        "height": 1080
       }
     }
   ],
   "photoCategories": [
     {
-      "id": "pc-004",
-      "slug": "portraits-fashion",
+      "id": "pc-003",
+      "slug": "wedding",
       "title": {
-        "en": "Portraits & Fashion",
-        "fr": "Portraits & Mode",
-        "ar": "بورتريه وأزياء"
+        "en": "Shooting Wedding",
+        "fr": "Shooting Mariage",
+        "ar": "تصوير الأعراس"
+      }
+    },
+    {
+      "id": "pc-004",
+      "slug": "kaftan",
+      "title": {
+        "en": "Shooting Kaftan",
+        "fr": "Shooting Caftan",
+        "ar": "تصوير القفطان"
       }
     },
     {
       "id": "pc-005",
-      "slug": "hospitality",
+      "slug": "family",
       "title": {
-        "en": "Hospitality & Food",
-        "fr": "Hôtellerie & Gastronomie",
-        "ar": "الضيافة وفن الطهي"
-      }
-    },
-    {
-      "id": "pc-006",
-      "slug": "craft-performance",
-      "title": {
-        "en": "Craft & Performance",
-        "fr": "Artisanat & Spectacle",
-        "ar": "الحرف والعروض"
+        "en": "Shooting Family & Lifestyle",
+        "fr": "Shooting Famille & Lifestyle",
+        "ar": "تصوير العائلة ونمط الحياة"
       }
     }
   ],
   "albums": [
     {
-      "id": "album-00k",
-      "slug": "portraits",
+      "id": "album-00j",
+      "slug": "wedding",
       "title": {
-        "en": "Portraits",
-        "fr": "Portraits",
-        "ar": "بورتريه"
+        "en": "A Wedding Among the Palms",
+        "fr": "Un mariage sous les palmiers",
+        "ar": "زفاف بين أشجار النخيل"
       },
-      "categoryId": "pc-004",
+      "categoryId": "pc-003",
       "onHome": true,
       "photos": [
         {
-          "id": "ph-00g",
-          "path": "/media/seed/albums/portraits/01.jpg",
-          "width": 1600,
-          "height": 2400,
+          "id": "ph-00a",
+          "path": "/media/seed/albums/wedding/01.avif",
+          "width": 3200,
+          "height": 2133,
           "alt": {
-            "en": "A smiling woman with long brown hair in a cream shirt, seated at a table outdoors.",
-            "fr": "Une femme souriante aux longs cheveux bruns, en chemise crème, assise à une table en extérieur.",
-            "ar": "امرأة مبتسمة بشعر بني طويل وقميص كريمي تجلس إلى طاولة في الهواء الطلق."
+            "en": "A bride in a long ivory embroidered gown and veil stands at the pool edge, reflected among the palms.",
+            "fr": "Une mariée en longue robe ivoire brodée et voile se tient au bord de la piscine, reflétée parmi les palmiers.",
+            "ar": "عروس بفستان عاجي طويل مطرز وطرحة تقف على حافة المسبح، وتنعكس صورتها بين أشجار النخيل."
+          }
+        },
+        {
+          "id": "ph-00b",
+          "path": "/media/seed/albums/wedding/02.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "A veiled bride in blush pink walks towards a floral arch beside the pool as guests in colourful dress look on.",
+            "fr": "Une mariée voilée en rose poudré avance vers une arche fleurie au bord de la piscine sous le regard des invités.",
+            "ar": "عروس بطرحة وردية فاتحة تتقدم نحو قوس من الزهور بجانب المسبح، والضيوف بملابس ملونة يتابعونها."
+          }
+        },
+        {
+          "id": "ph-00c",
+          "path": "/media/seed/albums/wedding/03.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "A veiled bride in a gold-embroidered gown sits beneath a flower-draped canopy, a woman in a floral headscarf beside her.",
+            "fr": "Une mariée voilée en robe brodée d'or assise sous un dais fleuri, une femme au foulard fleuri à ses côtés.",
+            "ar": "عروس بطرحة وفستان مطرز بالذهب تجلس تحت مظلة مزينة بالزهور، وإلى جانبها امرأة بوشاح مزهر."
+          }
+        },
+        {
+          "id": "ph-00d",
+          "path": "/media/seed/albums/wedding/04.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "Guests in colourful traditional dress and suits sit in a row beside the pool, several filming the ceremony on their phones.",
+            "fr": "Des invités en tenues traditionnelles colorées et costumes, assis en rang au bord de la piscine, filment la cérémonie au téléphone.",
+            "ar": "ضيوف بأزياء تقليدية ملونة وبدلات يجلسون في صف بجانب المسبح، ويصور بعضهم الحفل بهواتفهم."
+          }
+        },
+        {
+          "id": "ph-00e",
+          "path": "/media/seed/albums/wedding/05.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "An officiant in a cream suit reads from a sheet behind the seated, veiled bride under tall palm trees.",
+            "fr": "Un officiant en costume crème lit une feuille derrière la mariée voilée, assise sous de grands palmiers.",
+            "ar": "رجل ببدلة كريمية يقرأ من ورقة خلف العروس الجالسة بطرحتها تحت أشجار نخيل عالية."
+          }
+        },
+        {
+          "id": "ph-00f",
+          "path": "/media/seed/albums/wedding/06.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "An officiant in a cream suit speaks, finger raised, beside the seated groom before a white flower arch.",
+            "fr": "Un officiant en costume crème prend la parole, le doigt levé, près du marié assis devant une arche de fleurs blanches.",
+            "ar": "رجل ببدلة كريمية يتحدث رافعا إصبعه بجانب العريس الجالس أمام قوس من الزهور البيضاء."
+          }
+        },
+        {
+          "id": "ph-00g",
+          "path": "/media/seed/albums/wedding/07.avif",
+          "width": 3200,
+          "height": 2133,
+          "alt": {
+            "en": "Guests stand along the pool edge, men in long white tunics and women in headscarves and embroidered dresses.",
+            "fr": "Des invités debout au bord de la piscine, hommes en longues tuniques blanches, femmes en foulard et robes brodées.",
+            "ar": "ضيوف واقفون على حافة المسبح، رجال بقمصان بيضاء طويلة ونساء بأوشحة وفساتين مطرزة."
           }
         },
         {
           "id": "ph-00h",
-          "path": "/media/seed/albums/portraits/02.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/wedding/08.avif",
+          "width": 3200,
+          "height": 2133,
           "alt": {
-            "en": "A woman with curly blonde hair holding half a grapefruit over one eye, palm trees behind her.",
-            "fr": "Une femme aux cheveux blonds bouclés tenant un demi-pamplemousse devant un œil, des palmiers derrière elle.",
-            "ar": "امرأة بشعر أشقر مجعد تضع نصف حبة جريب فروت أمام عينها وخلفها أشجار النخيل."
+            "en": "Wide view of a palm-lined venue with two blue pools, white parasols and guests lunching at long tables.",
+            "fr": "Vue d'ensemble d'un domaine bordé de palmiers, avec deux piscines bleues, des parasols blancs et des invités à table.",
+            "ar": "منظر واسع لمكان تحيط به أشجار النخيل، بمسبحين أزرقين ومظلات بيضاء وضيوف يتناولون الغداء."
           }
         },
         {
           "id": "ph-00i",
-          "path": "/media/seed/albums/portraits/03.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/wedding/09.avif",
+          "width": 3200,
+          "height": 2133,
           "alt": {
-            "en": "A smiling young girl in a white T-shirt holding a soft toy.",
-            "fr": "Une petite fille souriante en t-shirt blanc tenant une peluche.",
-            "ar": "طفلة مبتسمة بقميص أبيض تحمل دمية محشوة."
-          }
-        },
-        {
-          "id": "ph-00j",
-          "path": "/media/seed/albums/portraits/04.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A family on a terrace balcony beneath a reed canopy, palm trees beyond.",
-            "fr": "Une famille sur le balcon d'une terrasse, sous un auvent de roseaux, des palmiers au loin.",
-            "ar": "عائلة على شرفة تحت مظلة من القصب وأشجار النخيل في الأفق."
+            "en": "Waiters in beige embroidered tunics serve plates to women seated at a long table under hanging brass lanterns.",
+            "fr": "Des serveurs en tuniques beiges brodées servent des femmes attablées sous des lanternes en laiton suspendues.",
+            "ar": "نُدُل بقمصان بيج مطرزة يقدمون الأطباق لنساء جالسات إلى طاولة طويلة تحت فوانيس نحاسية معلقة."
           }
         }
       ]
     },
     {
-      "id": "album-00o",
-      "slug": "caftan",
+      "id": "album-00y",
+      "slug": "kaftan",
       "title": {
-        "en": "Caftan",
-        "fr": "Caftan",
-        "ar": "القفطان"
+        "en": "The Kaftan Collection",
+        "fr": "La collection caftan",
+        "ar": "مجموعة القفاطين"
       },
       "categoryId": "pc-004",
       "onHome": true,
       "photos": [
         {
-          "id": "ph-00l",
-          "path": "/media/seed/albums/caftan/01.jpg",
-          "width": 1600,
-          "height": 2400,
+          "id": "ph-00k",
+          "path": "/media/seed/albums/kaftan/01.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A seated woman in a pale gold caftan with an embroidered belt, her hands resting on her knee.",
-            "fr": "Une femme assise en caftan or pâle à ceinture brodée, les mains posées sur le genou.",
-            "ar": "امرأة جالسة بقفطان ذهبي فاتح وحزام مطرز ويداها على ركبتها."
+            "en": "A seated woman in a yellow and silver brocade kaftan with an embroidered belt, its skirt falling open over chartreuse velvet.",
+            "fr": "Une femme assise en caftan de brocart jaune et argent à ceinture brodée, la jupe ouverte sur un velours vert anis.",
+            "ar": "امرأة جالسة بقفطان من البروكار الأصفر والفضي وحزام مطرز، ينفتح ذيله على مخمل أخضر فاتح."
+          }
+        },
+        {
+          "id": "ph-00l",
+          "path": "/media/seed/albums/kaftan/02.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A woman with dark curls in an ivory floral kaftan with gold belt and lining, seated on a green sofa.",
+            "fr": "Une femme aux boucles brunes en caftan ivoire fleuri, ceinture et doublure dorées, assise sur un canapé vert.",
+            "ar": "امرأة بشعر أسود مموج ترتدي قفطانا عاجيا مزهرا بحزام وبطانة ذهبيين، جالسة على أريكة خضراء."
           }
         },
         {
           "id": "ph-00m",
-          "path": "/media/seed/albums/caftan/02.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/kaftan/03.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A woman in a long beige robe and nude heels seated on a white sofa.",
-            "fr": "Une femme en longue robe beige et talons nude assise sur un canapé blanc.",
-            "ar": "امرأة بعباءة بيج طويلة وكعب عالٍ تجلس على أريكة بيضاء."
+            "en": "A woman in a coral-orange kaftan with multicolour braided trim and an embroidered belt over a floral print underlayer.",
+            "fr": "Une femme en caftan orange corail à galons multicolores et ceinture brodée, sur un dessous à imprimé floral.",
+            "ar": "امرأة بقفطان برتقالي مرجاني بحواش ملونة مضفورة وحزام مطرز فوق ثوب داخلي بنقوش زهرية."
           }
         },
         {
           "id": "ph-00n",
-          "path": "/media/seed/albums/caftan/03.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/kaftan/04.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A hand decorated with henna resting on an open newspaper, a white robe at the wrist.",
-            "fr": "Une main ornée de henné posée sur un journal ouvert, la manche d'un peignoir blanc au poignet.",
-            "ar": "يد مزينة بالحناء على جريدة مفتوحة وكم رداء أبيض عند المعصم."
+            "en": "Hands resting on a knee over a pale sage satin kaftan edged with olive braided trim.",
+            "fr": "Des mains posées sur le genou, sur un caftan en satin vert d'eau pâle bordé de galons olive.",
+            "ar": "يدان على الركبة فوق قفطان من الساتان الأخضر الباهت مزين بحواش مضفورة بلون الزيتون."
           }
-        }
-      ]
-    },
-    {
-      "id": "album-00s",
-      "slug": "table",
-      "title": {
-        "en": "At the Table",
-        "fr": "À table",
-        "ar": "على المائدة"
-      },
-      "categoryId": "pc-005",
-      "onHome": true,
-      "photos": [
+        },
+        {
+          "id": "ph-00o",
+          "path": "/media/seed/albums/kaftan/05.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Legs crossed in leopard-print heels, a red kaftan opening over an emerald skirt patterned in gold.",
+            "fr": "Jambes croisées en escarpins léopard, un caftan rouge ouvert sur une jupe émeraude à motifs dorés.",
+            "ar": "ساقان متقاطعتان بحذاء بنقشة النمر، وقفطان أحمر ينفتح على تنورة زمردية بنقوش ذهبية."
+          }
+        },
         {
           "id": "ph-00p",
-          "path": "/media/seed/albums/table/01.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/kaftan/06.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A cocktail garnished with pineapple on a candlelit table, blue lights glowing behind it.",
-            "fr": "Un cocktail garni d'ananas sur une table aux chandelles, des lumières bleues en arrière-plan.",
-            "ar": "كوكتيل مزين بالأناناس على طاولة تضيئها الشموع وخلفه أضواء زرقاء."
+            "en": "A seated woman in a pistachio green satin kaftan with tone-on-tone embroidery and a silver statement necklace.",
+            "fr": "Une femme assise en caftan de satin vert pistache brodé ton sur ton, avec un grand collier argenté.",
+            "ar": "امرأة جالسة بقفطان من الساتان الأخضر الفستقي بتطريز من اللون نفسه وقلادة فضية كبيرة."
           }
         },
         {
           "id": "ph-00q",
-          "path": "/media/seed/albums/table/02.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/kaftan/07.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A plated main course with vegetables on a white dish, on a dark table at night.",
-            "fr": "Un plat principal aux légumes dans une assiette blanche, sur une table sombre de nuit.",
-            "ar": "طبق رئيسي بالخضار في صحن أبيض على طاولة داكنة ليلاً."
+            "en": "A hand gathering the sleeve of a beige wool kaftan trimmed with small buttons and fine braid.",
+            "fr": "Une main retenant la manche d'un caftan en laine beige orné de petits boutons et d'un fin galon.",
+            "ar": "يد تمسك كم قفطان من الصوف البيج مزين بأزرار صغيرة وحاشية مضفورة رقيقة."
           }
         },
         {
           "id": "ph-00r",
-          "path": "/media/seed/albums/table/03.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/kaftan/08.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "Two hands raising glasses of an orange drink against a clear blue sky.",
-            "fr": "Deux mains levant des verres d'une boisson orange sur un ciel bleu dégagé.",
-            "ar": "يدان ترفعان كأسين من مشروب برتقالي أمام سماء زرقاء صافية."
+            "en": "A seated woman in a yellow kaftan with silver leaf print, grey embroidered trim and coral-lined sleeves.",
+            "fr": "Une femme assise en caftan jaune à feuilles argentées, galons gris brodés et manches doublées de corail.",
+            "ar": "امرأة جالسة بقفطان أصفر بنقوش أوراق فضية وحواش رمادية مطرزة وأكمام ببطانة مرجانية."
+          }
+        },
+        {
+          "id": "ph-00s",
+          "path": "/media/seed/albums/kaftan/09.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A woman seated in profile on a green velvet sofa in an ivory silk kaftan with silver geometric trim.",
+            "fr": "Une femme assise de profil sur un canapé en velours vert, en caftan de soie ivoire à galons argentés géométriques.",
+            "ar": "امرأة جالسة جانبيا على أريكة مخملية خضراء بقفطان حريري عاجي بحواش فضية هندسية."
+          }
+        },
+        {
+          "id": "ph-00t",
+          "path": "/media/seed/albums/kaftan/10.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Hands resting on a red kaftan with tone-on-tone embroidered scrolls and a matching wide belt.",
+            "fr": "Des mains posées sur un caftan rouge aux arabesques brodées ton sur ton et à large ceinture assortie.",
+            "ar": "يدان على قفطان أحمر بزخارف مطرزة من اللون نفسه وحزام عريض متناسق معه."
+          }
+        },
+        {
+          "id": "ph-00u",
+          "path": "/media/seed/albums/kaftan/11.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Legs crossed in pink satin heels, a pistachio green kaftan with embroidered trim pooling onto a pale rug.",
+            "fr": "Jambes croisées en escarpins de satin rose, un caftan vert pistache brodé tombant sur un tapis clair.",
+            "ar": "ساقان متقاطعتان بحذاء ساتان وردي، وقفطان أخضر فستقي مطرز ينسدل على سجادة فاتحة."
+          }
+        },
+        {
+          "id": "ph-00v",
+          "path": "/media/seed/albums/kaftan/12.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Folded hands on the lap of a pale silver kaftan with an olive green braided belt and sheer embroidered underlayer.",
+            "fr": "Des mains jointes sur un caftan argent pâle à ceinture tressée vert olive et dessous brodé transparent.",
+            "ar": "يدان متشابكتان على قفطان فضي فاتح بحزام مضفور أخضر زيتوني وثوب داخلي شفاف مطرز."
+          }
+        },
+        {
+          "id": "ph-00w",
+          "path": "/media/seed/albums/kaftan/13.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Legs crossed in nude patent heels, a beige wool kaftan with button trim slit at the hem.",
+            "fr": "Jambes croisées en escarpins vernis nude, un caftan en laine beige bordé de petits boutons, fendu sur le bas.",
+            "ar": "ساقان متقاطعتان بحذاء لامع بلون البشرة، وقفطان من الصوف البيج مزين بأزرار ومشقوق عند الذيل."
+          }
+        },
+        {
+          "id": "ph-00x",
+          "path": "/media/seed/albums/kaftan/14.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "Hands resting on a knee over a yellow and silver brocade kaftan with a chartreuse velvet lining.",
+            "fr": "Des mains posées sur le genou, sur un caftan de brocart jaune et argent doublé de velours vert anis.",
+            "ar": "يدان على الركبة فوق قفطان من البروكار الأصفر والفضي ببطانة من المخمل الأخضر الفاتح."
           }
         }
       ]
     },
     {
-      "id": "album-00x",
-      "slug": "interiors",
+      "id": "album-016",
+      "slug": "family",
       "title": {
-        "en": "Interiors",
-        "fr": "Intérieurs",
-        "ar": "الفضاءات الداخلية"
+        "en": "Family Days in the Sun",
+        "fr": "Jours de famille au soleil",
+        "ar": "أيام عائلية تحت الشمس"
       },
       "categoryId": "pc-005",
       "onHome": true,
       "photos": [
         {
-          "id": "ph-00t",
-          "path": "/media/seed/albums/interiors/01.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A reflecting pool between stone columns, beneath a skylight and a tall library.",
-            "fr": "Un bassin entre des colonnes de pierre, sous une verrière et une haute bibliothèque.",
-            "ar": "حوض مائي بين أعمدة حجرية تحت كوة زجاجية ومكتبة عالية."
-          }
-        },
-        {
-          "id": "ph-00u",
-          "path": "/media/seed/albums/interiors/02.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A golden seated Buddha among plants in a hall with stone columns.",
-            "fr": "Un bouddha doré assis parmi les plantes dans une salle à colonnes de pierre.",
-            "ar": "تمثال بوذا ذهبي جالس بين النباتات في قاعة بأعمدة حجرية."
-          }
-        },
-        {
-          "id": "ph-00v",
-          "path": "/media/seed/albums/interiors/03.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A woman reading a magazine in a white bed against a blue wall.",
-            "fr": "Une femme lisant un magazine dans un lit blanc, devant un mur bleu.",
-            "ar": "امرأة تقرأ مجلة على سرير أبيض أمام جدار أزرق."
-          }
-        },
-        {
-          "id": "ph-00w",
-          "path": "/media/seed/albums/interiors/04.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A woven basket filled with Morocco travel guides and magazines.",
-            "fr": "Un panier tressé rempli de guides de voyage et de magazines sur le Maroc.",
-            "ar": "سلة منسوجة مليئة بأدلة سفر ومجلات عن المغرب."
-          }
-        }
-      ]
-    },
-    {
-      "id": "album-010",
-      "slug": "craft",
-      "title": {
-        "en": "Craft & Performance",
-        "fr": "Artisanat et spectacle",
-        "ar": "حرف وعروض"
-      },
-      "categoryId": "pc-006",
-      "onHome": true,
-      "photos": [
-        {
-          "id": "ph-00y",
-          "path": "/media/seed/albums/craft/01.jpg",
-          "width": 1600,
-          "height": 2400,
-          "alt": {
-            "en": "A potter in a blue apron shaping clay on a wheel, on a terrace beneath a reed canopy.",
-            "fr": "Un potier en tablier bleu façonnant l'argile sur un tour, sur une terrasse sous un auvent de roseaux.",
-            "ar": "خزّاف بمئزر أزرق يشكل الطين على الدولاب في شرفة تحت مظلة من القصب."
-          }
-        },
-        {
           "id": "ph-00z",
-          "path": "/media/seed/albums/craft/02.jpg",
-          "width": 1600,
-          "height": 2400,
+          "path": "/media/seed/albums/family/01.avif",
+          "width": 2133,
+          "height": 3200,
           "alt": {
-            "en": "A performer in a ruffled dress raising a flaming torch in blue smoke.",
-            "fr": "Une artiste en robe à volants levant une torche enflammée dans une fumée bleue.",
-            "ar": "مؤدية بفستان مكشكش ترفع شعلة نار وسط دخان أزرق."
+            "en": "A barefoot father lifts a toddler in a pink swimsuit high overhead on a sunlit lawn among palm trees.",
+            "fr": "Un père pieds nus soulève à bout de bras un tout-petit en maillot rose sur une pelouse plantée de palmiers.",
+            "ar": "أب حافي القدمين يرفع طفلا صغيرا بلباس سباحة وردي عاليا فوق رأسه على عشب بين أشجار النخيل."
+          }
+        },
+        {
+          "id": "ph-010",
+          "path": "/media/seed/albums/family/02.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A young family on a shaded terrace, the parents holding a boy and a curly-haired toddler behind an iron railing.",
+            "fr": "Une jeune famille sur une terrasse ombragée, les parents portant un garçon et un tout-petit bouclé derrière une rambarde en fer.",
+            "ar": "عائلة شابة على شرفة مظللة، يحمل الوالدان صبيا وطفلا صغيرا مجعد الشعر خلف درابزين حديدي."
+          }
+        },
+        {
+          "id": "ph-011",
+          "path": "/media/seed/albums/family/03.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A plate of seared steak with roasted carrots, broccoli and cherry tomatoes on a sunlit table beside a blue glass.",
+            "fr": "Une assiette de steak saisi, carottes rôties, brocoli et tomates cerises sur une table ensoleillée, près d'un verre bleu.",
+            "ar": "طبق من شريحة لحم مشوية مع جزر وبروكلي وطماطم كرزية على طاولة مشمسة بجانب كأس زرقاء."
+          }
+        },
+        {
+          "id": "ph-012",
+          "path": "/media/seed/albums/family/04.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A family stands on a palm-shaded lawn, the father holding a toddler while the mother leans towards their young son.",
+            "fr": "Une famille sur une pelouse ombragée de palmiers, le père portant un tout-petit, la mère penchée vers leur jeune fils.",
+            "ar": "عائلة تقف على عشب تظلله أشجار النخيل، الأب يحمل طفلا صغيرا والأم تنحني نحو ابنهما الصغير."
+          }
+        },
+        {
+          "id": "ph-013",
+          "path": "/media/seed/albums/family/05.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A young woman with sunglasses in her hair eats a plated dish at an outdoor table, eyes lowered.",
+            "fr": "Une jeune femme, lunettes de soleil dans les cheveux, déguste un plat à une table en terrasse, les yeux baissés.",
+            "ar": "شابة تضع نظارة شمسية فوق شعرها تتناول طبقا على طاولة في الهواء الطلق وعيناها منخفضتان."
+          }
+        },
+        {
+          "id": "ph-014",
+          "path": "/media/seed/albums/family/06.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A mother holds her young son as the family looks out over a sunlit railing, palm trees blurred behind.",
+            "fr": "Une mère tient son jeune fils tandis que la famille regarde par-dessus une rambarde ensoleillée, palmiers flous en arrière-plan.",
+            "ar": "أم تحمل ابنها الصغير بينما تطل العائلة من فوق درابزين مشمس، وأشجار النخيل ضبابية خلفهم."
+          }
+        },
+        {
+          "id": "ph-015",
+          "path": "/media/seed/albums/family/07.avif",
+          "width": 2133,
+          "height": 3200,
+          "alt": {
+            "en": "A young man in a red fez raises a glass of mint tea inside a tent hung with colourful tassels.",
+            "fr": "Un jeune homme coiffé d'un fez rouge lève un verre de thé à la menthe sous une tente ornée de pompons colorés.",
+            "ar": "شاب يعتمر طربوشا أحمر يرفع كأس شاي بالنعناع داخل خيمة مزينة بشراشيب ملونة."
           }
         }
       ]
@@ -659,7 +678,7 @@
   ],
   "clients": [
     {
-      "id": "client-011",
+      "id": "client-017",
       "name": "Sol by Meliá",
       "tone": false,
       "logo": {
@@ -669,7 +688,7 @@
       }
     },
     {
-      "id": "client-012",
+      "id": "client-018",
       "name": "Le Blokk, dîner spectacle",
       "tone": true,
       "logo": {
@@ -679,7 +698,7 @@
       }
     },
     {
-      "id": "client-013",
+      "id": "client-019",
       "name": "La Maison Arabe Marrakech",
       "tone": false,
       "logo": {
@@ -689,7 +708,7 @@
       }
     },
     {
-      "id": "client-014",
+      "id": "client-01a",
       "name": "TH Events",
       "tone": true,
       "logo": {
@@ -699,7 +718,7 @@
       }
     },
     {
-      "id": "client-015",
+      "id": "client-01b",
       "name": "Rue Chic",
       "tone": false,
       "logo": {
@@ -709,7 +728,7 @@
       }
     },
     {
-      "id": "client-016",
+      "id": "client-01c",
       "name": "The House of the Calligraphy",
       "tone": false,
       "logo": {
@@ -719,7 +738,7 @@
       }
     },
     {
-      "id": "client-017",
+      "id": "client-01d",
       "name": "212 Communication",
       "tone": true,
       "logo": {
@@ -729,7 +748,7 @@
       }
     },
     {
-      "id": "client-018",
+      "id": "client-01e",
       "name": "El Rssouh",
       "tone": false,
       "logo": {
@@ -739,7 +758,7 @@
       }
     },
     {
-      "id": "client-019",
+      "id": "client-01f",
       "name": "Association des Étudiants ISPITS Marrakech",
       "tone": false,
       "logo": {
@@ -751,8 +770,8 @@
   ],
   "reviews": [
     {
-      "id": "review-01a",
-      "clientId": "client-011",
+      "id": "review-01g",
+      "clientId": "client-017",
       "name": "",
       "logo": null,
       "sector": {
@@ -765,8 +784,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01b",
-      "clientId": "client-012",
+      "id": "review-01h",
+      "clientId": "client-018",
       "name": "",
       "logo": null,
       "sector": {
@@ -779,8 +798,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01c",
-      "clientId": "client-013",
+      "id": "review-01i",
+      "clientId": "client-019",
       "name": "",
       "logo": null,
       "sector": {
@@ -793,8 +812,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01d",
-      "clientId": "client-014",
+      "id": "review-01j",
+      "clientId": "client-01a",
       "name": "",
       "logo": null,
       "sector": {
@@ -807,8 +826,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01e",
-      "clientId": "client-015",
+      "id": "review-01k",
+      "clientId": "client-01b",
       "name": "",
       "logo": null,
       "sector": {
@@ -821,8 +840,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01f",
-      "clientId": "client-016",
+      "id": "review-01l",
+      "clientId": "client-01c",
       "name": "",
       "logo": null,
       "sector": {
@@ -835,8 +854,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01g",
-      "clientId": "client-017",
+      "id": "review-01m",
+      "clientId": "client-01d",
       "name": "",
       "logo": null,
       "sector": {
@@ -849,8 +868,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01h",
-      "clientId": "client-018",
+      "id": "review-01n",
+      "clientId": "client-01e",
       "name": "",
       "logo": null,
       "sector": {
@@ -863,8 +882,8 @@
       "placeholder": true
     },
     {
-      "id": "review-01i",
-      "clientId": "client-019",
+      "id": "review-01o",
+      "clientId": "client-01f",
       "name": "",
       "logo": null,
       "sector": {

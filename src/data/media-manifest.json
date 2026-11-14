@@ -1,8 +1,33 @@
 {
-  "preview": {
+  "naoual-live-on-stage": {
+    "src": "/media/videos/naoual-live-on-stage.mp4",
+    "preview": "/media/videos/naoual-live-on-stage-preview.mp4",
+    "width": 1920,
+    "height": 1080,
+    "duration": 65,
+    "uploadDate": "2026-11-13T20:05:28.000Z"
+  },
+  "medina-stories": {
+    "src": "/media/videos/medina-stories.mp4",
+    "preview": "/media/videos/medina-stories-preview.mp4",
+    "width": 1920,
+    "height": 1080,
+    "duration": 15,
+    "uploadDate": "2026-11-13T20:05:28.000Z"
+  },
+  "essaouira-atlantic-soul": {
+    "src": "/media/videos/essaouira-atlantic-soul.mp4",
+    "preview": "/media/videos/essaouira-atlantic-soul-preview.mp4",
+    "width": 1920,
+    "height": 1080,
+    "duration": 11,
+    "uploadDate": "2026-11-13T20:05:28.000Z"
+  },
+  "showreel": {
+    "src": "/media/videos/hero-1080.mp4",
     "width": 1820,
     "height": 1024,
-    "duration": 18,
+    "duration": 14,
     "uploadDate": "2026-11-09T01:01:27.073Z"
   }
 }

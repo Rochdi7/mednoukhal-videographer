@@ -114,9 +114,9 @@ const curveItems = CURVE_ITEMS
         <button class="carousel__arrow carousel__arrow--next" type="button" data-next aria-label={s.showcase.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
         <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.films}>
           {FILMS.map((film, i) => (
-            <article class="tile tile--film" data-src={film.src} data-orient={film.height > film.width ? 'vertical' : undefined}>
+            <article class="tile tile--film" data-src={film.preview ?? film.src} data-orient={film.height > film.width ? 'vertical' : undefined}>
               <a class="tile__open" href={p(`/films/${film.slug}/`)} data-film={JSON.stringify({ src: film.src, title: film.title[locale], href: p(`/films/${film.slug}/`), width: film.width, height: film.height })} aria-label={`${s.film.watch}: ${film.title[locale]}`}>
-                <Picture src={film.poster} formats={['avif', 'webp']} widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="min(1040px, 90vw)" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} style={filmPh[i]} />
+                <Picture src={film.poster} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="min(1040px, 90vw)" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} style={filmPh[i]} />
               </a>
               <span class="tile__live" aria-hidden="true"><i></i><i></i><i></i></span>
               <span class="tile__label">{film.title[locale]}</span>
@@ -137,14 +137,10 @@ const curveItems = CURVE_ITEMS
       <div class="carousel__view">
         <button class="carousel__arrow carousel__arrow--prev" type="button" data-prev aria-label={s.showcase.prev}><ChevronLeft class="flip-rtl" aria-hidden="true" /></button>
         <button class="carousel__arrow carousel__arrow--next" type="button" data-next aria-label={s.showcase.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
-        <div class="giant" aria-hidden="true">
-          <div class="giant__row" data-text={`${SITE.logoAlt} — ${s.showcase.photo} — ${SITE.logoAlt} — ${s.showcase.photo} — `}></div>
-          <div class="giant__row giant__row--back" data-text={`${s.hero.role} — ${s.hero.role} — ${s.hero.role} — `}></div>
-        </div>
         <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.photo}>
           {albums.flatMap((album) => album.photos.map((photo) => (
             <a class="tile tile--photo" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
-              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="min(560px, 74vw)" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={70} style={photo.ph} />
+              <Picture src={photo.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 640px) 82vw, (max-width: 1024px) 60vw, 30vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={70} style={photo.ph} />
               <span class="tile__label">{album.title[locale]}</span>
             </a>
           )))}
@@ -165,7 +161,7 @@ const curveItems = CURVE_ITEMS
       <!-- Arch-framed still with a camera REC tag and a turning "role" ring around the MN mark -->
       <figure class="about__media">
         <div class="about__frame">
-          <Picture src={ABOUT_PHOTO.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= ABOUT_PHOTO.image.width)} sizes="(max-width: 760px) 78vw, 440px" alt="" loading="lazy" decoding="async" quality={72} style={`${aboutPh};object-position:${ABOUT_PHOTO.focus}`} />
+          <Picture src={ABOUT_PHOTO.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= ABOUT_PHOTO.image.width)} sizes="(max-width: 760px) 78vw, 440px" alt="" loading="lazy" decoding="async" quality={72} style={`${aboutPh};object-position:${ABOUT_PHOTO.focus}`} />
           <span class="about__rec" dir="ltr" aria-hidden="true"><i></i>REC</span>
         </div>
         <div class="about__badge" aria-hidden="true">

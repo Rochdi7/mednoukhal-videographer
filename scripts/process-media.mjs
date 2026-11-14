@@ -1,46 +1,36 @@
-// Turns preview.mp4 and the photo masters into the web deliverables.
-// Idempotent: existing outputs are skipped. Pass --force to rebuild them.
+// Turns the masters (wetransfer_* folders, gitignored) into the web deliverables:
+//   photos  → src/assets/photos/<album>/<name>.avif   (3200px long edge, AVIF; Astro makes the smaller sizes)
+//   posters → src/assets/films/<slug>.avif           (one still per film)
+//   videos  → public/media/videos/                    (1080p films with sound, muted hero loops + portrait crops)
+//   sizes   → src/data/media-manifest.json            (width, height, running time of each film)
+// Idempotent: existing outputs are skipped. Pass --force to rebuild them, --images to skip the video encodes.
+// The first hero loop (hero-1080/720/portrait.mp4) was cut from an older master and is kept as it is.
 // Run with: npm run media
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const PREVIEW = path.join(ROOT, 'preview.mp4');
-const PHOTO_SRC = path.join(ROOT, 'wetransfer__mn_0497-copy-jpg_2026-11-09_0033');
+const VIDEO_SRC = path.join(ROOT, 'wetransfer_med_2026-11-13_2004');
 const VIDEO_OUT = path.join(ROOT, 'public/media/videos');
 const ASSETS = path.join(ROOT, 'src/assets');
 const force = process.argv.includes('--force');
+const imagesOnly = process.argv.includes('--images');
 
-// The one clip stands in for every film until the real projects are added.
-// Each slot gets its own frame so the carousels can be judged with some variety.
-const POSTERS = {
-  'project-01': 0.5,
-  'project-02': 4.5,
-  'project-03': 5.6,
-  'project-04': 8.4,
-  'project-05': 9.5,
-  'project-06': 12.5,
-  'project-07': 14.2,
-  'project-08': 16.5,
-  showreel: 15.5,
-  'coaching-film': 7,
+// One folder per album, as delivered.
+const ALBUMS = {
+  wedding: 'wetransfer_mn_06327-jpg_2026-11-14_0040',
+  kaftan: 'wetransfer_untitled-transfer_2026-11-14_0056',
+  family: 'wetransfer_mn_00537-jpg_2026-11-14_0056',
 };
 
-// The burned-in "Directed + edited" title ends before 4s; it would clash with the hero logo.
-const HERO_START = 4;
-const HERO_LEN = 13.7;
-const HERO_STILL = 6;
-const PORTRAIT_CROP = 'crop=ih*9/16:ih:iw*0.55-ow/2:0'; // the subject stands slightly right of centre
-
-// Albums group the photographs by what they actually show.
-const PHOTOS = {
-  portraits: ['MN_00851.jpg', 'MN_09118.jpg', 'MN_09093.jpg', 'MN_00537.jpg'],
-  caftan: ['MN_09426.jpg', 'MN_09906.jpg', 'MN_09014.jpg'],
-  table: ['DSC00445-Enhanced-NR copy.jpg', 'DSC00609-Enhanced-NR copy.jpg', '_MN_2730.jpg'],
-  interiors: ['_MN_0500 copy.jpg', '_MN_0497 copy.jpg', 'MN_09002.jpg', 'DSC02040-Enhanced-NR copy.jpg'],
-  craft: ['DSC00303 copy.jpg', 'MN_03356.jpg'],
+// The films: master, poster frame (s), and the part used as a hero loop (start, length in s).
+const FILMS = {
+  'naoual-live-on-stage': { master: 'naoual .mp4', poster: 32.5, hero: 'hero-naoual', heroStart: 36, heroLen: 15 },
+  'medina-stories': { master: 'reel pvr26.mp4', poster: 11.5, hero: 'hero-medina', heroStart: 0, heroLen: 15.4 },
+  'essaouira-atlantic-soul': { master: 'Sequence 03_2.mp4', poster: 8.4, hero: 'hero-essaouira', heroStart: 0, heroLen: 10.9 },
 };
 
 function run(cmd, args) {
@@ -48,66 +38,68 @@ function run(cmd, args) {
   if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')}\n${r.stderr}`);
   return r.stdout + r.stderr;
 }
-
 const fresh = (f) => !force && fs.existsSync(f) && fs.statSync(f).size > 0;
-const still = (at, vf, out) => {
-  if (!fresh(out)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(at), '-i', PREVIEW, '-frames:v', '1', '-vf', vf, '-q:v', '2', '-update', '1', out]);
-};
+// AVIF at quality 64 / 4:4:4 is visually identical to the masters at a fraction of the weight.
+const avif = (input, out, size) =>
+  sharp(input).rotate().resize(size, size, { fit: 'inside', withoutEnlargement: true }).avif({ quality: 64, effort: 6, chromaSubsampling: '4:4:4' }).toFile(out);
 
-for (const d of [VIDEO_OUT, ...['films', 'hero', 'photos'].map((s) => path.join(ASSETS, s))]) {
-  fs.mkdirSync(d, { recursive: true });
-}
+for (const d of [VIDEO_OUT, path.join(ASSETS, 'films'), ...Object.keys(ALBUMS).map((a) => path.join(ASSETS, 'photos', a))]) fs.mkdirSync(d, { recursive: true });
 
-// --- Stills ---
-for (const [name, at] of Object.entries(POSTERS)) still(at, 'scale=iw:-2', path.join(ASSETS, 'films', `${name}.jpg`));
-still(HERO_STILL, 'scale=iw:-2', path.join(ASSETS, 'hero/hero.jpg'));
-still(HERO_STILL, PORTRAIT_CROP, path.join(ASSETS, 'hero/hero-portrait.jpg'));
-
-// The masters reach 41 MB each; 2400px on the long edge covers the album viewer.
-for (const [album, files] of Object.entries(PHOTOS)) {
-  for (const [i, file] of files.entries()) {
-    const out = path.join(ASSETS, 'photos', `${album}-${String(i + 1).padStart(2, '0')}.jpg`);
-    if (fresh(out)) continue;
-    await sharp(path.join(PHOTO_SRC, file)).rotate().resize(2400, 2400, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 90, chromaSubsampling: '4:4:4', mozjpeg: true }).toFile(out);
-    console.log('photo', path.basename(out));
-  }
-}
-console.log('stills done');
-
-// --- Video deliverables ---
-// The hero loop sits under a dark gradient and film grain, so it tolerates a higher CRF with no visible loss.
-// Three sizes: phones get the portrait crop, laptops 720p, large screens the full frame (see the <source> media queries).
-for (const [name, vfStart, crf] of [
-  ['hero-1080.mp4', null, '28'],
-  ['hero-720.mp4', 'scale=1280:-2:flags=lanczos', '27'],
-  ['hero-portrait.mp4', PORTRAIT_CROP, '29'],
-]) {
-  const out = path.join(VIDEO_OUT, name);
-  if (fresh(out)) continue;
-  const fades = `fade=t=in:st=0:d=0.6,fade=t=out:st=${HERO_LEN - 0.6}:d=0.6`;
-  const vf = [vfStart, 'fps=25', fades].filter(Boolean).join(',');
-  run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(HERO_START), '-t', String(HERO_LEN), '-i', PREVIEW, '-an', '-vf', vf, '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out]);
-  console.log('video', name);
-}
-
-const preview = path.join(VIDEO_OUT, 'preview.mp4');
-// Re-encoded rather than copied: the camera export is Baseline at 6 Mbps; High profile at CRF 23 looks the same at ~65% of the size.
-if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', PREVIEW, '-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', preview]);
-
-const info = JSON.parse(run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height:format=duration', '-of', 'json', preview]));
-fs.writeFileSync(
-  path.join(ROOT, 'src/data/media-manifest.json'),
-  JSON.stringify(
-    {
-      preview: {
-        width: info.streams[0].width,
-        height: info.streams[0].height,
-        duration: Math.round(Number(info.format.duration)),
-        uploadDate: fs.statSync(PREVIEW).mtime.toISOString(),
-      },
-    },
-    null,
-    2,
+// --- Photos ---
+await Promise.all(
+  Object.entries(ALBUMS).flatMap(([album, dir]) =>
+    fs.readdirSync(path.join(ROOT, dir)).filter((f) => /\.jpe?g$/i.test(f)).map(async (file) => {
+      const out = path.join(ASSETS, 'photos', album, `${path.parse(file).name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.avif`);
+      if (fresh(out)) return;
+      await avif(path.join(ROOT, dir, file), out, 3200);
+      console.log('photo', album, path.basename(out), `${(fs.statSync(path.join(ROOT, dir, file)).size / 1e6).toFixed(1)} MB → ${(fs.statSync(out).size / 1e6).toFixed(2)} MB`);
+    }),
   ),
 );
+
+// --- Posters ---
+for (const [slug, f] of Object.entries(FILMS)) {
+  const out = path.join(ASSETS, 'films', `${slug}.avif`);
+  if (fresh(out)) continue;
+  const tmp = path.join(os.tmpdir(), `mn-poster-${slug}.png`);
+  run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(f.poster), '-i', path.join(VIDEO_SRC, f.master), '-frames:v', '1', '-update', '1', tmp]);
+  await avif(tmp, out, 1920);
+  fs.rmSync(tmp, { force: true });
+  console.log('poster', slug);
+}
+// showreel.avif (a still of the first hero loop) is kept as it is.
+console.log('images done');
+if (imagesOnly) process.exit(0);
+
+// --- Videos ---
+// Films: 1080p H.264 with sound (the 4K masters are 20–30 Mbps; CRF 22 capped at 6 Mbps looks the same on the web
+// and keeps every file under GitHub's 50 MB warning). Previews: the hero cut at 720p with sound, for the muted carousel
+// and hover previews (the carousel has a sound button).
+// Hero loops: muted, 25 fps (the hero timecode counts 25 fps), plus a 9:16 centre crop for phones held upright.
+const x264 = (crf, max) => ['-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-maxrate', max, '-bufsize', `${parseInt(max) * 2}${max.replace(/\d+/, '')}`, '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart'];
+for (const [slug, f] of Object.entries(FILMS)) {
+  const master = path.join(VIDEO_SRC, f.master);
+  const film = path.join(VIDEO_OUT, `${slug}.mp4`);
+  if (!fresh(film)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', master, '-vf', 'scale=1920:1080:flags=lanczos', ...x264('22', '6M'), '-c:a', 'aac', '-b:a', '160k', film]);
+  const cut = ['-ss', String(f.heroStart), '-t', String(f.heroLen), '-i', master, '-an'];
+  const preview = path.join(VIDEO_OUT, `${slug}-preview.mp4`);
+  if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', ...cut.slice(0, -1), '-vf', 'scale=1280:720:flags=lanczos', ...x264('23', '2500k'), '-c:a', 'aac', '-b:a', '128k', '-af', 'afade=t=in:d=0.3', preview]);
+  const wide = path.join(VIDEO_OUT, `${f.hero}-1080.mp4`);
+  if (!fresh(wide)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', ...cut, '-vf', 'fps=25,scale=1920:1080:flags=lanczos', ...x264('24', '3500k'), wide]);
+  const tall = path.join(VIDEO_OUT, `${f.hero}-portrait.mp4`);
+  if (!fresh(tall)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', ...cut, '-vf', 'fps=25,crop=ih*9/16:ih,scale=576:1024:flags=lanczos', ...x264('26', '1500k'), tall]);
+  console.log('video', slug);
+}
+
+// --- Manifest: what the film pages and the VideoObject data need ---
+const probe = (file) => {
+  const info = JSON.parse(run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height:format=duration', '-of', 'json', file]));
+  return { width: info.streams[0].width, height: info.streams[0].height, duration: Math.round(Number(info.format.duration)) };
+};
+const manifest = {};
+for (const [slug, f] of Object.entries(FILMS)) {
+  manifest[slug] = { src: `/media/videos/${slug}.mp4`, preview: `/media/videos/${slug}-preview.mp4`, ...probe(path.join(VIDEO_OUT, `${slug}.mp4`)), uploadDate: fs.statSync(path.join(VIDEO_SRC, f.master)).mtime.toISOString() };
+}
+manifest.showreel = { src: '/media/videos/hero-1080.mp4', ...probe(path.join(VIDEO_OUT, 'hero-1080.mp4')), uploadDate: '2026-11-09T01:01:27.073Z' };
+fs.writeFileSync(path.join(ROOT, 'src/data/media-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 console.log('ALL DONE');

@@ -33,7 +33,13 @@ export const HERO: HeroMedia = home?.videos?.length && home.poster
         { src: '/media/videos/hero-720.mp4', media: '(max-width: 1600px)' },
         { src: '/media/videos/hero-1080.mp4' },
       ],
-      playlist: [{ src: '/media/videos/hero-1080.mp4', srcMobile: '/media/videos/hero-portrait.mp4' }],
+      // The original loop first (the stills above are its frames), then a cut from each film, round and round.
+      playlist: [
+        { src: '/media/videos/hero-1080.mp4', srcMobile: '/media/videos/hero-portrait.mp4' },
+        { src: '/media/videos/hero-naoual-1080.mp4', srcMobile: '/media/videos/hero-naoual-portrait.mp4' },
+        { src: '/media/videos/hero-medina-1080.mp4', srcMobile: '/media/videos/hero-medina-portrait.mp4' },
+        { src: '/media/videos/hero-essaouira-1080.mp4', srcMobile: '/media/videos/hero-essaouira-portrait.mp4' },
+      ],
     };
 
 // The closing carousel's cards from the dashboard: photos or videos, each with an optional link.

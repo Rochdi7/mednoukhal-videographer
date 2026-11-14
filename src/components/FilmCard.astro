@@ -16,9 +16,9 @@ const data = JSON.stringify({ src: film.src, title, href, width: film.width, hei
 const widths = [480, 800, 1200, 1600].filter((w) => w <= film.poster.width);
 const sizes = feature ? '90vw' : '(max-width: 900px) 90vw, 60vw';
 ---
-<a class:list={['film', { 'film--feature': feature }]} href={href} data-film={data} data-orient={film.height > film.width ? 'vertical' : undefined} data-cat={film.category} data-slot={slot}>
+<a class:list={['film', { 'film--feature': feature }]} href={href} data-film={data} data-preview={film.preview} data-orient={film.height > film.width ? 'vertical' : undefined} data-cat={film.category} data-slot={slot}>
   <div class="film__frame">
-    <Picture src={film.poster} formats={['avif', 'webp']} widths={widths} sizes={sizes} alt={film.description[locale]} loading={feature ? 'eager' : 'lazy'} decoding="async" quality={68} style={ph} />
+    <Picture src={film.poster} formats={['avif', 'webp']} fallbackFormat="jpg" widths={widths} sizes={sizes} alt={film.description[locale]} loading={feature ? 'eager' : 'lazy'} decoding="async" quality={68} style={ph} />
     <span class="film__rec latin" aria-hidden="true"><i></i>REC</span>
     <div class="film__play" aria-hidden="true"><span><Play strokeWidth={1.25} /></span></div>
   </div>

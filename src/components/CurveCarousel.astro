@@ -33,7 +33,7 @@ const s = t(locale);
           {card.video ? (
             <video src={card.video} muted loop playsinline preload="none" data-curve-video poster={card.poster} />
           ) : (
-            card.image && <Picture src={card.image} formats={['avif', 'webp']} widths={[320, 640].filter((w) => w <= card.image!.width)} sizes="(max-width: 640px) 42vw, (max-width: 1024px) 23vw, 20vw" alt="" loading="lazy" decoding="async" draggable="false" quality={70} />
+            card.image && <Picture src={card.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[320, 640].filter((w) => w <= card.image!.width)} sizes="(max-width: 640px) 42vw, (max-width: 1024px) 23vw, 20vw" alt="" loading="lazy" decoding="async" draggable="false" quality={70} />
           )}
           {card.href && <span class="curve__go" aria-hidden="true"><ArrowUpRight /></span>}
         </Tag>

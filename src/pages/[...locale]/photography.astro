@@ -58,7 +58,7 @@ const crumbs = breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale
         <div class="album__grid">
           {album.photos.map((photo) => (
             <a class="print" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
-              <Picture src={photo.image} formats={['avif', 'webp']} widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 620px) 50vw, 25vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={72} style={photo.ph} />
+              <Picture src={photo.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 620px) 50vw, 30vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={72} style={photo.ph} />
             </a>
           ))}
         </div>

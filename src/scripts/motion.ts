@@ -302,17 +302,6 @@ function start() {
     });
   }
 
-  // Image carousel: the giant words behind the straight row slide apart as it passes.
-  const tiltView = document.querySelector<HTMLElement>('[data-panel="photo"] .carousel__view');
-  if (tiltView) {
-    const rows = $$('.giant__row', tiltView);
-    scrub(tiltView, (top, bottom, vh) => [top - vh, bottom], (p) => {
-      rows.forEach((row, i) => {
-        row.style.translate = `${((p - 0.5) * (i ? 18 : -18)).toFixed(2)}vw 0`;
-      });
-    });
-  }
-
   // About: the words light up as they are read. The starting level keeps every word legible (4.5:1 or better).
   const aboutText = document.querySelector<HTMLElement>('.about__text');
   if (aboutText) {

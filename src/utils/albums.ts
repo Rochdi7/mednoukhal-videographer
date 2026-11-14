@@ -11,8 +11,8 @@ export const resolveAlbums = ({ home = false }: { home?: boolean } = {}) =>
       photos: await Promise.all(
         album.photos.map(async (photo) => ({
           ...photo,
-          full: await getImage({ src: photo.image, width: Math.min(2000, photo.image.width), format: 'webp', quality: 82 }),
-          thumb: await getImage({ src: photo.image, width: 160, height: 160, fit: 'cover', format: 'webp', quality: 60 }),
+          full: await getImage({ src: photo.image, width: Math.min(2000, photo.image.width), format: 'avif', quality: 70 }),
+          thumb: await getImage({ src: photo.image, width: 160, height: 160, fit: 'cover', format: 'avif', quality: 55 }),
           ph: `${await blur(photo.image, photo.focus)}${photo.focus ? `;object-position:${photo.focus}` : ''}`,
         })),
       ),

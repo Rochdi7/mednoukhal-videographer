@@ -22,12 +22,13 @@ if (existsSync(join(root, 'src/data/cms.json'))) {
 // Load the site's data modules through Vite, so `import x from './a.jpg'` and import.meta.glob resolve to file paths.
 const vite = await createServer({ root, configFile: false, logLevel: 'error', server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } });
 const load = (path) => vite.ssrLoadModule(path);
-const [{ SITE }, { ALL_FILMS }, { ALBUMS }, { CLIENTS }, reviewsModule] = await Promise.all([
+const [{ SITE }, { ALL_FILMS, FILM_CATEGORIES }, { ALBUMS, PHOTO_CATEGORIES }, { CLIENTS }, reviewsModule, { HERO }] = await Promise.all([
   load('/src/config/site.ts'),
   load('/src/data/films.ts'),
   load('/src/data/photos.ts'),
   load('/src/data/clients.ts'),
   load('/src/data/reviews.ts'),
+  load('/src/data/home.ts'),
 ]);
 await vite.close();
 
@@ -59,28 +60,20 @@ const video = (src) => {
 let n = 0;
 const id = (prefix) => `${prefix}-${(n++).toString(36).padStart(3, '0')}`;
 
-// The current films and albums are placeholders: they are spread over categories so each category has something to show.
-const filmCategories = [
-  { slug: 'commercials', title: { en: 'Commercials', fr: 'Publicités', ar: 'إعلانات' } },
-  { slug: 'brand-films', title: { en: 'Brand films', fr: 'Films de marque', ar: 'أفلام العلامات التجارية' } },
-  { slug: 'music-videos', title: { en: 'Music videos', fr: 'Clips musicaux', ar: 'كليبات موسيقية' } },
-  { slug: 'documentaries', title: { en: 'Documentaries', fr: 'Documentaires', ar: 'أفلام وثائقية' } },
-].map((c) => ({ id: id('fc'), ...c }));
-
-const photoCategories = [
-  { slug: 'portraits-fashion', title: { en: 'Portraits & Fashion', fr: 'Portraits & Mode', ar: 'بورتريه وأزياء' }, albums: ['portraits', 'caftan'] },
-  { slug: 'hospitality', title: { en: 'Hospitality & Food', fr: 'Hôtellerie & Gastronomie', ar: 'الضيافة وفن الطهي' }, albums: ['table', 'interiors'] },
-  { slug: 'craft-performance', title: { en: 'Craft & Performance', fr: 'Artisanat & Spectacle', ar: 'الحرف والعروض' }, albums: ['craft'] },
-].map((c) => ({ id: id('pc'), ...c }));
+// The categories the code's films and albums use.
+const filmCategories = FILM_CATEGORIES.map((c) => ({ id: id('fc'), ...c }));
+const photoCategories = PHOTO_CATEGORIES.map((c) => ({ id: id('pc'), ...c }));
+const filmCat = new Map(filmCategories.map((c) => [c.slug, c.id]));
+const photoCat = new Map(photoCategories.map((c) => [c.slug, c.id]));
 
 const films = [];
-for (const [i, f] of ALL_FILMS.entries()) {
+for (const f of ALL_FILMS) {
   films.push({
     id: id('film'),
     slug: f.slug,
     title: f.title,
     description: f.description,
-    categoryId: filmCategories[f.featured ? 0 : (i - 1 + filmCategories.length) % filmCategories.length].id,
+    categoryId: filmCat.get(f.category) ?? '',
     featured: !!f.featured,
     onHome: f.onHome !== false,
     date: String(f.uploadDate).slice(0, 10),
@@ -93,8 +86,7 @@ const albums = [];
 for (const a of ALBUMS) {
   const photos = [];
   for (const [i, p] of a.photos.entries()) photos.push({ id: id('ph'), ...(await image(p.image, `albums/${a.slug}`, String(i + 1).padStart(2, '0')) ), alt: p.alt });
-  const category = photoCategories.find((c) => c.albums.includes(a.slug)) ?? photoCategories[0];
-  albums.push({ id: id('album'), slug: a.slug, title: a.title, categoryId: category.id, onHome: true, photos });
+  albums.push({ id: id('album'), slug: a.slug, title: a.title, categoryId: photoCat.get(a.category) ?? '', onHome: a.onHome !== false, photos });
 }
 
 const clients = [];
@@ -117,7 +109,7 @@ const seed = {
   },
   home: {
     // The hero films, played in order (one loops).
-    videos: [{ id: id('hero'), video: video('/media/videos/hero-1080.mp4'), videoMobile: video('/media/videos/hero-portrait.mp4') }],
+    videos: HERO.playlist.map((v) => ({ id: id('hero'), video: video(v.src), videoMobile: v.srcMobile ? video(v.srcMobile) : null })),
     poster: await image('/src/assets/hero/hero.jpg', 'hero', 'poster'),
     posterMobile: await image('/src/assets/hero/hero-portrait.jpg', 'hero', 'poster-portrait'),
     aboutPhoto: await image('/src/assets/films/about-portrait.jpg', 'hero', 'about', { focus: '50% 40%' }),

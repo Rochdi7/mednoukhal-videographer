@@ -14,7 +14,7 @@ const previewFor = (card: HTMLElement) => {
     video.playsInline = true;
     video.preload = 'auto';
     video.setAttribute('aria-hidden', 'true');
-    video.src = (JSON.parse(card.dataset.film!) as { src: string }).src;
+    video.src = card.dataset.preview ?? (JSON.parse(card.dataset.film!) as { src: string }).src;
     video.addEventListener('playing', () => card.classList.add('is-previewing'));
     video.addEventListener('pause', () => card.classList.remove('is-previewing'));
     card.querySelector('.film__frame')!.prepend(video);
