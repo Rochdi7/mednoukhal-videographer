@@ -50,21 +50,6 @@
       {
         "id": "hero-01s",
         "video": {
-          "path": "/media/videos/hero-1080.mp4",
-          "width": 1820,
-          "height": 1024,
-          "duration": 14
-        },
-        "videoMobile": {
-          "path": "/media/videos/hero-portrait.mp4",
-          "width": 576,
-          "height": 1024,
-          "duration": 14
-        }
-      },
-      {
-        "id": "hero-01t",
-        "video": {
           "path": "/media/videos/hero-naoual-1080.mp4",
           "width": 1920,
           "height": 1080,
@@ -75,6 +60,21 @@
           "width": 576,
           "height": 1024,
           "duration": 65
+        }
+      },
+      {
+        "id": "hero-01t",
+        "video": {
+          "path": "/media/videos/hero-1080.mp4",
+          "width": 1820,
+          "height": 1024,
+          "duration": 14
+        },
+        "videoMobile": {
+          "path": "/media/videos/hero-portrait.mp4",
+          "width": 576,
+          "height": 1024,
+          "duration": 14
         }
       },
       {
@@ -110,8 +110,8 @@
     ],
     "poster": {
       "path": "/media/seed/hero/poster.jpg",
-      "width": 1820,
-      "height": 1024
+      "width": 1920,
+      "height": 1080
     },
     "posterMobile": {
       "path": "/media/seed/hero/poster-portrait.jpg",
@@ -174,7 +174,7 @@
       },
       "categoryId": "fc-001",
       "featured": true,
-      "onHome": false,
+      "onHome": true,
       "date": "2026-11-09",
       "video": {
         "path": "/media/videos/hero-1080.mp4",

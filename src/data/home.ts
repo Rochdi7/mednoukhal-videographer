@@ -1,7 +1,8 @@
 import type { ImageMetadata } from 'astro';
 import { cms, cmsImage } from './cms';
-import heroImage from '../assets/hero/hero.jpg';
-import heroPortrait from '../assets/hero/hero-portrait.jpg';
+// The stills shown until the first hero film plays: its first frame (Naoual), landscape and phone.
+import heroImage from '../assets/hero/hero-naoual.jpg';
+import heroPortrait from '../assets/hero/hero-naoual-portrait.jpg';
 // About photo, unless another one is set in the dashboard (Homepage hero → About section photo).
 import aboutImage from '../assets/films/med-noukhal-videographer-behind-the-camera.avif';
 
@@ -29,14 +30,13 @@ export const HERO: HeroMedia = home?.videos?.length && home.poster
       poster: heroImage,
       posterMobile: heroPortrait,
       sources: [
-        { src: '/media/videos/hero-portrait.mp4', media: PORTRAIT },
-        { src: '/media/videos/hero-720.mp4', media: '(max-width: 1600px)' },
-        { src: '/media/videos/hero-1080.mp4' },
+        { src: '/media/videos/hero-naoual-portrait.mp4', media: PORTRAIT },
+        { src: '/media/videos/hero-naoual-1080.mp4' },
       ],
-      // The original loop first (the stills above are its frames), then a cut from each film, round and round.
+      // Naoual opens (the stills above are its first frame), then the showreel, then the other films, round and round.
       playlist: [
-        { src: '/media/videos/hero-1080.mp4', srcMobile: '/media/videos/hero-portrait.mp4' },
         { src: '/media/videos/hero-naoual-1080.mp4', srcMobile: '/media/videos/hero-naoual-portrait.mp4' },
+        { src: '/media/videos/hero-1080.mp4', srcMobile: '/media/videos/hero-portrait.mp4' },
         { src: '/media/videos/hero-medina-1080.mp4', srcMobile: '/media/videos/hero-medina-portrait.mp4' },
         { src: '/media/videos/hero-essaouira-1080.mp4', srcMobile: '/media/videos/hero-essaouira-portrait.mp4' },
       ],

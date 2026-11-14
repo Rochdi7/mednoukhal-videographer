@@ -51,7 +51,7 @@ const LOCAL_FILMS: Film[] = [
     en: 'A man in a patterned jacket stands on a rocky hilltop and looks out over the city.',
     fr: 'Un homme en veste à motifs, debout sur une colline rocheuse, contemple la ville.',
     ar: 'رجل بسترة منقوشة يقف على تلة صخرية ويتأمل المدينة.',
-  }, { featured: true, onHome: false }),
+  }, { featured: true }),
   build('naoual-live-on-stage', 'music-videos', { en: 'Naoual — Live on Stage', fr: 'Naoual — Sur scène', ar: 'نوال — على المسرح' }, {
     en: 'A singer in a Morocco jersey and red fez performs with a troupe of dancers under deep red stage light.',
     fr: 'Une chanteuse en maillot du Maroc et fez rouge se produit avec une troupe de danseurs sous une lumière rouge profonde.',
@@ -94,8 +94,8 @@ const source = CMS_FILMS ?? LOCAL_FILMS;
 const reel = source.findIndex((f) => f.featured);
 export const ALL_FILMS: Film[] = reel < 0 ? source : [source[reel], ...source.filter((_, i) => i !== reel).map((f) => ({ ...f, featured: false }))];
 export const SHOWREEL: Film = ALL_FILMS[0];
-// The homepage carousel.
-export const FILMS: Film[] = ALL_FILMS.filter((f) => f.onHome !== false && f !== SHOWREEL);
+// The homepage carousel: every film ticked for it, the showreel included.
+export const FILMS: Film[] = ALL_FILMS.filter((f) => f.onHome !== false);
 
 // Only categories that hold at least one film are listed on the site.
 // (The showreel opens the films page as a banner outside the filter, so it does not count.)

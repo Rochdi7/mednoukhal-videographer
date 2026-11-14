@@ -113,8 +113,8 @@ const seed = {
   home: {
     // The hero films, played in order (one loops).
     videos: HERO.playlist.map((v) => ({ id: id('hero'), video: video(v.src), videoMobile: v.srcMobile ? video(v.srcMobile) : null })),
-    poster: await image('/src/assets/hero/hero.jpg', 'hero', 'poster'),
-    posterMobile: await image('/src/assets/hero/hero-portrait.jpg', 'hero', 'poster-portrait'),
+    poster: await image(HERO.poster, 'hero', 'poster'),
+    posterMobile: await image(HERO.posterMobile, 'hero', 'poster-portrait'),
     aboutPhoto: await image('/src/assets/films/med-noukhal-videographer-behind-the-camera.avif', 'hero', 'med-noukhal-videographer-behind-the-camera', { focus: '62% 30%' }),
   },
   // Empty: the dashboard shows the built-in texts and stores only what is changed.
