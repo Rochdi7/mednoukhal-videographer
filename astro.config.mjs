@@ -1,11 +1,10 @@
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
 
 // Replace with the real domain before deploying, or set SITE_URL at build time.
 const site = process.env.SITE_URL ?? 'https://mednoukhal.com';
-// The dashboard's address (same as ADMIN_PATH in src/config/admin.ts), kept out of the sitemap.
-const DASHBOARD = '/mnvisual00.rec';
 
+// The sitemap is src/pages/sitemap.xml.ts (served at /sitemap.xml, with hreflang, image and video entries).
+// It lists only the public pages, so the dashboard never appears in it.
 export default defineConfig({
   site,
   output: 'static',
@@ -14,10 +13,4 @@ export default defineConfig({
   trailingSlash: 'always',
   build: { format: 'directory', inlineStylesheets: 'auto' },
   devToolbar: { enabled: false },
-  integrations: [
-    sitemap({
-      filter: (page) => !page.includes('/404') && !page.includes(DASHBOARD),
-      i18n: { defaultLocale: 'en', locales: { en: 'en', fr: 'fr', ar: 'ar' } },
-    }),
-  ],
 });

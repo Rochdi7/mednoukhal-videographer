@@ -1,0 +1,4 @@
+# The contact form and dashboard API: nothing here belongs in search results.
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>

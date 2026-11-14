@@ -12,7 +12,7 @@ import { LOGO_MARK as mark, LOGO_WORDMARK } from '../../config/site';
 import { FILM_CATEGORIES, FILMS } from '../../data/films';
 import { SITE } from '../../config/site';
 import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
-import { personNode, websiteNode } from '../../utils/seo';
+import { abs, businessNode, personNode, websiteNode } from '../../utils/seo';
 import { resolveAlbums } from '../../utils/albums';
 import { blur } from '../../utils/placeholder';
 import { ABOUT_PHOTO, CURVE_ITEMS, HERO } from '../../data/home';
@@ -52,8 +52,19 @@ const curveItems = CURVE_ITEMS
     })))
   : mixedPhotos;
 
+// Structured data: the site, Med Noukhal (with his photo) and the production service he runs.
+const site = Astro.site;
+const aboutJpg = await getImage({ src: ABOUT_PHOTO.image, width: Math.min(1200, ABOUT_PHOTO.image.width), format: 'jpg', quality: 80 });
+const heroJpg = await getImage({ src: HERO.poster, width: Math.min(1200, HERO.poster.width), format: 'jpg', quality: 80 });
+const logoPng = await getImage({ src: mark, width: 512, format: 'png' });
+const jsonLd = [
+  websiteNode(site, locale),
+  personNode(site, locale, abs(site, aboutJpg.src)),
+  businessNode(site, locale, { image: abs(site, heroJpg.src), logo: abs(site, logoPng.src), description: s.meta.homeDesc }),
+];
+const aboutAlt = `${SITE.name} — ${s.hero.sr}`;
 ---
-<Base locale={locale} title={s.meta.homeTitle} description={s.meta.homeDesc} path="/" hero jsonLd={[websiteNode(Astro.site, locale), personNode(Astro.site, locale)]}>
+<Base locale={locale} title={s.meta.homeTitle} description={s.meta.homeDesc} path="/" hero jsonLd={jsonLd}>
   <Fragment slot="head">
     <link rel="preload" as="image" href={heroLandscape.src} type="image/webp" media="(min-width: 701px), (orientation: landscape)" fetchpriority="high" />
     <link rel="preload" as="image" href={heroMobile.src} type="image/webp" media="(max-width: 700px) and (orientation: portrait)" fetchpriority="high" />
@@ -182,7 +193,7 @@ const curveItems = CURVE_ITEMS
       <!-- Arch-framed still with a camera REC tag and a turning "role" ring around the MN mark -->
       <figure class="about__media">
         <div class="about__frame">
-          <Picture src={ABOUT_PHOTO.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= ABOUT_PHOTO.image.width)} sizes="(max-width: 760px) 78vw, 440px" alt="" loading="lazy" decoding="async" quality={72} style={`${aboutPh};object-position:${ABOUT_PHOTO.focus}`} />
+          <Picture src={ABOUT_PHOTO.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= ABOUT_PHOTO.image.width)} sizes="(max-width: 760px) 78vw, 440px" alt={aboutAlt} loading="lazy" decoding="async" quality={72} style={`${aboutPh};object-position:${ABOUT_PHOTO.focus}`} />
           <span class="about__rec" dir="ltr" aria-hidden="true"><i></i>REC</span>
         </div>
         <div class="about__badge" aria-hidden="true">

@@ -156,7 +156,7 @@ const drawBar = () => {
     h('span', { class: 'bar__state', 'data-tone': failed ? 'error' : tone }, failed ? 'Publish failed' : stateText),
     failed && run!.url && h('a', { class: 'btn btn--sm btn--ghost', href: run!.url, target: '_blank', rel: 'noopener' }, 'Details'),
     h('button', { class: 'btn', type: 'button', disabled: !state.dirty || state.saving, onClick: save }, 'Save'),
-    h('button', { class: 'btn btn--primary', type: 'button', disabled: state.dirty || state.saving || !!building || !s?.canPublish, title: s && !s.canPublish ? 'Publishing is not set up on the server yet (github_token in api/config.php).' : undefined, onClick: publish }, 'Publish'),
+    h('button', { class: 'btn btn--primary', type: 'button', disabled: state.dirty || state.saving || !!building, 'aria-disabled': s && !s.canPublish ? 'true' : undefined, onClick: publish }, 'Publish'),
     h('a', { class: 'btn btn--ghost', href: '/', target: '_blank', rel: 'noopener' }, 'View site', icon(ArrowUpRight)),
   );
 };
@@ -222,7 +222,10 @@ function renderLogin(message = '') {
               ({
                 wrong_login: 'Wrong email or password.',
                 rate_limited: `Too many attempts. Try again in ${Math.ceil((res.retryIn ?? 900) / 60)} minutes.`,
-                not_configured: 'No login is set up on the server yet: fill in admin_email and admin_password_hash in api/config.php.',
+                not_configured: 'No login is set up on the server: add admin_email and admin_password_hash to mn-config.php (next to public_html) or api/config.php.',
+                server: `Server error (${res.status}). Check that api/config.php or mn-config.php is on the server.`,
+                data_dir: 'The server cannot create its data folder (mn-data next to public_html).',
+                origin: 'Request blocked: open the dashboard on the same address as the site.',
                 no_api: 'The dashboard API was not found. Open the dashboard on the server (or with npm run admin:local), not with the Astro dev server.',
                 network: 'No connection to the server.',
               } as Record<string, string>)[res.code ?? ''] ?? 'Sign-in failed. Try again.';
@@ -342,6 +345,11 @@ async function refreshStatus() {
 
 async function publish() {
   const local = !!state.status?.local;
+  // Said out loud on click: a silently greyed-out button reads as broken.
+  if (state.status && !state.status.canPublish) {
+    toast('Publishing is not connected yet. Your changes are saved and will go live once GitHub publishing is set up.', 'error');
+    return;
+  }
   if (!confirm(local ? 'Publish your saved changes? The local site rebuilds in about a minute.' : 'Publish your saved changes? The site updates in 3–5 minutes.')) return;
   const res = await call('publish', {});
   if (!res.ok) {

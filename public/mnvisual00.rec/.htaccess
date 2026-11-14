@@ -1,0 +1,6 @@
+# The dashboard: never indexed, cached or shown in search, whatever finds it.
+# Sent as a header so it covers every file in this folder (strings.json too), not only the page with the meta tag.
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+  Header always set Cache-Control "no-store"
+</IfModule>

@@ -832,7 +832,7 @@ a.channel:dir(rtl):hover .channel__go { translate: -3px -3px; }
 }
 
 /* ---------- Footer: the page's end credits ----------
-   Closing call to action, four credit columns, a bottom bar, and a giant outlined MN VISUAL sinking off the bottom edge. */
+   Closing call to action, four credit columns, a bottom bar, and a giant outlined MED NOUKHAL sinking off the bottom edge. */
 .site-foot { position: relative; overflow: hidden; isolation: isolate; font-size: 14px; color: var(--muted); border-block-start: 1px solid var(--line); background: radial-gradient(70% 55% at 50% 0%, rgba(228, 78, 29, 0.1), transparent 70%); }
 /* Low specificity on purpose: buttons and the email link keep their own hover colours and transitions */
 .site-foot :where(a:not(.btn)) { transition: color 0.3s; }
@@ -896,7 +896,7 @@ nav.site-foot__col a:hover::before, nav.site-foot__col a:focus-visible::before {
 .site-foot__top:hover svg { background: var(--accent-fill); color: #000; translate: 0 -4px; }
 
 /* Closing card: giant outlined title, cut by the bottom edge */
-.site-foot__giant { position: relative; z-index: -1; margin-block: 0 calc(-0.34 * min(11.5vw, 220px)); font-family: var(--heavy); font-weight: 500; font-size: min(11.5vw, 220px); line-height: 1; letter-spacing: 0.02em; text-align: center; text-transform: uppercase; white-space: nowrap; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14); pointer-events: none; user-select: none;
+.site-foot__giant { --giant: min(11.2vw, 215px); position: relative; z-index: -1; margin-block: 0 calc(-0.34 * var(--giant)); font-family: var(--heavy); font-weight: 500; font-size: var(--giant); line-height: 1; letter-spacing: 0.02em; text-align: center; text-transform: uppercase; white-space: nowrap; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14); pointer-events: none; user-select: none;
   -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 85%); mask-image: linear-gradient(to bottom, #000 30%, transparent 85%); }
 
 @media (max-width: 960px) {

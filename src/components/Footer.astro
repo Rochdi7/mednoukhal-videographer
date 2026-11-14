@@ -3,7 +3,7 @@
 // 1. a closing call to action (big email link, start-a-project and WhatsApp buttons),
 // 2. credits: the logo centred on its own row, then pages, direct contact and social channels,
 // 3. a bottom bar with copyright, developer credit and a "back to top" rewind,
-// with a giant outlined MN VISUAL title sinking off the bottom edge like a closing card.
+// with a giant outlined MED NOUKHAL title sinking off the bottom edge like a closing card.
 import { Image } from 'astro:assets';
 import { ArrowUp, ArrowUpRight, Mail, Phone } from '@lucide/astro';
 import Ticker from './Ticker.astro';
@@ -90,5 +90,5 @@ const icon = brandIcon;
     <a class="site-foot__top" href="#">{f.top}<ArrowUp aria-hidden="true" /></a>
   </div>
 
-  <p class="site-foot__giant latin" aria-hidden="true">{SITE.logoAlt}</p>
+  <p class="site-foot__giant latin" aria-hidden="true">{SITE.name}</p>
 </footer>

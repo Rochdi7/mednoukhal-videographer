@@ -156,7 +156,8 @@ if ($errors) {
     respond(422, ['ok' => false, 'code' => 'validation', 'fields' => $errors]);
 }
 
-$config = require __DIR__ . '/config.php';
+// config.php is optional (a deploy that empties public_html removes it); mn-config.php outside the website survives.
+$config = is_file(__DIR__ . '/config.php') ? (array) require __DIR__ . '/config.php' : [];
 // Optional settings file outside the website (next to public_html on the server, the project folder locally). Its values win.
 $outside = dirname(__DIR__, 2) . '/mn-config.php';
 if (is_file($outside)) {

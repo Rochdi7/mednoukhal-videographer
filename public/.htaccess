@@ -4,9 +4,17 @@ ErrorDocument 404 /404.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # One address per page for Google: www goes to the bare domain, http to https (in a single hop).
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
   RewriteCond %{HTTPS} off
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # /films/index.html and the like are the same page as /films/: send them to the clean address.
+  RewriteCond %{THE_REQUEST} \s/+((?:[^\s?]*/)?)index\.html[\s?]
+  RewriteRule ^ /%1 [L,R=301]
+  # The old sitemap addresses (before /sitemap.xml), in case they were submitted to Search Console.
+  RewriteRule ^sitemap-(?:index|0)\.xml$ /sitemap.xml [L,R=301]
 </IfModule>
 
 <FilesMatch "^config\.php$">
@@ -21,7 +29,10 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/xml text/plain
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/ld+json image/svg+xml application/xml text/xml text/plain image/x-icon
+  <IfModule mod_headers.c>
+    Header append Vary Accept-Encoding
+  </IfModule>
 </IfModule>
 
 <IfModule mod_headers.c>

@@ -1,5 +1,6 @@
 import type { ImageMetadata } from 'astro';
 import { cms, cmsImage } from './cms';
+import { versioned } from './media-version';
 // The stills shown until the first hero film plays: its first frame (Naoual), landscape and phone.
 import heroImage from '../assets/hero/hero-naoual.jpg';
 import heroPortrait from '../assets/hero/hero-naoual-portrait.jpg';
@@ -19,7 +20,7 @@ export interface HeroMedia {
 const PORTRAIT = '(max-width: 700px) and (orientation: portrait)';
 const home = cms?.home;
 
-export const HERO: HeroMedia = home?.videos?.length && home.poster
+const HERO_FILES: HeroMedia = home?.videos?.length && home.poster
   ? {
       poster: cmsImage(home.poster),
       posterMobile: home.posterMobile ? cmsImage(home.posterMobile) : null,
@@ -41,6 +42,13 @@ export const HERO: HeroMedia = home?.videos?.length && home.poster
         { src: '/media/videos/hero-essaouira-1080.mp4', srcMobile: '/media/videos/hero-essaouira-portrait.mp4' },
       ],
     };
+
+// Every hero URL carries its file version, so a re-cut film is never served from an old cached copy.
+export const HERO: HeroMedia = {
+  ...HERO_FILES,
+  sources: HERO_FILES.sources.map((s) => ({ ...s, src: versioned(s.src) })),
+  playlist: HERO_FILES.playlist.map((f) => ({ src: versioned(f.src), ...(f.srcMobile ? { srcMobile: versioned(f.srcMobile) } : {}) })),
+};
 
 // The closing carousel's cards from the dashboard: photos or videos, each with an optional link.
 // null = not set there, so the page keeps its row of album photos.

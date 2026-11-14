@@ -26,6 +26,7 @@ img, video { display: block; max-width: 100%; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn--primary { background: var(--accent-fill); border-color: var(--accent-fill); color: #000; }
 .btn--primary:hover { background: var(--accent); border-color: var(--accent); }
+.btn--primary[aria-disabled="true"] { opacity: 0.55; }
 .btn--danger { color: var(--danger); border-color: rgba(255, 107, 107, 0.4); }
 .btn--danger:hover { background: var(--danger); color: #000; border-color: var(--danger); }
 .btn--ghost { border-color: transparent; color: var(--muted); }
@@ -37,9 +38,9 @@ img, video { display: block; max-width: 100%; }
 /* ---------- Login ---------- */
 .login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
 .login__card { width: min(400px, 100%); padding: 36px 32px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
-.login__brand { margin: 0 0 12px; }
-.login__brand img { display: block; width: auto; height: 56px; }
-.login__sub { margin: 0 0 24px; color: var(--muted); }
+.login__brand { margin: 0 0 12px; text-align: center; }
+.login__brand img { display: block; width: auto; height: 56px; margin-inline: auto; }
+.login__sub { margin: 0 0 24px; color: var(--muted); text-align: center; }
 .login form { display: grid; gap: 14px; }
 .login .btn { width: 100%; min-height: 44px; }
 

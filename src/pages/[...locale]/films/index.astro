@@ -4,7 +4,7 @@ import FilmCard from '../../../components/FilmCard.astro';
 import Theater from '../../../components/Theater.astro';
 import { ALL_FILMS, FILM_CATEGORIES, SHOWREEL } from '../../../data/films';
 import { localePath, localeStaticPaths, t, type Locale } from '../../../i18n';
-import { breadcrumbNode, personNode } from '../../../utils/seo';
+import { breadcrumbNode, collectionNode, personNode } from '../../../utils/seo';
 
 export const getStaticPaths = localeStaticPaths;
 
@@ -17,7 +17,7 @@ const projects = ALL_FILMS.filter((film) => film !== reel);
 const categoryName = new Map(FILM_CATEGORIES.map((c) => [c.slug, c.title[locale]]));
 const countIn = (slug: string) => projects.filter((film) => film.category === slug).length;
 ---
-<Base locale={locale} title={s.meta.filmsTitle} description={s.meta.filmsDesc} path="/films/" image={SHOWREEL.poster} jsonLd={[personNode(site, locale), breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.films, path: localePath(locale, '/films/') }])]}>
+<Base locale={locale} title={s.meta.filmsTitle} description={s.meta.filmsDesc} path="/films/" image={SHOWREEL.poster} jsonLd={[collectionNode(site, locale, { name: s.meta.filmsTitle, description: s.meta.filmsDesc, path: '/films/', items: ALL_FILMS.map((film) => ({ name: film.title[locale], path: `/films/${film.slug}/` })) }), personNode(site, locale), breadcrumbNode(site, [{ name: s.nav.home, path: localePath(locale) }, { name: s.nav.films, path: localePath(locale, '/films/') }])]}>
   <header class="page-head wrap films-head">
     <div>
       <p class="eyebrow">{s.films.eyebrow}</p>

@@ -17,7 +17,10 @@ header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
-$CONFIG = require __DIR__ . '/../config.php';
+// config.php is optional: a deploy that empties public_html removes it (the zip never carries it), and a missing
+// file must not take the whole API down. mn-config.php outside the website survives every deploy.
+$inside = __DIR__ . '/../config.php';
+$CONFIG = is_file($inside) ? (array) require $inside : [];
 // Optional settings file outside the website (next to public_html on the server, the project folder locally),
 // written by `npm run admin:password -- --local`. Its values win over config.php.
 $outside = dirname(__DIR__, 3) . '/mn-config.php';

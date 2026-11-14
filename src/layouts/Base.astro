@@ -29,7 +29,10 @@ const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 const canonical = abs(site, localePath(locale, path));
 const og = await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 });
 const ogUrl = abs(site, og.src);
-const ogLocale = { en: 'en_US', fr: 'fr_FR', ar: 'ar_MA' }[locale];
+const OG_LOCALES = { en: 'en_US', fr: 'fr_FR', ar: 'ar_MA' } as const;
+const ogLocale = OG_LOCALES[locale];
+// Lets Google show large photo previews and full video previews in results (it is a visual portfolio).
+const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 const fonts = locale === 'ar'
   ? ['lemonmilk-medium', 'ibm-plex-sans-arabic-arabic-400-normal']
   : ['lemonmilk-medium', 'lemonmilk-light', 'inter-latin-400-normal'];
@@ -42,7 +45,9 @@ const strings = t(locale);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={robots} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta name="author" content={SITE.name} />
     {!noindex && LOCALES.map((l) => <link rel="alternate" hreflang={l} href={abs(site, localePath(l, path))} />)}
     {!noindex && <link rel="alternate" hreflang="x-default" href={abs(site, path)} />}
     <meta name="theme-color" content="#000000" />
@@ -56,11 +61,18 @@ const strings = t(locale);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content={String(og.attributes.width ?? 1200)} />
+    {og.attributes.height && <meta property="og:image:height" content={String(og.attributes.height)} />}
+    <meta property="og:image:alt" content={fullTitle} />
     <meta property="og:locale" content={ogLocale} />
+    {!noindex && LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={OG_LOCALES[l]} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogUrl} />
+    <meta name="twitter:image:alt" content={fullTitle} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     {jsonLd.map((node) => <script type="application/ld+json" set:html={JSON.stringify(node)} />)}
     <script is:inline>
       (function () {
@@ -88,6 +100,7 @@ const strings = t(locale);
     <Footer locale={locale} />
     <script src="../scripts/site.ts"></script>
     <script src="../scripts/motion.ts"></script>
+    <script src="../scripts/guard.ts"></script>
     <script>
       // Live editing for the signed-in owner: ?edit on any page loads the editor (a separate file, never loaded for
       // visitors); it stays on while browsing until "Leave edit mode".

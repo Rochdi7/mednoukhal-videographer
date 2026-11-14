@@ -2,6 +2,7 @@ import type { ImageMetadata } from 'astro';
 import type { Localized } from '../i18n';
 import manifest from './media-manifest.json';
 import { cms, cmsImage, cmsLocalized } from './cms';
+import { versioned } from './media-version';
 
 const posters = import.meta.glob<{ default: ImageMetadata }>('/src/assets/films/*.avif', { eager: true });
 
@@ -34,16 +35,21 @@ const LOCAL_CATEGORIES: FilmCategory[] = [
   { slug: 'travel', title: { en: 'Travel', fr: 'Voyage', ar: 'سفر' } },
 ];
 
-const build = (slug: keyof typeof manifest, category: string, title: Localized, description: Localized, extra: Partial<Film> = {}): Film => ({
-  slug,
-  title,
-  description,
-  poster: posters[`/src/assets/films/${slug}.avif`].default,
-  ...manifest[slug],
-  category,
-  onHome: true,
-  ...extra,
-});
+const build = (slug: keyof typeof manifest, category: string, title: Localized, description: Localized, extra: Partial<Film> = {}): Film => {
+  const media: { src: string; preview?: string; width: number; height: number; duration: number; uploadDate: string } = manifest[slug];
+  return {
+    slug,
+    title,
+    description,
+    poster: posters[`/src/assets/films/${slug}.avif`].default,
+    ...media,
+    src: versioned(media.src),
+    ...(media.preview ? { preview: versioned(media.preview) } : {}),
+    category,
+    onHome: true,
+    ...extra,
+  };
+};
 
 const LOCAL_FILMS: Film[] = [
   // The first hero loop doubles as the showreel: it opens the films page as the wide banner.
@@ -77,7 +83,7 @@ const CMS_FILMS: Film[] | null = cms?.films.length
       description: cmsLocalized(f.description, { en: '', fr: '', ar: '' }),
       poster: cmsImage(f.poster),
       focus: f.poster.focus,
-      src: f.video.src,
+      src: versioned(f.video.src),
       width: f.video.width || 1920,
       height: f.video.height || 1080,
       duration: f.video.duration,
