@@ -47,4 +47,4 @@ GSAP is not used. `src/scripts/motion.ts` is a small dependency-free scroll engi
 
 ## Media
 
-Masters stay in `media-source/`, which is not deployed. `npm run media` builds the deliverables. Photos and posters go to `src/assets/` rather than `public/media/` so Astro and Sharp can generate AVIF, WebP and responsive sizes.
+The masters were removed after processing (put the `wetransfer_*` folders back to rebuild). `npm run media` builds the deliverables. Photos and posters go to `src/assets/` rather than `public/media/` so Astro and Sharp can generate AVIF, WebP and responsive sizes.

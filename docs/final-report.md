@@ -126,7 +126,7 @@ These need the live host:
 5. Create the sender mailbox on the domain and send a test enquiry.
 6. Submit `sitemap-index.xml` in Google Search Console.
 
-No Node.js or database is needed on the server. `media-source/` is about 870 MB of masters and should not be uploaded. Keep it to rebuild the media with `npm run media`.
+No Node.js or database is needed on the server. The masters were removed after processing; the finished photos and videos are in the repo.
 
 ## Remaining issues
 

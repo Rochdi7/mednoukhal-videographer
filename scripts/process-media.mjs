@@ -34,6 +34,13 @@ const FILMS = {
   'essaouira-atlantic-soul': { master: 'Sequence 03_2.mp4', poster: 8.4, hero: 'hero-essaouira', previewStart: 0, previewLen: 10.9 },
 };
 
+// The masters were removed once processed; the outputs above are in the repo. Put the folders back to rebuild.
+const missing = [VIDEO_SRC, ...Object.values(ALBUMS).map((d) => path.join(ROOT, d))].filter((d) => !fs.existsSync(d));
+if (missing.length) {
+  console.log(`Masters not found, nothing to rebuild:\n  ${missing.map((d) => path.basename(d)).join('\n  ')}`);
+  process.exit(0);
+}
+
 function run(cmd, args) {
   const r = spawnSync(cmd, args, { encoding: 'utf8', maxBuffer: 1 << 26 });
   if (r.status !== 0) throw new Error(`${cmd} ${args.join(' ')}\n${r.stderr}`);
