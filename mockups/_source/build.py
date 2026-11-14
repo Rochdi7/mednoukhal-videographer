@@ -1,4 +1,4 @@
-"""Build the MN Visual presentation mockups.
+"""Build the Med Noukhal presentation mockups.
 
 Usage (dev server on http://localhost:4321 not needed here, only the screenshots):
     python mockups/_source/build.py            # all scenes
@@ -56,7 +56,7 @@ def phone(name, x, y, w, rot="", off=0, z=10, extra=""):
 def tablet(name, x, y, w, rot="", off=0, z=10, extra=""):
     bg = top_color(name, off, "tablet")
     return f'''<div class="tablet" {style(x, y, w, rot, z, extra)}><div class="bezel"><div class="screen">
-  <div class="status" style="background:{bg}"><span>9:41&nbsp;&nbsp;Ven. 13 nov.</span><span class="ic">{WIFI}{BATT}</span></div>
+  <div class="status" style="background:{bg}"><span>9:41&nbsp;&nbsp;Sam. 14 nov.</span><span class="ic">{WIFI}{BATT}</span></div>
   <img src="{shot(name)}" style="top:calc({26 - off} * var(--u))" alt="">
   <div class="home"></div><div class="glare"></div></div></div></div>'''
 
@@ -90,10 +90,10 @@ def viewfinder(tc="00:00:24:12", ratio="16:9", inset=72, fs=22, c=64):
 def brand(x, y, fs=30, right=False, sub="Photographie · Vidéographie"):
     pos = f"right:{x}px" if right else f"left:{x}px"
     return f'''<div class="brand" style="position:absolute;z-index:35;{pos};top:{y}px;font-size:{fs}px">
-  <img src="{MARK}" alt=""><div class="word">MEDNOUKHAL<small>{sub}</small></div></div>'''
+  <img src="{MARK}" alt=""><div class="word">MED NOUKHAL<small>{sub}</small></div></div>'''
 
 
-def footbar(left="mednoukhal.com", mid='Films <span class="dot">·</span> Photographie <span class="dot">·</span> Coaching', right="© 2026 MN Visual", x=170, y=118, fs=19):
+def footbar(left="mednoukhal.com", mid='Films <span class="dot">·</span> Photographie <span class="dot">·</span> Avis', right="© 2026 Med Noukhal", x=170, y=118, fs=19):
     return f'<div class="footbar" style="--fb-x:{x}px;--fb-y:{y}px;--fb-fs:{fs}px"><span>{left}</span><span>{mid}</span><span>{right}</span></div>'
 
 
@@ -122,11 +122,11 @@ def s_cover():
     body = f'''
 <div class="ghost" style="font-size:520px;left:50%;top:50%;transform:translate(-50%,-50%)">MN VISUAL</div>
 {viewfinder("00:00:00:01", "4K · 16:9")}
-<div style="position:absolute;z-index:35;left:0;right:0;top:470px;text-align:center">
-  <img src="{LOCKUP}" style="height:700px;filter:drop-shadow(0 30px 80px rgba(0,0,0,.6))" alt="MN Visual">
-  <div class="rule" style="margin:110px auto 70px;width:160px"></div>
+<div style="position:absolute;z-index:35;left:0;right:0;top:640px;text-align:center">
+  <img src="{LOCKUP}" style="width:2200px;filter:drop-shadow(0 30px 80px rgba(0,0,0,.6))" alt="Med Noukhal Visuals">
+  <div class="rule" style="margin:150px auto 80px;width:160px"></div>
   <div class="title" style="font-size:44px;letter-spacing:.5em;font-weight:300">Présentation du site web</div>
-  <div style="margin-top:36px;font-family:var(--display);font-size:24px;letter-spacing:.6em;color:var(--muted)">MEDNOUKHAL <span style="color:var(--accent)">·</span> PHOTOGRAPHIE <span style="color:var(--accent)">·</span> VIDÉOGRAPHIE</div>
+  <div style="margin-top:36px;font-family:var(--display);font-size:24px;letter-spacing:.6em;color:var(--muted)">MED NOUKHAL <span style="color:var(--accent)">·</span> PHOTOGRAPHIE <span style="color:var(--accent)">·</span> VIDÉOGRAPHIE</div>
 </div>
 {footbar(left="mednoukhal.com", mid="Desktop · Tablette · Mobile", right="Novembre 2026")}'''
     return page(W, H, body, gy="48%")
@@ -134,7 +134,7 @@ def s_cover():
 
 def s_hero():
     body = f'''
-<div class="ghost" style="font-size:430px;left:50%;top:330px;transform:translateX(-50%)">MEDNOUKHAL</div>
+<div class="ghost" style="font-size:360px;left:50%;top:360px;transform:translateX(-50%)">MED NOUKHAL</div>
 {viewfinder()}
 {brand(170, 215)}
 <div class="eyebrow" style="position:absolute;z-index:35;right:170px;top:245px;--eb:21px">Site web · Responsive</div>
@@ -155,7 +155,7 @@ def s_desktop():
 {brand(170, 215)}
 {text_block(210, 560, 1120, "Desktop", 'Grand écran,<br><em>grand format.</em>',
             "Une navigation cinématographique pensée pour les écrans larges : vidéo plein cadre, typographie LEMON MILK et accent orange signature.",
-            [("1440", "Viewport"), ("FR·EN·AR", "Langues"), ("6", "Pages")], tsize=96)}
+            [("1440", "Viewport"), ("EN·FR·AR", "Langues"), ("5", "Pages")], tsize=96)}
 {floor_shadow(1360, 1700, 2380, 150)}
 {laptop("home-showcase-desktop", 1330, 440, 2380)}
 {footbar()}'''
@@ -169,7 +169,7 @@ def s_tablet():
 {brand(170, 215)}
 {text_block(210, 600, 1150, "Tablette", 'Pensé pour<br><em>le toucher.</em>',
             "Les albums photo et les films se parcourent du bout des doigts. Chaque mise en page se réorganise pour garder le cadre lisible.",
-            [("834", "Viewport"), ("5", "Albums"), ("Tactile", "Navigation")], tsize=96)}
+            [("834", "Viewport"), ("3", "Albums"), ("Tactile", "Navigation")], tsize=96)}
 {floor_shadow(1640, 1800, 950, 120)}
 {floor_shadow(2580, 1690, 950, 120)}
 {tablet("photography-tablet", 1660, 600, 880, rot="rotate(-5deg)", z=12)}
@@ -197,8 +197,8 @@ def s_mobile():
 
 
 def s_pages():
-    items = [("home-phone", "Accueil"), ("films-phone", "Films"), ("photography-phone", "Photographie"),
-             ("coaching-phone", "Coaching"), ("advice-phone", "Conseils"), ("contact-phone", "Contact")]
+    items = [("home-phone", "Accueil"), ("films-phone", "Films"), ("photography-phone", "Albums"),
+             ("reviews-phone", "Avis"), ("contact-phone", "Contact"), ("ar-phone", "Arabe")]
     w, gap = 470, 108
     x0 = (W - (6 * w + 5 * gap)) // 2
     parts = []
@@ -212,7 +212,7 @@ def s_pages():
 {viewfinder("00:04:20:00")}
 <div style="position:absolute;z-index:35;left:{x0}px;top:190px">
   <div class="eyebrow" style="--eb:22px">Toutes les pages</div>
-  <h1 class="title" style="font-size:84px;margin-top:40px">Six pages, <em>une signature.</em></h1></div>
+  <h1 class="title" style="font-size:84px;margin-top:40px">Cinq pages, <em>trois langues.</em></h1></div>
 {brand(x0, 210, right=True)}
 {''.join(parts)}
 {footbar(x=x0)}'''
@@ -247,15 +247,144 @@ def s_social():
 <div class="ghost" style="font-size:300px;left:50%;top:1180px;transform:translateX(-50%)">MN VISUAL</div>
 {viewfinder("00:00:15:00", "4:5", inset=64, fs=24, c=72)}
 <div style="position:absolute;z-index:35;left:0;right:0;top:250px;text-align:center">
-  <img src="{LOCKUP}" style="height:330px" alt="MN Visual">
+  <img src="{LOCKUP}" style="width:1500px" alt="Med Noukhal Visuals">
   <div class="eyebrow" style="justify-content:center;margin-top:76px;--eb:30px">Nouveau site web</div>
 </div>
 {floor_shadow(430, 2260, 880, 110)}
 {floor_shadow(1300, 2230, 420, 90)}
 {tablet("home-tablet", 400, 1010, 900, z=11)}
 {phone("photography-phone", 1330, 1360, 440, z=12, extra="--halo:.2")}
-{footbar(left="mednoukhal.com", mid="", right="Films · Photo · Coaching", x=150, y=140, fs=24)}'''
+{footbar(left="mednoukhal.com", mid="", right="Films · Photo · Avis", x=150, y=140, fs=24)}'''
     return page(w, h, body, gy="62%"), (w, h)
+
+
+# ---------- extra scenes (Nov. 2026) ----------
+def film_strip(frames, x, y, w, rot="rotate(-7deg)", fw=1280, fh=800, gap=64, z=10):
+    """A 35 mm film strip: perforations top and bottom, edge markings, and one page per frame."""
+    holes = "".join("<i></i>" for _ in range(60))
+    edge = "".join(f'<span>MN VISUAL 400 <b>▸</b> {n:02d}A</span>' for n in range(1, 9))
+    cells = "".join(f'<div class="cell"><img src="{shot(n)}" alt=""><em>{i + 1:02d}</em></div>' for i, n in enumerate(frames))
+    return f'''<div class="strip" style="left:{x}px;top:{y}px;width:{w}px;--fw:{fw}px;--fh:{fh}px;--fg:{gap}px;transform:{rot};z-index:{z}">
+  <div class="holes">{holes}</div><div class="edge">{edge}</div>
+  <div class="cells">{cells}</div>
+  <div class="edge">{edge}</div><div class="holes">{holes}</div></div>'''
+
+
+def s_strip():
+    frames = ["home-desktop", "home-showcase-desktop", "films-desktop", "home-about-desktop", "photography-desktop", "home-reviews-desktop", "contact-desktop"]
+    body = f'''
+{viewfinder("00:06:12:20", "35 MM")}
+{brand(170, 215)}
+<div style="position:absolute;z-index:35;right:190px;top:230px;width:1500px;text-align:right">
+  <div class="eyebrow" style="--eb:22px;justify-content:flex-end">Plan par plan</div>
+  <h1 class="title" style="font-size:92px;margin-top:40px">Un site <em>monté</em><br>comme un film.</h1></div>
+{film_strip(frames, -420, 745, 4700)}
+{footbar()}'''
+    return page(W, H, body, gy="66%")
+
+
+def s_dashboard():
+    body = f'''
+<div class="ghost" style="font-size:330px;right:-60px;top:110px">STUDIO</div>
+{viewfinder("00:07:00:00", "ADMIN")}
+{brand(170, 215)}
+{text_block(210, 560, 1120, "Tableau de bord", 'Le contenu,<br><em>entre ses mains.</em>',
+            "Un tableau de bord sur mesure, hébergé avec le site : films, albums, photos de l’accueil, textes en trois langues et publication en un clic. Sans abonnement ni CMS tiers.",
+            [("0 €", "Abonnement"), ("3", "Langues"), ("1 clic", "Publication")], tsize=92)}
+{floor_shadow(1360, 1700, 2380, 150)}
+{laptop("dashboard-albums-photos-desktop", 1330, 420, 2300, url="mednoukhal.com/mnvisual00.rec")}
+{floor_shadow(3180, 1900, 460, 80)}
+{phone("dashboard-albums-detail-phone", 3200, 1010, 420, z=21, extra="--halo:.2")}
+{footbar(mid='Films <span class="dot">·</span> Albums <span class="dot">·</span> Textes <span class="dot">·</span> Publication')}'''
+    return page(W, H, body, gx="66%", gy="55%")
+
+
+def s_popup():
+    body = f'''
+<div class="ghost" style="font-size:380px;right:-40px;top:100px">CINEMA</div>
+{viewfinder("00:01:04:00", "16:9")}
+{brand(170, 215)}
+{text_block(210, 600, 1100, "Films", 'Chaque film,<br><em>en plein cadre.</em>',
+            "Une grille éditoriale numérotée, des aperçus au survol, et le film qui s’ouvre dans un lecteur en popup, sans quitter la page.",
+            [("16:9", "Cadre"), ("2", "Par ligne"), ("1 clic", "Lecture")], tsize=92)}
+{floor_shadow(1380, 1720, 2300, 150)}
+{window("films-desktop-full", 1420, 300, 1700, 1000, "mednoukhal.com/films", z=9, extra="opacity:.55;filter:blur(1px)")}
+{laptop("films-popup-desktop", 1500, 560, 2150, url="mednoukhal.com/films", z=12)}
+{floor_shadow(3240, 1880, 440, 80)}
+{phone("films-popup-phone", 3260, 1080, 400, z=21, extra="--halo:.22")}
+{footbar()}'''
+    return page(W, H, body, gx="66%", gy="55%")
+
+
+def s_iso():
+    names = ["home-phone", "films-phone", "photography-phone", "reviews-phone", "contact-phone", "home-showcase-phone"]
+    w, gx, gy = 560, 700, 1250
+    phones = "".join(phone(n, (i % 3) * gx, (i // 3) * gy + (180 if i % 3 == 1 else 0), w, z=10 + i) for i, n in enumerate(names))
+    cw, ch = 2 * gx + w, gy + round(w * 874 / 420) + 180
+    body = f'''
+{viewfinder("00:08:30:00", "9:16")}
+{brand(170, 215)}
+<div style="position:absolute;z-index:35;left:210px;bottom:300px;width:1250px">
+  <div class="eyebrow" style="--eb:22px">Mobile</div>
+  <h1 class="title" style="font-size:92px;margin:40px 0 36px">Toutes les pages,<br><em>dans la main.</em></h1>
+  <p class="lead" style="--lead:30px">Vidéos plein écran, albums au doigt et carrousels qui se balaient : le même cadre sur chaque page.</p></div>
+<div style="position:absolute;z-index:5;left:{2560 - cw // 2}px;top:{1080 - ch // 2}px;width:{cw}px;height:{ch}px;transform:rotateX(52deg) rotateZ(-34deg) scale(.78)">{phones}</div>
+{footbar()}'''
+    return page(W, H, body, gx="66%", gy="50%")
+
+
+def s_languages():
+    body = f'''
+<div class="ghost arabic" style="font-size:420px;right:-40px;top:60px">مرحبا</div>
+{viewfinder("00:09:15:00", "EN · FR · AR")}
+{brand(170, 215)}
+{text_block(210, 600, 1150, "Trois langues", 'Un seul style,<br><em>trois langues.</em>',
+            "Anglais, français et arabe, de droite à gauche : chaque page, chaque menu et chaque texte du tableau de bord existe dans les trois langues.",
+            [("EN", "English"), ("FR", "Français"), ("AR", "<span class='arabic'>العربية</span>")], tsize=92)}
+{floor_shadow(1450, 1720, 1900, 140)}
+{window("ar-desktop", 1480, 420, 1880, 900, "mednoukhal.com/ar", z=10)}
+{floor_shadow(2980, 1900, 460, 80)}
+{phone("ar-phone", 3000, 900, 440, rot="rotate(5deg)", z=21, extra="--halo:.2")}
+{floor_shadow(1220, 1930, 420, 80)}
+{phone("home-phone", 1240, 1000, 400, rot="rotate(-5deg)", z=20)}
+{footbar(mid='English <span class="dot">·</span> Français <span class="dot">·</span> <span class="arabic">العربية</span>')}'''
+    return page(W, H, body, gx="66%", gy="56%")
+
+
+def s_case():
+    credits = [("Client", "Med Noukhal · Vidéaste & photographe"), ("Mission", "Design · Développement · Tableau de bord"),
+               ("Technologies", "Astro · PHP · ffmpeg"), ("Livraison", "Novembre 2026")]
+    rows = "".join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in credits)
+    body = f'''
+{viewfinder("00:10:00:00", "CASE STUDY")}
+<div style="position:absolute;z-index:35;left:210px;top:330px;width:1300px">
+  <div class="eyebrow" style="--eb:22px">Étude de cas · Codesommet</div>
+  <img src="{LOCKUP}" style="width:1180px;margin:70px 0 60px;display:block" alt="Med Noukhal Visuals">
+  <p class="lead" style="--lead:31px">Un site vitrine cinématographique pour un vidéaste et photographe : films en plein cadre, albums photo, avis clients, et un tableau de bord sur mesure pour tout gérer seul.</p>
+  <div class="credits">{rows}</div></div>
+{floor_shadow(1640, 1720, 2100, 140)}
+{laptop("home-desktop", 1620, 470, 2100)}
+{floor_shadow(3260, 1890, 400, 80)}
+{phone("home-showcase-phone", 3290, 1060, 380, z=21, extra="--halo:.22")}
+{footbar(left="codesommet.com", mid='Étude de cas <span class="dot">·</span> Site web', right="mednoukhal.com")}'''
+    return page(W, H, body, gx="70%", gy="54%")
+
+
+def s_story():
+    w, h = 2160, 3840
+    body = f'''
+<div class="ghost" style="font-size:380px;left:50%;top:2650px;transform:translateX(-50%)">VISUALS</div>
+{viewfinder("00:00:09:16", "9:16", inset=64, fs=26, c=76)}
+<div style="position:absolute;z-index:35;left:0;right:0;top:330px;text-align:center">
+  <img src="{LOCKUP}" style="width:1500px" alt="Med Noukhal Visuals">
+  <div class="eyebrow" style="justify-content:center;margin-top:84px;--eb:32px">Nouveau site web</div>
+</div>
+{floor_shadow(560, 3260, 1040, 120)}
+{phone("home-phone", 560, 1080, 1040, z=12, extra="--halo:.25")}
+{floor_shadow(1520, 3420, 520, 90)}
+{phone("films-popup-phone", 1500, 2180, 540, rot="rotate(7deg)", z=13)}
+{footbar(left="mednoukhal.com", mid="", right="Films · Photo · Avis", x=150, y=150, fs=26)}'''
+    return page(w, h, body, gy="55%"), (w, h)
 
 
 SCENES = {
@@ -267,6 +396,13 @@ SCENES = {
     "05-all-pages-mobile": s_pages,
     "06-full-page-scroll": s_scroll,
     "07-instagram-post-4x5": s_social,
+    "08-film-strip": s_strip,
+    "09-dashboard": s_dashboard,
+    "10-films-popup": s_popup,
+    "11-isometric-mobile": s_iso,
+    "12-three-languages": s_languages,
+    "13-case-study-codesommet": s_case,
+    "14-instagram-story-9x16": s_story,
 }
 
 

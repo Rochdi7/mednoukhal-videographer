@@ -17,4 +17,12 @@ if ($library && str_starts_with($path, '/media/library/') && !str_contains($path
     http_response_code(404);
     return true;
 }
+// A folder whose name has a dot (the dashboard, /mnvisual00.rec/): php -S takes ".rec" for a file extension and answers
+// 404, so its index.html is served here. Apache on the server serves it as a normal folder.
+$docroot = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
+if (str_ends_with($path, '/') && !str_contains($path, '..') && is_file($docroot . $path . 'index.html')) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile($docroot . $path . 'index.html');
+    return true;
+}
 return false;

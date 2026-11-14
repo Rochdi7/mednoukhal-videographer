@@ -135,3 +135,26 @@ body { width: var(--cw); height: var(--ch); overflow: hidden; color: var(--fg); 
 .shadow { position: absolute; z-index: 0; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, 0.9), transparent); filter: blur(18px); }
 .label { position: absolute; font-family: var(--display); font-size: var(--lb, 18px); letter-spacing: 0.34em; color: rgba(255, 255, 255, 0.55); white-space: nowrap; }
 .label b { color: var(--accent); font-weight: 500; margin-right: 0.8em; }
+
+/* ---------- Extra scenes (Nov. 2026) ---------- */
+@font-face { font-family: 'Plex Arabic'; src: url('../../public/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2') format('woff2'); font-weight: 500; }
+.arabic { font-family: 'Plex Arabic', var(--sans); letter-spacing: 0 !important; }
+.ghost.arabic { font-weight: 500; }
+
+/* 35 mm film strip: perforations, orange edge print, one page per frame */
+.strip { position: absolute; display: flex; flex-direction: column; gap: 18px; padding: 26px 0; background: linear-gradient(#141414, #0b0b0b); border-block: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 80px 160px rgba(0, 0, 0, 0.85), 0 0 220px rgba(228, 78, 29, 0.12); transform-origin: 50% 50%; }
+.strip .holes { display: flex; gap: 38px; padding-inline: 24px; overflow: hidden; }
+.strip .holes i { flex: none; width: 44px; height: 30px; border-radius: 7px; background: #e8e1cf; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35); opacity: 0.9; }
+.strip .edge { display: flex; gap: 420px; padding-inline: 120px; overflow: hidden; white-space: nowrap; font-family: var(--display); font-size: 17px; letter-spacing: 0.3em; color: rgba(255, 122, 77, 0.75); }
+.strip .edge b { font-weight: 500; color: var(--accent-fill); }
+.strip .cells { display: flex; gap: var(--fg); padding-inline: var(--fg); }
+.strip .cell { position: relative; flex: none; width: var(--fw); height: var(--fh); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 0 0 2px #000, 0 0 0 3px rgba(255, 255, 255, 0.06); }
+.strip .cell img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.strip .cell em { position: absolute; left: 22px; bottom: 16px; font-family: var(--display); font-style: normal; font-size: 64px; color: transparent; -webkit-text-stroke: 2px rgba(255, 255, 255, 0.75); }
+
+/* Case-study credits */
+.credits { margin-top: 80px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.credits div { display: grid; grid-template-columns: 330px 1fr; padding: 26px 0; border-bottom: 1px solid var(--line); font-size: 27px; }
+.credits b { font-family: var(--display); font-weight: 500; font-size: 18px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); align-self: center; }
+.credits span { color: #e6e6e6; }
