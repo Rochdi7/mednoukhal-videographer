@@ -129,9 +129,9 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
   carousel.querySelector('[data-prev]')?.addEventListener('click', () => step(-1));
   carousel.querySelector('[data-next]')?.addEventListener('click', () => step(1));
 
-  // The photo row opens on its second photo, so the first three fill the width, and can be pulled with the mouse.
+  // The tilted image row opens mid-sequence, so photos fill both edges, and can be pulled with the mouse.
   if (carousel.hasAttribute('data-drag')) {
-    moveTo(track, tiles[Math.min(1, tiles.length - 1)], 'auto');
+    moveTo(track, tiles[Math.min(2, tiles.length - 1)], 'auto');
     let down = false;
     let moved = false;
     let startX = 0;

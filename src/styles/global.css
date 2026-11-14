@@ -370,20 +370,30 @@ html:has(.menu[open]) { overflow: hidden; }
   .carousel:not(.is-strip) .carousel__track:hover .tile:not(:hover) { opacity: 0.5; }
 }
 
-/* ---------- Image carousel: three 4:5 photos across the content width, album name on each ---------- */
-.carousel--tilt .carousel__view { container-type: inline-size; overflow: clip; }
-.carousel--tilt .carousel__track { --gap: 16px; --tile-w: min((100cqw - 2 * var(--gap)) / 3, 66svh); padding-block: 20px 36px; padding-inline: calc(50cqw - var(--tile-w) / 2); gap: var(--gap); cursor: grab; }
+/* ---------- Image carousel: full-bleed straight row over giant moving text ---------- */
+/* Three 4:5 photos fill the content width (between the page gutters); one per screen on tablets and phones. */
+.carousel--tilt { --tile-gap: 16px; --tile-w: min((90vw - 2 * var(--tile-gap)) / 3, 66svh); }
+.carousel--tilt .carousel__view { position: relative; margin-inline: calc(50% - 50vw); overflow: clip; }
+.carousel--tilt .carousel__track { position: relative; z-index: 1; padding-block: 56px; padding-inline: calc(50vw - var(--tile-w) / 2); gap: var(--tile-gap); cursor: grab; }
 .carousel--tilt .carousel__track.is-dragging { scroll-snap-type: none; }
 .carousel--tilt .carousel__track.is-dragging .tile { pointer-events: none; }
-.carousel--tilt .tile--photo { width: var(--tile-w); aspect-ratio: 4 / 5; cursor: grab; }
-.carousel--tilt .tile--photo img { transition: transform 0.8s var(--ease, ease); }
+.carousel--tilt .tile--photo { width: var(--tile-w); aspect-ratio: 4 / 5; border-radius: 14px; cursor: grab; }
 .carousel--tilt .carousel__track.is-dragging, .carousel--tilt .carousel__track.is-dragging .tile--photo { cursor: grabbing; }
+.carousel--tilt .tile--photo::after, .carousel--tilt .tile--photo .tile__label { opacity: 0; transition: opacity 0.35s; }
+.carousel--tilt .carousel__arrow--prev { inset-inline-start: 2.5%; }
+.carousel--tilt .carousel__arrow--next { inset-inline-end: 2.5%; }
 @media (hover: hover) {
-  .carousel--tilt .tile--photo:hover img { transform: scale(1.04); }
+  .carousel--tilt .tile--photo:hover::after, .carousel--tilt .tile--photo:hover .tile__label { opacity: 1; }
   .carousel--tilt .carousel__track:hover .tile:not(:hover) { opacity: 1; }
 }
-@media (max-width: 1024px) { .carousel--tilt .carousel__track { --tile-w: 60cqw; } }
-@media (max-width: 640px) { .carousel--tilt .carousel__track { --gap: 10px; --tile-w: 82cqw; } }
+@media (hover: none) { .carousel--tilt .tile--photo::after, .carousel--tilt .tile--photo .tile__label { opacity: 1; } }
+@media (max-width: 1024px) { .carousel--tilt { --tile-w: min(60vw, 66svh); } }
+@media (max-width: 640px) { .carousel--tilt { --tile-gap: 12px; --tile-w: 78vw; } }
+.giant { position: absolute; inset: 0; z-index: 0; display: flex; flex-direction: column; justify-content: space-between; padding-block: 12px; direction: ltr; pointer-events: none; }
+.giant__row { display: flex; width: max-content; font-family: var(--display); font-weight: 300; font-size: clamp(84px, 14.5vw, 240px); line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; white-space: pre; color: rgba(255, 255, 255, 0.115); animation: giant 90s linear infinite; }
+.giant__row::before, .giant__row::after { content: attr(data-text); flex: none; }
+.giant__row--back { animation-direction: reverse; }
+@keyframes giant { to { transform: translateX(-50%); } }
 
 /* ---------- Film cards (films page) ---------- */
 /* ---------- Films page: editorial grid ----------
@@ -981,7 +991,7 @@ html:not(.js) .curve__card { position: static; flex: none; margin: 0; visibility
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  .ticker__track, .tile__live i, .hero__scroll::after, .btn, .strip__track, .reviews__track, .reviews__leak { animation: none; }
+  .ticker__track, .giant__row, .tile__live i, .hero__scroll::after, .btn, .strip__track, .reviews__track, .reviews__leak { animation: none; }
   /* Reviews hold still: one copy per column, scrollable by hand */
   .reviews__set + .reviews__set { display: none; }
   .reviews__col { height: 100%; overflow-y: auto; scrollbar-width: thin; }

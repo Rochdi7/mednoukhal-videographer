@@ -38,7 +38,7 @@ style.textContent = `
 .mn-editable[contenteditable] { outline: 2px solid #ff7a4d !important; background-color: rgba(0, 0, 0, 0.55); color: #fff; }
 .mn-editable.mn-changed { outline-color: #4ade80 !important; outline-style: solid !important; }
 /* In edit mode the moving rows stand still (reviews wall, logo strips, text tickers), so their texts can be clicked and typed into */
-.reviews__track, .ticker__track, .strip__track { animation-play-state: paused !important; }
+.reviews__track, .ticker__track, .strip__track, .giant__row { animation-play-state: paused !important; }
 .mn-live { position: fixed; z-index: 2147483000; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; width: max-content; max-width: calc(100vw - 24px); padding: 10px 14px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 14px; background: rgba(12, 12, 12, 0.96); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6); color: #f4f4f4; font: 500 13px/1.4 Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; direction: ltr; }
 .mn-live b { color: #ff7a4d; }
 .mn-live__icon { width: 15px; height: 15px; margin-inline-end: 6px; vertical-align: -3px; }
