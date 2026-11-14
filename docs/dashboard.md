@@ -33,7 +33,7 @@ The password itself is never stored, only its hash. It can be changed later from
 | Secret | `CMS_TOKEN` | the same value as `deploy_token` |
 | Variable | `CMS_URL` | `https://yourdomain.com` |
 | Variable | `SITE_URL` | `https://yourdomain.com` |
-| Variable | `FTP_SERVER_DIR` | optional; defaults to `./public_html/`. Use `./` if the FTP account opens inside public_html |
+| Variable | `FTP_SERVER_DIR` | optional; defaults to `./domains/mednoukhal.com/public_html/` (Hostinger's main FTP account opens at the account root). Use `./` if the FTP account opens inside public_html |
 
 The workflow is `.github/workflows/deploy.yml`. It runs when Publish is pressed, on every push to `main`, and from **Actions → Build and deploy → Run workflow**. It never overwrites `api/config.php` or the uploads.
 

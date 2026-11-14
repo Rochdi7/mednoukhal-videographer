@@ -60,7 +60,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ${{ vars.FTP_SERVER_DIR || './public_html/' }}
+          # Hostinger's main FTP account opens at the account root, so the site folder is domains/<domain>/public_html.
+          server-dir: ${{ vars.FTP_SERVER_DIR || './domains/mednoukhal.com/public_html/' }}
           # Never touch what only exists on the server: its settings (api/config.php) and the dashboard uploads.
           exclude: |
             **/.git*
