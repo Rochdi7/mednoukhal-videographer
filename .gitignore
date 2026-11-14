@@ -20,3 +20,6 @@ mn-data/
 public/media/library/
 src/data/cms.json
 src/assets/cms/
+public/media/auto/
+# local rebuilds from the dashboard Publish button (npm run admin:local)
+.local-build/

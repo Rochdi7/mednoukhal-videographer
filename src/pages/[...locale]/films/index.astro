@@ -34,11 +34,12 @@ const countIn = (slug: string) => projects.filter((film) => film.category === sl
       </div>
     </div>
   )}
-  <!-- Editorial grid: the reel opens it full width, then the projects alternate size, shape and height on 12 columns.
-       data-slot (0-7) picks each film's place in the pattern; the category filter renumbers it for the films left in view. -->
+  <!-- Editorial grid: the reel opens it full width, then two wide (16:9) films per row on 12 columns, a large and a
+       small one, staggered and swapping sides each row. data-slot (0-3) picks each film's place in the pattern; the
+       category filter renumbers it for the films left in view. A click plays the film in the popup player (Theater). -->
   <section class="wrap film-grid" style="padding-block-end:var(--section)" aria-label={s.films.title}>
     {reel && <FilmCard film={reel} locale={locale} index={0} feature category={categoryName.get(reel.category ?? '')} />}
-    {projects.map((film, i) => <FilmCard film={film} locale={locale} index={i + 1} slot={i % 8} category={categoryName.get(film.category ?? '')} />)}
+    {projects.map((film, i) => <FilmCard film={film} locale={locale} index={i + 1} slot={i % 4} category={categoryName.get(film.category ?? '')} />)}
   </section>
   <Theater locale={locale} />
   <script src="../../../scripts/films.ts"></script>

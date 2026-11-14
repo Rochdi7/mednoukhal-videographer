@@ -51,7 +51,7 @@ if (local) {
   // A password changed in the local dashboard is kept in mn-data/auth.json and would win over this one.
   const saved = new URL('../mn-data/auth.json', import.meta.url);
   if (existsSync(saved)) writeFileSync(saved, JSON.stringify({ email, hash }));
-  console.log(`\nLocal login set for ${email}. Dashboard: npm run admin:local → http://127.0.0.1:4322/admin/`);
+  console.log(`\nLocal login set for ${email}. Dashboard: npm run admin:local → http://127.0.0.1:4322/mnvisual00.rec/`);
 } else {
   console.log('\nPaste these two lines into public_html/api/config.php on the server (replacing the empty ones):\n');
   console.log(lines);

@@ -5,10 +5,17 @@ return [
     // ---------- Contact form ----------
     // Where enquiries are delivered. The form reports "not configured" while this is empty.
     'to_email' => '',
-    // Sender address on your own domain, for example no-reply@yourdomain.com.
+    // Sender address. With Gmail SMTP below, leave it empty: it then sends as smtp_user.
+    // Without SMTP (PHP mail()), use an address on your own domain, for example no-reply@yourdomain.com.
     'from_email' => '',
+    // Gmail SMTP: the Gmail address and a Google app password (Google Account → Security → App passwords).
+    // Leave smtp_host empty to send with PHP mail() instead.
+    'smtp_host' => 'smtp.gmail.com',
+    'smtp_port' => 465,
+    'smtp_user' => '',
+    'smtp_pass' => '',
 
-    // ---------- Dashboard (/admin) ----------
+    // ---------- Dashboard (/mnvisual00.rec/) ----------
     // The login. Make the hash with:  npm run admin:password
     // (it can then be changed from the dashboard itself, under Account).
     'admin_email' => '',

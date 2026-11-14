@@ -9,7 +9,7 @@ import CurveCarousel from '../../components/CurveCarousel.astro';
 import Clients from '../../components/Clients.astro';
 import Reviews from '../../components/Reviews.astro';
 import { LOGO_MARK as mark, LOGO_WORDMARK } from '../../config/site';
-import { FILMS } from '../../data/films';
+import { FILM_CATEGORIES, FILMS } from '../../data/films';
 import { SITE } from '../../config/site';
 import { localePath, localeStaticPaths, t, type Locale } from '../../i18n';
 import { personNode, websiteNode } from '../../utils/seo';
@@ -24,10 +24,20 @@ const s = t(locale);
 const p = (path: string) => localePath(locale, path);
 
 const heroLandscape = await getImage({ src: HERO.poster, width: Math.min(1920, HERO.poster.width), format: 'webp', quality: 72 });
-const heroMobile = await getImage({ src: HERO.posterMobile, width: Math.min(720, HERO.posterMobile.width), format: 'webp', quality: 68 });
+// The phone still: the portrait one if set, else the poster cropped to 9:16 around its centre (as the mobile film is).
+const portraitH = Math.min(1280, HERO.poster.height);
+const heroMobile = HERO.posterMobile
+  ? await getImage({ src: HERO.posterMobile, width: Math.min(720, HERO.posterMobile.width), format: 'webp', quality: 68 })
+  : await getImage({ src: HERO.poster, width: Math.round((portraitH * 9) / 16), height: portraitH, fit: 'cover', position: 'center', format: 'webp', quality: 68 });
 // Only the albums marked "Show on the homepage" feed the photo carousels.
 const albums = await resolveAlbums({ home: true });
+// The portfolio's photo row: the photos ticked "Home" in each album (the first two until any are ticked).
+// Should none be ticked anywhere, the first two of each album keep the row from going empty.
+const anyTicked = albums.some((a) => a.photos.some((p) => p.home));
+const homePhotos = albums.flatMap((album) => album.photos.map((photo, i) => ({ album, photo, i, show: anyTicked ? photo.home : i < 2 })));
 const heroPh = await blur(HERO.poster);
+// The showcase filters are video categories only: the ones that have a film on the homepage.
+const HOME_FILM_CATS = FILM_CATEGORIES.filter((c) => FILMS.some((film) => film.category === c.slug));
 const filmPh = await Promise.all(FILMS.map(async (film) => `${await blur(film.poster, film.focus)}${film.focus ? `;object-position:${film.focus}` : ''}`));
 const aboutPh = await blur(ABOUT_PHOTO.image, ABOUT_PHOTO.focus);
 // One photo from each album in turn, so neighbouring cards in the curved row differ.
@@ -64,7 +74,7 @@ const curveItems = CURVE_ITEMS
     </div>
     <div class="hero__inner">
       <h1 id="hero-title" class="sr-only">{SITE.name}: {s.hero.sr}</h1>
-      <Image class="hero__logo" src={LOGO_WORDMARK} alt="" widths={[360, 560, 760, 1120, 1520]} sizes="(max-width: 700px) 78vw, min(44vw, 760px)" format="webp" quality={90} loading="eager" fetchpriority="high" />
+      <Image class="hero__logo" src={LOGO_WORDMARK} alt="" widths={[360, 560, 760, 1120, 1520]} sizes="(max-width: 700px) 70vw, min(36vw, 620px)" format="webp" quality={90} loading="eager" fetchpriority="high" />
       <div class="hero__rule" aria-hidden="true"></div>
       <p class="hero__role">{s.hero.role}</p>
       <div class="hero__btns">
@@ -82,9 +92,9 @@ const curveItems = CURVE_ITEMS
         </a>
       </div>
     </div>
-    <!-- Camera viewfinder over the footage: corner brackets, REC light and the clip's running timecode -->
+    <!-- Camera viewfinder over the footage: corner brackets and the REC light -->
     <div class="hero__hud" data-hero-hud aria-hidden="true">
-      <p class="hero__rec" dir="ltr"><i></i>REC <span data-hero-tc>00:00:00:00</span></p>
+      <p class="hero__rec" dir="ltr"><i></i>REC</p>
     </div>
     <a class="hero__scroll" href="#showcase">{s.hero.scroll}</a>
   </section>
@@ -97,11 +107,12 @@ const curveItems = CURVE_ITEMS
         <p class="eyebrow">{s.showcase.eyebrow}</p>
         <h2 class="h-lg" id="showcase-title">{s.showcase.title}</h2>
       </div>
-      <div class="filters" role="group" aria-label={s.showcase.filter}>
-        <button type="button" data-filter="all" aria-pressed="true">{s.showcase.all}</button>
-        <button type="button" data-filter="films" aria-pressed="false">{s.showcase.films}</button>
-        <button type="button" data-filter="photo" aria-pressed="false">{s.showcase.photo}</button>
-      </div>
+      {HOME_FILM_CATS.length > 1 && (
+        <div class="filters" role="group" aria-label={s.showcase.filter} data-film-filter>
+          <button type="button" data-filter="all" aria-pressed="true">{s.showcase.all}</button>
+          {HOME_FILM_CATS.map((c) => <button type="button" data-filter={c.slug} aria-pressed="false">{c.title[locale]}</button>)}
+        </div>
+      )}
     </div>
 
     <div class="carousel" data-carousel data-autoplay data-panel="films">
@@ -114,7 +125,7 @@ const curveItems = CURVE_ITEMS
         <button class="carousel__arrow carousel__arrow--next" type="button" data-next aria-label={s.showcase.next}><ChevronRight class="flip-rtl" aria-hidden="true" /></button>
         <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.films}>
           {FILMS.map((film, i) => (
-            <article class="tile tile--film" data-src={film.preview ?? film.src} data-orient={film.height > film.width ? 'vertical' : undefined}>
+            <article class="tile tile--film" data-cat={film.category} data-src={film.preview ?? film.src} data-orient={film.height > film.width ? 'vertical' : undefined}>
               <a class="tile__open" href={p(`/films/${film.slug}/`)} data-film={JSON.stringify({ src: film.src, title: film.title[locale], href: p(`/films/${film.slug}/`), width: film.width, height: film.height })} aria-label={`${s.film.watch}: ${film.title[locale]}`}>
                 <Picture src={film.poster} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800, 1200].filter((w) => w <= film.poster.width)} sizes="min(1040px, 90vw)" alt={film.description[locale]} loading="lazy" decoding="async" quality={68} style={filmPh[i]} />
               </a>
@@ -142,13 +153,19 @@ const curveItems = CURVE_ITEMS
           <div class="giant__row giant__row--back" data-text={`${s.hero.role} — ${s.hero.role} — ${s.hero.role} — `}></div>
         </div>
         <div class="carousel__track" data-track tabindex="0" role="group" aria-label={s.showcase.photo}>
-          {albums.flatMap((album) => album.photos.map((photo) => (
-            <a class="tile tile--photo" href={photo.full.src} data-photo data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
+          {homePhotos.filter((x) => x.show).map(({ album, photo, i }) => (
+            <a class="tile tile--photo" href={photo.full.src} data-photo data-i={i} data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} aria-label={`${s.photo.open}: ${photo.alt[locale]}`}>
               <Picture src={photo.image} formats={['avif', 'webp']} fallbackFormat="jpg" widths={[480, 800].filter((w) => w <= photo.image.width)} sizes="(max-width: 640px) 78vw, (max-width: 1024px) 60vw, 30vw" alt={photo.alt[locale]} loading="lazy" decoding="async" quality={70} style={photo.ph} />
               <span class="tile__label">{album.title[locale]}</span>
             </a>
-          )))}
+          ))}
         </div>
+      </div>
+      <!-- The rest of each album: not in the row, but the album viewer opened from a photo still pages through all of it. -->
+      <div hidden>
+        {homePhotos.filter((x) => !x.show).map(({ album, photo, i }) => (
+          <a href={photo.full.src} data-photo data-i={i} data-album={album.slug} data-album-title={album.title[locale]} data-thumb={photo.thumb.src} data-alt={photo.alt[locale]} tabindex="-1" aria-hidden="true"></a>
+        ))}
       </div>
     </div>
   </section>
@@ -169,7 +186,9 @@ const curveItems = CURVE_ITEMS
           <span class="about__rec" dir="ltr" aria-hidden="true"><i></i>REC</span>
         </div>
         <div class="about__badge" aria-hidden="true">
-          <svg viewBox="0 0 120 120"><defs><path id="about-ring" d="M60 60m-47 0a47 47 0 1 1 94 0a47 47 0 1 1-94 0" /></defs><text><textPath href="#about-ring" textLength="292" lengthAdjust={locale === 'ar' ? 'spacingAndGlyphs' : 'spacing'}>{`${s.hero.role} · `}</textPath></text></svg>
+          <svg viewBox="0 0 120 120"><defs><path id="about-ring" d="M60 60m-47 0a47 47 0 1 1 94 0a47 47 0 1 1-94 0" /></defs>{locale === 'ar'
+            ? <text data-ring-fit><textPath href="#about-ring">{`${s.hero.role} · ${s.hero.role} · `}</textPath></text>
+            : <text><textPath href="#about-ring" textLength="292" lengthAdjust="spacing">{`${s.hero.role} · `}</textPath></text>}</svg>
           <Image src={mark} alt="" width={80} format="webp" quality={90} loading="lazy" />
         </div>
       </figure>
@@ -184,7 +203,8 @@ const curveItems = CURVE_ITEMS
       <h2 class="h-lg" id="services-title">{s.services.title}</h2>
       <p class="lead">{s.services.sub}</p>
     </div>
-    <div class="expertise">
+    <!-- A grid on larger screens; on phones a swipe carousel with a dot per card (home.ts keeps the dots in step). -->
+    <div class="expertise" data-svc-track>
       {s.services.items.map((item, i) => (
         <article class="expertise__item" data-spot>
           <p class="eyebrow">{s.services.production}</p>
@@ -193,6 +213,9 @@ const curveItems = CURVE_ITEMS
           <a class="link" href={`${p('/contact/')}?service=${encodeURIComponent(item.title)}`}><span>{s.services.learnMore}<span class="sr-only">: {item.title}</span></span></a>
         </article>
       ))}
+    </div>
+    <div class="expertise__dots" data-svc-dots aria-hidden="true">
+      {s.services.items.map((_, i) => <span class={i === 0 ? 'is-on' : undefined}></span>)}
     </div>
   </section>
 

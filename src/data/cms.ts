@@ -1,6 +1,6 @@
 import type { ImageMetadata } from 'astro';
 
-// Content saved in the dashboard (/admin), copied in by scripts/cms-sync.mjs before each build.
+// Content saved in the dashboard (/mnvisual00.rec/), copied in by scripts/cms-sync.mjs before each build.
 // When the site is built without the dashboard (no src/data/cms.json), `cms` is null and every data module
 // falls back to the content written in the code, so the site always builds.
 
@@ -13,6 +13,7 @@ export interface CmsData {
   syncedAt: string;
   settings: { name?: string; jobTitle?: string; logoAlt?: string; email?: string; whatsapp?: string; phone?: string; socials?: { label: string; handle?: string; href: string; icon?: string }[]; logo: CmsImage | null; logoMark: CmsImage | null; logoWordmark?: CmsImage | null } | null;
   // videos: the hero films, played one after another (a single one loops).
+  // videoMobile: the 9:16 cut, made by scripts/video-portrait.mjs during the sync; posterMobile null = cropped from the poster.
   home: { videos: { video: CmsVideo; videoMobile: CmsVideo | null }[]; poster: CmsImage | null; posterMobile: CmsImage | null; aboutPhoto: CmsImage | null } | null;
   // The closing carousel's cards; empty = the album photos.
   curve: { kind: 'image' | 'video'; image: CmsImage | null; video: CmsVideo | null; href?: string }[];
@@ -20,7 +21,8 @@ export interface CmsData {
   filmCategories: { slug: string; title: CmsText }[];
   films: { slug: string; title: CmsText; description?: CmsText; featured?: boolean; onHome?: boolean; date?: string; category?: string; video: CmsVideo; poster: CmsImage }[];
   photoCategories: { slug: string; title: CmsText }[];
-  albums: { slug: string; title: CmsText; onHome?: boolean; category?: string; photos: (CmsImage & { alt?: CmsText })[] }[];
+  // home: the photo is ticked for the homepage carousel.
+  albums: { slug: string; title: CmsText; onHome?: boolean; category?: string; photos: (CmsImage & { alt?: CmsText; home?: boolean })[] }[];
   clients: { name: string; tone?: boolean; logo: CmsImage | null }[];
   // logo: the review's own logo (replaces the client's); a review may name a client outside the client list.
   reviews: { client: string; sector?: CmsText; quote: string; rating: number; placeholder?: boolean; logo?: CmsImage | null; tone?: boolean }[];

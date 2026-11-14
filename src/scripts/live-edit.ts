@@ -4,6 +4,7 @@
 // films, albums and categories, so no page template needs markers. A text used in several places changes everywhere.
 // Saved texts show at once on refresh in edit mode; visitors see them after "Publish" (the site is rebuilt).
 import { createElement, SquarePen } from 'lucide';
+import { ADMIN_API, ADMIN_PATH } from '../config/admin';
 
 type Lang = 'en' | 'fr' | 'ar';
 type L = Record<Lang, string>;
@@ -12,7 +13,7 @@ type ListName = 'films' | 'albums' | 'filmCategories' | 'photoCategories' | 'rev
 // title inside an album, a review quote…); `localized` fields keep one value per language and only this page's changes.
 type Target = { kind: 'text'; path: (string | number)[] } | { kind: 'field'; list: ListName; id: string; photo?: string; field: string; localized: boolean };
 
-const API = '/api/admin/api.php';
+const API = ADMIN_API;
 const lang = ((document.documentElement.lang || 'en').slice(0, 2) as Lang) ?? 'en';
 const LANG_NAME: Record<Lang, string> = { en: 'English', fr: 'French', ar: 'Arabic' };
 const norm = (s: string | null | undefined) => (s ?? '').replace(/\s+/g, ' ').trim();
@@ -75,11 +76,11 @@ const exit = () => {
 
   const session = await api('session');
   if (!session.user) {
-    bar.innerHTML = `<span><b>Live editor</b> · sign in first.</span><a href="/admin/">Sign in</a><button type="button" data-exit>Exit</button>`;
+    bar.innerHTML = `<span><b>Live editor</b> · sign in first.</span><a href="${ADMIN_PATH}">Sign in</a><button type="button" data-exit>Exit</button>`;
     bar.querySelector('[data-exit]')!.addEventListener('click', exit);
     return;
   }
-  const [contentRes, defaults] = await Promise.all([api('content'), fetch('/admin/strings.json').then((r) => r.json() as Promise<Record<Lang, any>>)]);
+  const [contentRes, defaults] = await Promise.all([api('content'), fetch(`${ADMIN_PATH}strings.json`).then((r) => r.json() as Promise<Record<Lang, any>>)]);
   if (!contentRes.ok) {
     bar.innerHTML = `<span>Could not load the content (${contentRes.code}).</span><button type="button" data-exit>Exit</button>`;
     bar.querySelector('[data-exit]')!.addEventListener('click', exit);
@@ -327,9 +328,11 @@ const exit = () => {
 
   const publish = async () => {
     if (pending.size) return setMsg('Save your changes first.', 'error');
-    if (!confirm('Publish your saved changes? The site updates in 3–5 minutes.')) return;
+    if (!confirm('Publish your saved changes?')) return;
     const res = await api('publish', {});
-    setMsg(res.ok ? 'Publishing. Live in 3–5 minutes.' : res.code === 'publish_not_configured' ? 'Publishing is not set up on the server yet.' : `Publish failed (${res.code}).`, res.ok ? 'ok' : 'error');
+    // res.local: under `npm run admin:local` Publish rebuilds this computer's copy of the site.
+    const done = res.local ? 'Rebuilding the local site. Refresh in about a minute.' : 'Publishing. Live in 3–5 minutes.';
+    setMsg(res.ok ? done : res.code === 'publish_not_configured' ? 'Publishing is not set up on the server yet.' : `Publish failed (${res.code}).`, res.ok ? 'ok' : 'error');
   };
 
   // ---------- the bar ----------
@@ -349,7 +352,7 @@ const exit = () => {
     saveBtn.addEventListener('click', save);
     const pubBtn = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Publish' });
     pubBtn.addEventListener('click', publish);
-    const dash = Object.assign(document.createElement('a'), { href: '/admin/', textContent: 'Dashboard' });
+    const dash = Object.assign(document.createElement('a'), { href: ADMIN_PATH, textContent: 'Dashboard' });
     const out = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Exit' });
     out.addEventListener('click', () => (!pending.size || confirm('Leave without saving your changes?')) && exit());
     bar.append(info, saveBtn, pubBtn, dash, out);

@@ -160,7 +160,8 @@ const focusable = (frame: HTMLElement, img: HTMLImageElement, value: Img) => {
 };
 
 // One photo or one video: preview, upload/replace with progress, remove, and the focus point for photos.
-export function media(label: string, obj: Record<string, any>, key: string, kind: 'image' | 'video', opts: { help?: string; required?: boolean; focus?: boolean; accept?: string } = {}) {
+// `onUpload` runs after a new file replaces the value (e.g. to drop a derived version made from the old one).
+export function media(label: string, obj: Record<string, any>, key: string, kind: 'image' | 'video', opts: { help?: string; required?: boolean; focus?: boolean; accept?: string; onUpload?: () => void } = {}) {
   const wrap = h('div', { class: 'field' });
   const draw = () => {
     const value = obj[key] as (Img & Vid) | null;
@@ -179,6 +180,7 @@ export function media(label: string, obj: Record<string, any>, key: string, kind
           const info = kind === 'video' ? await videoInfo(file) : null;
           const done = await upload(file, kind, (share) => (bar.style.width = `${share * 100}%`));
           obj[key] = kind === 'video' ? { path: done.path, ...info } : { path: done.path, width: done.width, height: done.height, focus: '50% 50%' };
+          opts.onUpload?.();
           changed();
           toast(`${file.name} uploaded.`);
         } catch (err) {

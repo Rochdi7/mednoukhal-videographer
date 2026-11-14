@@ -26,6 +26,81 @@ function single_line(string $value): string
     return trim(preg_replace('/[\r\n\t]+/', ' ', $value) ?? '');
 }
 
+// Sends one plain-text message through an SMTP server that needs a login (Gmail with an app password:
+// smtp.gmail.com, port 465 for SSL or 587 for STARTTLS). Returns false on any refusal and logs the step.
+function smtp_send(array $c, string $from, string $to, string $replyTo, string $encodedSubject, string $body): bool
+{
+    $host = trim((string) $c['smtp_host']);
+    $port = (int) ($c['smtp_port'] ?? 465) ?: 465;
+    $user = trim((string) $c['smtp_user']);
+    $pass = str_replace(' ', '', (string) ($c['smtp_pass'] ?? '')); // Google shows app passwords in groups of four
+    $context = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $host]]);
+    $fp = @stream_socket_client(($port === 465 ? 'ssl://' : 'tcp://') . $host . ':' . $port, $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $context);
+    if (!$fp) {
+        error_log("Med Noukhal contact form: SMTP connect failed ($errno $errstr)");
+        return false;
+    }
+    stream_set_timeout($fp, 15);
+
+    $read = function () use ($fp): int {
+        $code = 0;
+        while (($line = fgets($fp, 1024)) !== false) {
+            $code = (int) substr($line, 0, 3);
+            if (strlen($line) < 4 || $line[3] === ' ') {
+                break;
+            }
+        }
+        return $code;
+    };
+    $step = function (string $command, array $ok, string $label) use ($fp, $read): bool {
+        if ($command !== '') {
+            fwrite($fp, $command . "\r\n");
+        }
+        $code = $read();
+        if (!in_array($code, $ok, true)) {
+            error_log("Med Noukhal contact form: SMTP $label refused ($code)");
+            return false;
+        }
+        return true;
+    };
+
+    $helo = preg_replace('/[^A-Za-z0-9.\-]/', '', (string) ($_SERVER['SERVER_NAME'] ?? '')) ?: 'localhost';
+    $date = date('r');
+    $domain = substr(strrchr($from, '@') ?: '@localhost', 1);
+    $message = implode("\r\n", [
+        'Date: ' . $date,
+        'From: Med Noukhal website <' . $from . '>',
+        'To: <' . $to . '>',
+        'Reply-To: ' . $replyTo,
+        'Subject: ' . $encodedSubject,
+        'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $domain . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        '',
+        rtrim(chunk_split(base64_encode($body), 76, "\r\n")),
+    ]);
+
+    $ok = $step('', [220], 'greeting')
+        && $step('EHLO ' . $helo, [250], 'EHLO');
+    if ($ok && $port !== 465) {
+        $ok = $step('STARTTLS', [220], 'STARTTLS')
+            && stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT)
+            && $step('EHLO ' . $helo, [250], 'EHLO after STARTTLS');
+    }
+    $ok = $ok
+        && $step('AUTH LOGIN', [334], 'AUTH')
+        && $step(base64_encode($user), [334], 'login')
+        && $step(base64_encode($pass), [235], 'password')
+        && $step('MAIL FROM:<' . $from . '>', [250], 'MAIL FROM')
+        && $step('RCPT TO:<' . $to . '>', [250, 251], 'RCPT TO')
+        && $step('DATA', [354], 'DATA')
+        && $step($message . "\r\n.", [250], 'message');
+    @fwrite($fp, "QUIT\r\n");
+    fclose($fp);
+    return $ok;
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     respond(405, ['ok' => false, 'code' => 'server']);
@@ -82,9 +157,16 @@ if ($errors) {
 }
 
 $config = require __DIR__ . '/config.php';
+// Optional settings file outside the website (next to public_html on the server, the project folder locally). Its values win.
+$outside = dirname(__DIR__, 2) . '/mn-config.php';
+if (is_file($outside)) {
+    $config = array_merge($config, (array) require $outside);
+}
 $sink = getenv('MEDNOUKHAL_MAIL_SINK') ?: '';
+$smtp = trim((string) ($config['smtp_host'] ?? '')) !== '' && trim((string) ($config['smtp_user'] ?? '')) !== '';
 $to = $config['to_email'] ?? '';
-$from = $config['from_email'] ?? '';
+// Gmail only sends as the account that signs in, so with SMTP the sender defaults to that account.
+$from = ($config['from_email'] ?? '') ?: ($smtp ? $config['smtp_user'] : '');
 if ($sink === '' && (!filter_var($to, FILTER_VALIDATE_EMAIL) || !filter_var($from, FILTER_VALIDATE_EMAIL))) {
     respond(503, ['ok' => false, 'code' => 'not_configured']);
 }
@@ -112,7 +194,7 @@ $body = implode("\n", $lines) . "\n";
 $subject = 'Website enquiry: ' . $service . ' from ' . $name;
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 $headers = implode("\r\n", [
-    'From: Mednoukhal website <' . $from . '>',
+    'From: Med Noukhal website <' . $from . '>',
     'Reply-To: ' . $email,
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
@@ -120,12 +202,14 @@ $headers = implode("\r\n", [
 
 if ($sink !== '') {
     $sent = file_put_contents($sink, json_encode(['subject' => $subject, 'body' => $body, 'reply_to' => $email]) . "\n", FILE_APPEND) !== false;
+} elseif ($smtp) {
+    $sent = smtp_send($config, $from, $to, $email, $encodedSubject, $body);
 } else {
     $sent = mail($to, $encodedSubject, $body, $headers, '-f' . $from);
 }
 
 if (!$sent) {
-    error_log('Mednoukhal contact form: delivery failed');
+    error_log('Med Noukhal contact form: delivery failed');
     respond(500, ['ok' => false, 'code' => 'server']);
 }
 

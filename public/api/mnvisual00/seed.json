@@ -1,6 +1,6 @@
 {
   "settings": {
-    "name": "Mednoukhal",
+    "name": "Med Noukhal",
     "jobTitle": "Videographer and Photographer",
     "logoAlt": "MN Visual",
     "email": "mednoukhal00@gmail.com",
@@ -31,8 +31,8 @@
     ],
     "logo": {
       "path": "/media/seed/branding/logo.png",
-      "width": 1578,
-      "height": 883
+      "width": 1600,
+      "height": 308
     },
     "logoMark": {
       "path": "/media/seed/branding/mark.png",
@@ -68,13 +68,13 @@
           "path": "/media/videos/hero-naoual-1080.mp4",
           "width": 1920,
           "height": 1080,
-          "duration": 15
+          "duration": 65
         },
         "videoMobile": {
           "path": "/media/videos/hero-naoual-portrait.mp4",
           "width": 576,
           "height": 1024,
-          "duration": 15
+          "duration": 65
         }
       },
       {
@@ -119,10 +119,10 @@
       "height": 1024
     },
     "aboutPhoto": {
-      "path": "/media/seed/hero/about.jpg",
-      "width": 1820,
-      "height": 1024,
-      "focus": "50% 40%"
+      "path": "/media/seed/hero/med-noukhal-videographer-behind-the-camera.avif",
+      "width": 1200,
+      "height": 1800,
+      "focus": "62% 30%"
     }
   },
   "texts": {},
@@ -326,7 +326,8 @@
             "en": "A bride in a long ivory embroidered gown and veil stands at the pool edge, reflected among the palms.",
             "fr": "Une mariée en longue robe ivoire brodée et voile se tient au bord de la piscine, reflétée parmi les palmiers.",
             "ar": "عروس بفستان عاجي طويل مطرز وطرحة تقف على حافة المسبح، وتنعكس صورتها بين أشجار النخيل."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-00b",
@@ -337,7 +338,8 @@
             "en": "A veiled bride in blush pink walks towards a floral arch beside the pool as guests in colourful dress look on.",
             "fr": "Une mariée voilée en rose poudré avance vers une arche fleurie au bord de la piscine sous le regard des invités.",
             "ar": "عروس بطرحة وردية فاتحة تتقدم نحو قوس من الزهور بجانب المسبح، والضيوف بملابس ملونة يتابعونها."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-00c",
@@ -348,7 +350,8 @@
             "en": "A veiled bride in a gold-embroidered gown sits beneath a flower-draped canopy, a woman in a floral headscarf beside her.",
             "fr": "Une mariée voilée en robe brodée d'or assise sous un dais fleuri, une femme au foulard fleuri à ses côtés.",
             "ar": "عروس بطرحة وفستان مطرز بالذهب تجلس تحت مظلة مزينة بالزهور، وإلى جانبها امرأة بوشاح مزهر."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00d",
@@ -359,7 +362,8 @@
             "en": "Guests in colourful traditional dress and suits sit in a row beside the pool, several filming the ceremony on their phones.",
             "fr": "Des invités en tenues traditionnelles colorées et costumes, assis en rang au bord de la piscine, filment la cérémonie au téléphone.",
             "ar": "ضيوف بأزياء تقليدية ملونة وبدلات يجلسون في صف بجانب المسبح، ويصور بعضهم الحفل بهواتفهم."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00e",
@@ -370,7 +374,8 @@
             "en": "An officiant in a cream suit reads from a sheet behind the seated, veiled bride under tall palm trees.",
             "fr": "Un officiant en costume crème lit une feuille derrière la mariée voilée, assise sous de grands palmiers.",
             "ar": "رجل ببدلة كريمية يقرأ من ورقة خلف العروس الجالسة بطرحتها تحت أشجار نخيل عالية."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00f",
@@ -381,7 +386,8 @@
             "en": "An officiant in a cream suit speaks, finger raised, beside the seated groom before a white flower arch.",
             "fr": "Un officiant en costume crème prend la parole, le doigt levé, près du marié assis devant une arche de fleurs blanches.",
             "ar": "رجل ببدلة كريمية يتحدث رافعا إصبعه بجانب العريس الجالس أمام قوس من الزهور البيضاء."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00g",
@@ -392,7 +398,8 @@
             "en": "Guests stand along the pool edge, men in long white tunics and women in headscarves and embroidered dresses.",
             "fr": "Des invités debout au bord de la piscine, hommes en longues tuniques blanches, femmes en foulard et robes brodées.",
             "ar": "ضيوف واقفون على حافة المسبح، رجال بقمصان بيضاء طويلة ونساء بأوشحة وفساتين مطرزة."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00h",
@@ -403,7 +410,8 @@
             "en": "Wide view of a palm-lined venue with two blue pools, white parasols and guests lunching at long tables.",
             "fr": "Vue d'ensemble d'un domaine bordé de palmiers, avec deux piscines bleues, des parasols blancs et des invités à table.",
             "ar": "منظر واسع لمكان تحيط به أشجار النخيل، بمسبحين أزرقين ومظلات بيضاء وضيوف يتناولون الغداء."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00i",
@@ -414,7 +422,8 @@
             "en": "Waiters in beige embroidered tunics serve plates to women seated at a long table under hanging brass lanterns.",
             "fr": "Des serveurs en tuniques beiges brodées servent des femmes attablées sous des lanternes en laiton suspendues.",
             "ar": "نُدُل بقمصان بيج مطرزة يقدمون الأطباق لنساء جالسات إلى طاولة طويلة تحت فوانيس نحاسية معلقة."
-          }
+          },
+          "home": false
         }
       ]
     },
@@ -438,7 +447,8 @@
             "en": "A seated woman in a yellow and silver brocade kaftan with an embroidered belt, its skirt falling open over chartreuse velvet.",
             "fr": "Une femme assise en caftan de brocart jaune et argent à ceinture brodée, la jupe ouverte sur un velours vert anis.",
             "ar": "امرأة جالسة بقفطان من البروكار الأصفر والفضي وحزام مطرز، ينفتح ذيله على مخمل أخضر فاتح."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-00l",
@@ -449,7 +459,8 @@
             "en": "A woman with dark curls in an ivory floral kaftan with gold belt and lining, seated on a green sofa.",
             "fr": "Une femme aux boucles brunes en caftan ivoire fleuri, ceinture et doublure dorées, assise sur un canapé vert.",
             "ar": "امرأة بشعر أسود مموج ترتدي قفطانا عاجيا مزهرا بحزام وبطانة ذهبيين، جالسة على أريكة خضراء."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-00m",
@@ -460,7 +471,8 @@
             "en": "A woman in a coral-orange kaftan with multicolour braided trim and an embroidered belt over a floral print underlayer.",
             "fr": "Une femme en caftan orange corail à galons multicolores et ceinture brodée, sur un dessous à imprimé floral.",
             "ar": "امرأة بقفطان برتقالي مرجاني بحواش ملونة مضفورة وحزام مطرز فوق ثوب داخلي بنقوش زهرية."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00n",
@@ -471,7 +483,8 @@
             "en": "Hands resting on a knee over a pale sage satin kaftan edged with olive braided trim.",
             "fr": "Des mains posées sur le genou, sur un caftan en satin vert d'eau pâle bordé de galons olive.",
             "ar": "يدان على الركبة فوق قفطان من الساتان الأخضر الباهت مزين بحواش مضفورة بلون الزيتون."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00o",
@@ -482,7 +495,8 @@
             "en": "Legs crossed in leopard-print heels, a red kaftan opening over an emerald skirt patterned in gold.",
             "fr": "Jambes croisées en escarpins léopard, un caftan rouge ouvert sur une jupe émeraude à motifs dorés.",
             "ar": "ساقان متقاطعتان بحذاء بنقشة النمر، وقفطان أحمر ينفتح على تنورة زمردية بنقوش ذهبية."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00p",
@@ -493,7 +507,8 @@
             "en": "A seated woman in a pistachio green satin kaftan with tone-on-tone embroidery and a silver statement necklace.",
             "fr": "Une femme assise en caftan de satin vert pistache brodé ton sur ton, avec un grand collier argenté.",
             "ar": "امرأة جالسة بقفطان من الساتان الأخضر الفستقي بتطريز من اللون نفسه وقلادة فضية كبيرة."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00q",
@@ -504,7 +519,8 @@
             "en": "A hand gathering the sleeve of a beige wool kaftan trimmed with small buttons and fine braid.",
             "fr": "Une main retenant la manche d'un caftan en laine beige orné de petits boutons et d'un fin galon.",
             "ar": "يد تمسك كم قفطان من الصوف البيج مزين بأزرار صغيرة وحاشية مضفورة رقيقة."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00r",
@@ -515,7 +531,8 @@
             "en": "A seated woman in a yellow kaftan with silver leaf print, grey embroidered trim and coral-lined sleeves.",
             "fr": "Une femme assise en caftan jaune à feuilles argentées, galons gris brodés et manches doublées de corail.",
             "ar": "امرأة جالسة بقفطان أصفر بنقوش أوراق فضية وحواش رمادية مطرزة وأكمام ببطانة مرجانية."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00s",
@@ -526,7 +543,8 @@
             "en": "A woman seated in profile on a green velvet sofa in an ivory silk kaftan with silver geometric trim.",
             "fr": "Une femme assise de profil sur un canapé en velours vert, en caftan de soie ivoire à galons argentés géométriques.",
             "ar": "امرأة جالسة جانبيا على أريكة مخملية خضراء بقفطان حريري عاجي بحواش فضية هندسية."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00t",
@@ -537,7 +555,8 @@
             "en": "Hands resting on a red kaftan with tone-on-tone embroidered scrolls and a matching wide belt.",
             "fr": "Des mains posées sur un caftan rouge aux arabesques brodées ton sur ton et à large ceinture assortie.",
             "ar": "يدان على قفطان أحمر بزخارف مطرزة من اللون نفسه وحزام عريض متناسق معه."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00u",
@@ -548,7 +567,8 @@
             "en": "Legs crossed in pink satin heels, a pistachio green kaftan with embroidered trim pooling onto a pale rug.",
             "fr": "Jambes croisées en escarpins de satin rose, un caftan vert pistache brodé tombant sur un tapis clair.",
             "ar": "ساقان متقاطعتان بحذاء ساتان وردي، وقفطان أخضر فستقي مطرز ينسدل على سجادة فاتحة."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00v",
@@ -559,7 +579,8 @@
             "en": "Folded hands on the lap of a pale silver kaftan with an olive green braided belt and sheer embroidered underlayer.",
             "fr": "Des mains jointes sur un caftan argent pâle à ceinture tressée vert olive et dessous brodé transparent.",
             "ar": "يدان متشابكتان على قفطان فضي فاتح بحزام مضفور أخضر زيتوني وثوب داخلي شفاف مطرز."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00w",
@@ -570,7 +591,8 @@
             "en": "Legs crossed in nude patent heels, a beige wool kaftan with button trim slit at the hem.",
             "fr": "Jambes croisées en escarpins vernis nude, un caftan en laine beige bordé de petits boutons, fendu sur le bas.",
             "ar": "ساقان متقاطعتان بحذاء لامع بلون البشرة، وقفطان من الصوف البيج مزين بأزرار ومشقوق عند الذيل."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-00x",
@@ -581,7 +603,8 @@
             "en": "Hands resting on a knee over a yellow and silver brocade kaftan with a chartreuse velvet lining.",
             "fr": "Des mains posées sur le genou, sur un caftan de brocart jaune et argent doublé de velours vert anis.",
             "ar": "يدان على الركبة فوق قفطان من البروكار الأصفر والفضي ببطانة من المخمل الأخضر الفاتح."
-          }
+          },
+          "home": false
         }
       ]
     },
@@ -605,7 +628,8 @@
             "en": "A barefoot father lifts a toddler in a pink swimsuit high overhead on a sunlit lawn among palm trees.",
             "fr": "Un père pieds nus soulève à bout de bras un tout-petit en maillot rose sur une pelouse plantée de palmiers.",
             "ar": "أب حافي القدمين يرفع طفلا صغيرا بلباس سباحة وردي عاليا فوق رأسه على عشب بين أشجار النخيل."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-010",
@@ -616,7 +640,8 @@
             "en": "A young family on a shaded terrace, the parents holding a boy and a curly-haired toddler behind an iron railing.",
             "fr": "Une jeune famille sur une terrasse ombragée, les parents portant un garçon et un tout-petit bouclé derrière une rambarde en fer.",
             "ar": "عائلة شابة على شرفة مظللة، يحمل الوالدان صبيا وطفلا صغيرا مجعد الشعر خلف درابزين حديدي."
-          }
+          },
+          "home": true
         },
         {
           "id": "ph-011",
@@ -627,7 +652,8 @@
             "en": "A plate of seared steak with roasted carrots, broccoli and cherry tomatoes on a sunlit table beside a blue glass.",
             "fr": "Une assiette de steak saisi, carottes rôties, brocoli et tomates cerises sur une table ensoleillée, près d'un verre bleu.",
             "ar": "طبق من شريحة لحم مشوية مع جزر وبروكلي وطماطم كرزية على طاولة مشمسة بجانب كأس زرقاء."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-012",
@@ -638,7 +664,8 @@
             "en": "A family stands on a palm-shaded lawn, the father holding a toddler while the mother leans towards their young son.",
             "fr": "Une famille sur une pelouse ombragée de palmiers, le père portant un tout-petit, la mère penchée vers leur jeune fils.",
             "ar": "عائلة تقف على عشب تظلله أشجار النخيل، الأب يحمل طفلا صغيرا والأم تنحني نحو ابنهما الصغير."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-013",
@@ -649,7 +676,8 @@
             "en": "A young woman with sunglasses in her hair eats a plated dish at an outdoor table, eyes lowered.",
             "fr": "Une jeune femme, lunettes de soleil dans les cheveux, déguste un plat à une table en terrasse, les yeux baissés.",
             "ar": "شابة تضع نظارة شمسية فوق شعرها تتناول طبقا على طاولة في الهواء الطلق وعيناها منخفضتان."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-014",
@@ -660,7 +688,8 @@
             "en": "A mother holds her young son as the family looks out over a sunlit railing, palm trees blurred behind.",
             "fr": "Une mère tient son jeune fils tandis que la famille regarde par-dessus une rambarde ensoleillée, palmiers flous en arrière-plan.",
             "ar": "أم تحمل ابنها الصغير بينما تطل العائلة من فوق درابزين مشمس، وأشجار النخيل ضبابية خلفهم."
-          }
+          },
+          "home": false
         },
         {
           "id": "ph-015",
@@ -671,7 +700,8 @@
             "en": "A young man in a red fez raises a glass of mint tea inside a tent hung with colourful tassels.",
             "fr": "Un jeune homme coiffé d'un fez rouge lève un verre de thé à la menthe sous une tente ornée de pompons colorés.",
             "ar": "شاب يعتمر طربوشا أحمر يرفع كأس شاي بالنعناع داخل خيمة مزينة بشراشيب ملونة."
-          }
+          },
+          "home": false
         }
       ]
     }

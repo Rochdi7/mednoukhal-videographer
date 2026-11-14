@@ -26,11 +26,12 @@ const ALBUMS = {
   family: 'wetransfer_mn_00537-jpg_2026-11-14_0056',
 };
 
-// The films: master, poster frame (s), and the part used as a hero loop (start, length in s).
+// The films: master, poster frame (s), the hero file name, and the part used as the short preview
+// (carousel and hover; start, length in s). The hero always plays the whole film, then the next one starts.
 const FILMS = {
-  'naoual-live-on-stage': { master: 'naoual .mp4', poster: 32.5, hero: 'hero-naoual', heroStart: 36, heroLen: 15 },
-  'medina-stories': { master: 'reel pvr26.mp4', poster: 11.5, hero: 'hero-medina', heroStart: 0, heroLen: 15.4 },
-  'essaouira-atlantic-soul': { master: 'Sequence 03_2.mp4', poster: 8.4, hero: 'hero-essaouira', heroStart: 0, heroLen: 10.9 },
+  'naoual-live-on-stage': { master: 'naoual .mp4', poster: 32.5, hero: 'hero-naoual', previewStart: 36, previewLen: 15 },
+  'medina-stories': { master: 'reel pvr26.mp4', poster: 11.5, hero: 'hero-medina', previewStart: 0, previewLen: 15.4 },
+  'essaouira-atlantic-soul': { master: 'Sequence 03_2.mp4', poster: 8.4, hero: 'hero-essaouira', previewStart: 0, previewLen: 10.9 },
 };
 
 function run(cmd, args) {
@@ -73,7 +74,7 @@ if (imagesOnly) process.exit(0);
 
 // --- Videos ---
 // Films: 1080p H.264 with sound (the 4K masters are 20–30 Mbps; CRF 22 capped at 6 Mbps looks the same on the web
-// and keeps every file under GitHub's 50 MB warning). Previews: the hero cut at 720p with sound, for the muted carousel
+// and keeps every file under GitHub's 50 MB warning). Previews: a short cut (previewStart/previewLen) at 720p with sound, for the muted carousel
 // and hover previews (the carousel has a sound button).
 // Hero loops: muted, 25 fps (the hero timecode counts 25 fps), plus a 9:16 centre crop for phones held upright.
 const x264 = (crf, max) => ['-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-maxrate', max, '-bufsize', `${parseInt(max) * 2}${max.replace(/\d+/, '')}`, '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart'];
@@ -81,9 +82,9 @@ for (const [slug, f] of Object.entries(FILMS)) {
   const master = path.join(VIDEO_SRC, f.master);
   const film = path.join(VIDEO_OUT, `${slug}.mp4`);
   if (!fresh(film)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', master, '-vf', 'scale=1920:1080:flags=lanczos', ...x264('22', '6M'), '-c:a', 'aac', '-b:a', '160k', film]);
-  const cut = ['-ss', String(f.heroStart), '-t', String(f.heroLen), '-i', master, '-an'];
+  const cut = ['-i', master, '-an'];
   const preview = path.join(VIDEO_OUT, `${slug}-preview.mp4`);
-  if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', ...cut.slice(0, -1), '-vf', 'scale=1280:720:flags=lanczos', ...x264('23', '2500k'), '-c:a', 'aac', '-b:a', '128k', '-af', 'afade=t=in:d=0.3', preview]);
+  if (!fresh(preview)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(f.previewStart), '-t', String(f.previewLen), '-i', master,'-vf', 'scale=1280:720:flags=lanczos', ...x264('23', '2500k'), '-c:a', 'aac', '-b:a', '128k', '-af', 'afade=t=in:d=0.3', preview]);
   const wide = path.join(VIDEO_OUT, `${f.hero}-1080.mp4`);
   if (!fresh(wide)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', ...cut, '-vf', 'fps=25,scale=1920:1080:flags=lanczos', ...x264('24', '3500k'), wide]);
   const tall = path.join(VIDEO_OUT, `${f.hero}-portrait.mp4`);

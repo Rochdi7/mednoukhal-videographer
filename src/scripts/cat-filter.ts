@@ -12,7 +12,7 @@ document.querySelectorAll<HTMLElement>('[data-cat-filter]').forEach((group) => {
     items.forEach((item) => {
       const show = filter === 'all' || item.dataset.cat === filter;
       item.hidden = !show;
-      if (show && item.dataset.slot !== undefined) item.dataset.slot = String(slot++ % 8);
+      if (show && item.dataset.slot !== undefined) item.dataset.slot = String(slot++ % 4);
       // Cards brought back by a filter fade in, rather than appearing already mid-animation.
       if (show && !calm) item.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(0.2, 0.7, 0.1, 1)' });
     });

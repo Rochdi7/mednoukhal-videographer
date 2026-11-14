@@ -1,4 +1,4 @@
-// Everything specific to Mednoukhal lives here. Empty values are hidden on the site.
+// Everything specific to Med Noukhal lives here. Empty values are hidden on the site.
 // The values below are the defaults: whatever is filled in under "Site settings & logo" in the dashboard replaces them.
 import type { ImageMetadata } from 'astro';
 import { cms, cmsImage } from '../data/cms';
@@ -9,7 +9,7 @@ import wordmark from '../assets/branding/mednoukhal-wordmark.png';
 export type SocialIcon = 'instagram' | 'youtube' | 'threads';
 
 const DEFAULTS = {
-  name: 'Mednoukhal',
+  name: 'Med Noukhal',
   displayName: 'Med Noukhal', // the name as written in the logo, used in the footer credits
   logoAlt: 'MN Visual', // what the logo image reads
   jobTitle: 'Videographer and Photographer',

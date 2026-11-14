@@ -9,7 +9,10 @@ import { checkbox, emptyL, flag, h, icon, localized, media, onChange, put, selec
 
 type Cat = { id: string; slug: string; title: L };
 type Film = { id: string; slug: string; title: L; description: L; categoryId: string; featured: boolean; onHome: boolean; date: string; video: Vid | null; poster: Img | null };
-type Photo = Img & { id: string; alt: L };
+// home: ticked for the homepage photo carousel.
+type Photo = Img & { id: string; alt: L; home: boolean };
+// Albums whose photos were never ticked for the homepage start with their first ones (same rule as the site).
+const HOME_DEFAULT = 2;
 type Album = { id: string; slug: string; title: L; categoryId: string; onHome: boolean; photos: Photo[] };
 type Client = { id: string; name: string; tone: boolean; logo: Img | null };
 type Review = { id: string; clientId: string; name: string; logo: Img | null; sector: L; quote: string; rating: number; placeholder: boolean };
@@ -40,7 +43,8 @@ const state = {
   content: null as Content | null,
   dirty: false,
   saving: false,
-  status: null as null | { revision: number; publishedRevision: number; publishedAt: string | null; canPublish: boolean; run: null | { status: string; conclusion: string | null; startedAt: string; url: string } },
+  // local: the dashboard runs under `npm run admin:local`, where Publish rebuilds this computer's copy of the site.
+  status: null as null | { revision: number; publishedRevision: number; publishedAt: string | null; canPublish: boolean; local?: boolean; run: null | { status: string; conclusion: string | null; startedAt: string; url: string } },
   filmFilter: 'all',
   albumFilter: 'all',
 };
@@ -150,7 +154,7 @@ const drawBar = () => {
   put(barEl,
     h('h1', { class: 'bar__title' }, ((n) => [n && icon(n.icon), n?.title ?? n?.label ?? 'Dashboard'])(NAV.find((n) => n.hash === route().section))),
     h('span', { class: 'bar__state', 'data-tone': failed ? 'error' : tone }, failed ? 'Publish failed' : stateText),
-    failed && h('a', { class: 'btn btn--sm btn--ghost', href: run!.url, target: '_blank', rel: 'noopener' }, 'Details'),
+    failed && run!.url && h('a', { class: 'btn btn--sm btn--ghost', href: run!.url, target: '_blank', rel: 'noopener' }, 'Details'),
     h('button', { class: 'btn', type: 'button', disabled: !state.dirty || state.saving, onClick: save }, 'Save'),
     h('button', { class: 'btn btn--primary', type: 'button', disabled: state.dirty || state.saving || !!building || !s?.canPublish, title: s && !s.canPublish ? 'Publishing is not set up on the server yet (github_token in api/config.php).' : undefined, onClick: publish }, 'Publish'),
     h('a', { class: 'btn btn--ghost', href: '/', target: '_blank', rel: 'noopener' }, 'View site', icon(ArrowUpRight)),
@@ -248,6 +252,8 @@ const errorsOf = (c: Content) => {
     need(f.title.en.trim(), 'A film has no English title.', at);
     need(filmCats.has(f.categoryId), `${name}: choose a category.`, at);
     need(f.video, `${name}: upload the video.`, at);
+    // The films page shows wide frames only.
+    need(!f.video || !f.video.width || f.video.width > f.video.height, `${name}: use a landscape video (wider than tall).`, at);
     need(f.poster, `${name}: upload a poster image.`, at);
   });
   c.albums.forEach((a) => {
@@ -330,21 +336,22 @@ async function refreshStatus() {
   if (res.ok) state.status = res as any;
   drawBar();
   clearTimeout(statusTimer);
-  // While a build runs, check on it every 15 seconds.
-  if (state.status?.run && state.status.run.status !== 'completed') statusTimer = window.setTimeout(refreshStatus, 15000);
+  // While a build runs, check on it every 15 seconds (5 for a local rebuild).
+  if (state.status?.run && state.status.run.status !== 'completed') statusTimer = window.setTimeout(refreshStatus, state.status.local ? 5000 : 15000);
 }
 
 async function publish() {
-  if (!confirm('Publish your saved changes? The site updates in 3–5 minutes.')) return;
+  const local = !!state.status?.local;
+  if (!confirm(local ? 'Publish your saved changes? The local site rebuilds in about a minute.' : 'Publish your saved changes? The site updates in 3–5 minutes.')) return;
   const res = await call('publish', {});
   if (!res.ok) {
     toast(res.code === 'publish_not_configured' ? 'Publishing is not set up on the server yet (github_token in api/config.php).' : `Publishing failed (${res.code}${res.status ? ` ${res.status}` : ''}).`, 'error');
     return;
   }
-  toast('Publishing. Live in 3–5 minutes.');
+  toast(local ? 'Rebuilding the local site.' : 'Publishing. Live in 3–5 minutes.');
   if (state.status) state.status.run = { status: 'queued', conclusion: null, startedAt: new Date().toISOString(), url: '' };
   drawBar();
-  setTimeout(refreshStatus, 6000);
+  setTimeout(refreshStatus, local ? 3000 : 6000);
 }
 
 // ---------------------------------------------------------------- list helpers
@@ -498,7 +505,7 @@ function filmDetail(view: HTMLElement, id: string) {
     ),
     h('div', { class: 'card' },
       h('p', { class: 'card__title' }, 'Video & poster'),
-      media('Video file (MP4)', film, 'video', 'video', { required: true, help: 'H.264 MP4, compressed.' }),
+      media('Video file (MP4)', film, 'video', 'video', { required: true, help: 'Landscape 16:9, H.264 MP4, compressed.' }),
       media('Poster image', film, 'poster', 'image', { required: true, focus: true, help: 'A frame from the film.' }),
     ),
     h('div', { class: 'card' },
@@ -535,7 +542,7 @@ function albumsScreen(view: HTMLElement, id?: string) {
             const i = c.albums.indexOf(a);
             return h('div', { class: 'row' },
               thumb(a.photos[0]),
-              h('div', {}, h('p', { class: 'row__title' }, a.title.en || 'Untitled album', !a.onHome && h('span', { class: 'badge' }, 'Not on homepage')), h('p', { class: 'row__meta' }, `${catName(c.photoCategories, a.categoryId)} · ${a.photos.length} photos`)),
+              h('div', {}, h('p', { class: 'row__title' }, a.title.en || 'Untitled album', !a.onHome && h('span', { class: 'badge' }, 'Not on homepage')), h('p', { class: 'row__meta' }, `${catName(c.photoCategories, a.categoryId)} · ${a.photos.length} photos · ${a.photos.filter((p) => p.home).length} on home`)),
               rowActions(c.albums, i, () => go(`albums/${a.id}`), `the album "${a.title.en || 'Untitled'}" and its photos`),
             );
           }),
@@ -552,12 +559,20 @@ function albumDetail(view: HTMLElement, id: string) {
   slugFollows(title, album, c.albums, 'album');
   const grid = h('div', { class: 'photos' });
   const uploads = h('div', { class: 'uploads' });
+  // How many photos of this album the homepage carousel shows; follows the ticks as they change.
+  const homeCount = h('p', { class: 'hint' });
+  const countHome = () => {
+    const n = album.photos.filter((p) => p.home).length;
+    homeCount.replaceChildren(icon(House), ` Home carousel: ${n} of ${album.photos.length} photos.${album.onHome ? '' : ' Album hidden from the homepage.'}`);
+  };
 
   const drawPhotos = () => {
+    countHome();
     grid.replaceChildren(
       ...album.photos.map((p, i) => {
         const img = h('img', { src: p.path, alt: '', loading: 'lazy', style: { objectPosition: p.focus ?? '50% 50%' } });
-        const frame = h('div', { class: 'photo__img', title: 'Click to set the focus point' }, img, h('span', { class: 'photo__n' }, i === 0 ? 'Cover' : i + 1));
+        const badge = h('span', { class: 'photo__home', hidden: !p.home }, icon(House), 'Home');
+        const frame = h('div', { class: 'photo__img', title: 'Click to set the focus point' }, img, h('span', { class: 'photo__n' }, i === 0 ? 'Cover' : i + 1), badge);
         const dot = h('span', { class: 'media__dot' });
         const place = () => {
           const [x, y] = (p.focus ?? '50% 50%').split(' ');
@@ -580,6 +595,10 @@ function albumDetail(view: HTMLElement, id: string) {
             h('button', { class: 'btn btn--sm btn--icon', type: 'button', 'aria-label': 'Move later', disabled: i === album.photos.length - 1, onClick: () => (album.photos.splice(i + 1, 0, ...album.photos.splice(i, 1)), markDirty(), drawPhotos()) }, icon(ArrowRight)),
             h('button', { class: 'btn btn--sm btn--danger', type: 'button', onClick: () => remove(album.photos, i, 'this photo') && drawPhotos() }, 'Delete'),
           ),
+          h('label', { class: 'check photo__check' },
+            h('input', { type: 'checkbox', checked: p.home, onChange: (e: Event) => ((p.home = (e.target as HTMLInputElement).checked), (badge.hidden = !p.home), countHome(), markDirty()) }),
+            h('span', {}, 'Show on home page'),
+          ),
           h('label', { class: 'field' }, h('span', {}, 'Photo title'), h('input', { type: 'text', value: p.alt.en, placeholder: 'e.g. Golden caftan', onInput: (e: Event) => ((p.alt.en = (e.target as HTMLInputElement).value), markDirty()) })),
           h('details', {}, h('summary', {}, 'Title in French / Arabic'),
             h('div', { class: 'langs langs--stack' },
@@ -600,7 +619,8 @@ function albumDetail(view: HTMLElement, id: string) {
       uploads.append(line);
       try {
         const done = await upload(file, 'image', (share) => (bar.style.width = `${share * 100}%`));
-        album.photos.push({ id: uid('ph'), path: done.path, width: done.width, height: done.height, focus: '50% 50%', alt: emptyL() });
+        // Ticked for the homepage while the album has fewer than two there; untick or tick it in the grid.
+        album.photos.push({ id: uid('ph'), path: done.path, width: done.width, height: done.height, focus: '50% 50%', alt: emptyL(), home: album.photos.filter((x) => x.home).length < HOME_DEFAULT });
         markDirty();
         drawPhotos();
         line.remove();
@@ -628,11 +648,12 @@ function albumDetail(view: HTMLElement, id: string) {
     h('div', { class: 'card' },
       title,
       select('Category', album, 'categoryId', c.photoCategories.map((x) => ({ value: x.id, label: x.title.en })), { required: true, help: 'Filter tab on the Photography page.' }),
-      checkbox('Show in the homepage photo carousels', album, 'onHome'),
+      checkbox('Show in the homepage photo carousel', album, 'onHome', { help: 'Only the photos ticked below.', onToggle: () => countHome() }),
     ),
     h('div', { class: 'card' },
       h('p', { class: 'card__title' }, 'Photos'),
-      h('p', { class: 'hint' }, 'The first photo is the cover. Click a photo to set its focus point.'),
+      h('p', { class: 'hint' }, 'The first photo is the cover. Click a photo to set its focus point. Tick the ones for the home page.'),
+      homeCount,
       drop,
       uploads,
       grid,
@@ -685,8 +706,8 @@ function homeScreen(view: HTMLElement) {
         h('div', { class: 'row row--plain' },
           h('div', { class: 'card', style: { padding: '0', border: '0' } },
             h('p', { class: 'label' }, `Film ${i + 1}`, i === 0 && h('span', { class: 'badge' }, 'plays first')),
-            media('Video (landscape)', film, 'video', 'video', { required: true, help: 'Muted. 10–30 s, under 15 MB.' }),
-            media('Mobile version (optional)', film, 'videoMobile', 'video', { help: '9:16 portrait.' }),
+            // The phone version is a 9:16 cut of this film, made when the site is published (scripts/video-portrait.mjs).
+            media('Video (landscape)', film, 'video', 'video', { required: true, help: 'Muted, under 15 MB. Phone version: automatic 9:16 cut.', onUpload: () => (film.videoMobile = null) }),
           ),
           h('div', { class: 'row__actions' },
             h('button', { class: 'btn btn--sm btn--icon', type: 'button', 'aria-label': 'Move up', disabled: i === 0, onClick: () => (home.videos.splice(i - 1, 0, ...home.videos.splice(i, 1)), markDirty(), drawFilms()) }, icon(ArrowUp)),
@@ -709,8 +730,7 @@ function homeScreen(view: HTMLElement) {
     ),
     h('div', { class: 'card' },
       h('p', { class: 'card__title' }, 'Poster'),
-      media('Desktop', home, 'poster', 'image', { required: true, help: 'First frame of film 1.' }),
-      media('Mobile', home, 'posterMobile', 'image', { help: 'First frame of the mobile film 1.' }),
+      media('Still image', home, 'poster', 'image', { required: true, help: 'First frame of film 1. Phone version: automatic 9:16 crop.', onUpload: () => (home.posterMobile = null) }),
     ),
     h('div', { class: 'card' }, h('p', { class: 'card__title' }, 'About section'), media('Photo', home, 'aboutPhoto', 'image', { focus: true, help: 'Portrait format.' })),
   );
@@ -1114,6 +1134,10 @@ async function boot() {
     content.curve ??= { items: [] };
     content.settings.logoWordmark ??= null;
     content.reviews.forEach((r) => ((r.name ??= ''), (r.logo ??= null)));
+    // Albums saved before photos could be ticked for the homepage: their first two are, as the site shows them.
+    content.albums.forEach((a) => {
+      if (!a.photos.some((p) => typeof p.home === 'boolean')) a.photos.forEach((p, i) => (p.home = i < HOME_DEFAULT));
+    });
     state.content = content;
   }
   render();

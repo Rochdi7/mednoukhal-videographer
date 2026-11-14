@@ -1,6 +1,8 @@
-// Talks to /api/admin/api.php: JSON calls with the CSRF token, and uploads sent in 4 MB pieces
+// Talks to the dashboard API (ADMIN_API in src/config/admin.ts): JSON calls with the CSRF token, and uploads sent in 4 MB pieces
 // (so a long film gets past the server's upload size limit, with a real progress bar).
-const ENDPOINT = '/api/admin/api.php';
+import { ADMIN_API } from '../../config/admin';
+
+const ENDPOINT = ADMIN_API;
 const CHUNK = 4 * 1024 * 1024;
 
 let csrf = '';

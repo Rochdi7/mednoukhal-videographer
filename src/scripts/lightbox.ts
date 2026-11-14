@@ -19,7 +19,8 @@ if (dialog) {
   const show = (i: number, direction = 0) => {
     index = (i + items.length) % items.length;
     const item = items[index];
-    const alt = item.querySelector('img')?.alt ?? '';
+    // Photos of the album that are not shown in the row carry their caption in data-alt.
+    const alt = item.dataset.alt ?? item.querySelector('img')?.alt ?? '';
     img.src = item.href;
     img.alt = alt;
     cap.textContent = alt;
@@ -63,7 +64,8 @@ if (dialog) {
       const e = event as MouseEvent;
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();
-      items = all.filter((other) => other.dataset.album === item.dataset.album);
+      // data-i is the photo's place in its album (homepage), so the viewer runs in album order.
+      items = all.filter((other) => other.dataset.album === item.dataset.album).sort((a, b) => Number(a.dataset.i ?? 0) - Number(b.dataset.i ?? 0));
       albumName.textContent = item.dataset.albumTitle ?? '';
       buildThumbs();
       dialog.showModal();

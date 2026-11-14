@@ -39,6 +39,10 @@ if (dialog) {
   });
 
   dialog.querySelector('[data-theater-close]')!.addEventListener('click', () => dialog.close());
+  // The player is a popup box: a click on the dimmed page around it (the dialog itself, not its content) closes it.
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
   dialog.querySelector('[data-theater-prev]')!.addEventListener('click', () => step(-1));
   dialog.querySelector('[data-theater-next]')!.addEventListener('click', () => step(1));
 

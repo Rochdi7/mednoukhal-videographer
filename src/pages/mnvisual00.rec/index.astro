@@ -1,5 +1,6 @@
 ---
-// The dashboard. Everything happens in the browser (src/scripts/admin/), talking to /api/admin/api.php on the server.
+// The dashboard. Everything happens in the browser (src/scripts/admin/), talking to the API in public/api/mnvisual00/ on the server.
+// Its address is set in src/config/admin.ts (not /admin, which bots try first).
 // The built-in texts are embedded so the Texts editor can show them and save only what changes.
 import { LOGO_MARK } from '../../config/site';
 import { strings } from '../../i18n/strings';
@@ -14,8 +15,8 @@ const defaults = JSON.stringify(strings).replace(/</g, '\\u003c');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="same-origin" />
-    <title>Dashboard · Mednoukhal</title>
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Dashboard · Med Noukhal</title>
+    <link rel="icon" type="image/png" href="/favicon.png?v=2" />
   </head>
   <body>
     <div id="app" class="boot" data-logo={LOGO_MARK.src}><p>Loading…</p></div>

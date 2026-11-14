@@ -1,9 +1,9 @@
 // Writes the dashboard's starting content from what the site shows today:
-//   public/api/admin/seed.json   films, albums, both category lists, hero, logo, settings, clients, reviews
+//   public/api/mnvisual00/seed.json   films, albums, both category lists, hero, logo, settings, clients, reviews
 //   public/media/seed/…          the images they use, at stable addresses (videos keep their /media/videos/ paths)
 // The dashboard loads seed.json the first time it opens on the server (when it has no content yet), so it starts
 // with every current film and album. Run again after changing the content in the code:  npm run cms:seed
-import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
@@ -32,7 +32,9 @@ const [{ SITE }, { ALL_FILMS, FILM_CATEGORIES }, { ALBUMS, PHOTO_CATEGORIES }, {
 ]);
 await vite.close();
 
-rmSync(SEED_DIR, { recursive: true, force: true });
+// Files from earlier seeds are kept: a dashboard already running on the server may still point at them, and the
+// build copies every image the content names (a missing one would stop it).
+mkdirSync(SEED_DIR, { recursive: true });
 
 const sourceOf = (ref) => {
   const path = String(ref?.src ?? ref).split('?')[0];
@@ -85,7 +87,8 @@ for (const f of ALL_FILMS) {
 const albums = [];
 for (const a of ALBUMS) {
   const photos = [];
-  for (const [i, p] of a.photos.entries()) photos.push({ id: id('ph'), ...(await image(p.image, `albums/${a.slug}`, String(i + 1).padStart(2, '0')) ), alt: p.alt });
+  // home: ticked for the homepage photo carousel (the first two of each album, see src/data/photos.ts).
+  for (const [i, p] of a.photos.entries()) photos.push({ id: id('ph'), ...(await image(p.image, `albums/${a.slug}`, String(i + 1).padStart(2, '0')) ), alt: p.alt, home: !!p.home });
   albums.push({ id: id('album'), slug: a.slug, title: a.title, categoryId: photoCat.get(a.category) ?? '', onHome: a.onHome !== false, photos });
 }
 
@@ -112,7 +115,7 @@ const seed = {
     videos: HERO.playlist.map((v) => ({ id: id('hero'), video: video(v.src), videoMobile: v.srcMobile ? video(v.srcMobile) : null })),
     poster: await image('/src/assets/hero/hero.jpg', 'hero', 'poster'),
     posterMobile: await image('/src/assets/hero/hero-portrait.jpg', 'hero', 'poster-portrait'),
-    aboutPhoto: await image('/src/assets/films/about-portrait.jpg', 'hero', 'about', { focus: '50% 40%' }),
+    aboutPhoto: await image('/src/assets/films/med-noukhal-videographer-behind-the-camera.avif', 'hero', 'med-noukhal-videographer-behind-the-camera', { focus: '62% 30%' }),
   },
   // Empty: the dashboard shows the built-in texts and stores only what is changed.
   texts: {},
@@ -126,5 +129,5 @@ const seed = {
   reviews,
 };
 
-writeFileSync(join(root, 'public/api/admin/seed.json'), `${JSON.stringify(seed, null, 2)}\n`);
+writeFileSync(join(root, 'public/api/mnvisual00/seed.json'), `${JSON.stringify(seed, null, 2)}\n`);
 console.log(`Seed written: ${films.length} films, ${albums.length} albums, ${clients.length} clients, ${reviews.length} reviews.`);

@@ -134,7 +134,9 @@ function start() {
   reveal('.about__badge', { from: { opacity: 0, transform: 'scale(0.6) rotate(-90deg)' }, duration: 1200 });
 
   // Service cards tip up toward the viewer, rippling across the grid.
-  reveal('.expertise__item', { from: { opacity: 0, transform: 'perspective(900px) translateY(70px) rotateX(-16deg)' }, duration: 1150, gap: 110 });
+  // On phones they sit in a swipe carousel, so the row arrives as one piece (cards off to the side are simply there when swiped to).
+  if (window.matchMedia('(max-width: 600px)').matches) reveal('.expertise', { from: up(50), duration: 1100 });
+  else reveal('.expertise__item', { from: { opacity: 0, transform: 'perspective(900px) translateY(70px) rotateX(-16deg)' }, duration: 1150, gap: 110 });
 
   // The photos on screen land one by one when the row arrives. Every other photo is simply in place when dragged to.
   const firstTiles = $$('[data-panel="photo"] .tile').slice(0, 6);

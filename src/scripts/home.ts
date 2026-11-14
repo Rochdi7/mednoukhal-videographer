@@ -39,41 +39,42 @@ if (hero) {
   }
 }
 
-// --- Hero viewfinder: the timecode follows the clip (HH:MM:SS:FF at 25 fps) and freezes when it pauses ---
-const timecode = document.querySelector<HTMLElement>('[data-hero-tc]');
-if (hero && timecode) {
-  const FPS = 25;
-  const pad = (n: number) => String(n).padStart(2, '0');
-  let shown = -1;
-  let ticking = false;
-  const draw = () => {
-    const t = hero.currentTime;
-    const frame = Math.floor(t * FPS);
-    if (frame !== shown) {
-      shown = frame;
-      timecode.textContent = `${pad(Math.floor(t / 3600))}:${pad(Math.floor(t / 60) % 60)}:${pad(Math.floor(t) % 60)}:${pad(frame % FPS)}`;
-    }
-    ticking = !hero.paused;
-    if (ticking) requestAnimationFrame(draw);
-  };
-  const run = () => {
-    if (!ticking) draw();
-  };
-  hero.addEventListener('playing', run);
-  hero.addEventListener('seeked', run);
-  if (!hero.paused) run();
+// --- About badge (Arabic): letters keep their natural shape, so the ring is filled by fitting the font size, never by stretching ---
+const ringText = document.querySelector<SVGTextElement>('[data-ring-fit]');
+if (ringText) {
+  document.fonts.ready.then(() => {
+    const ring = 2 * Math.PI * 47 - 4; // the ring path's length, less a hair so the phrase never clips
+    const length = ringText.getComputedTextLength();
+    const size = parseFloat(getComputedStyle(ringText).fontSize);
+    if (length > 0 && size > 0) ringText.style.fontSize = `${Math.min(14, Math.max(9, (size * ring) / length)).toFixed(2)}px`;
+  });
 }
 
-// --- Filter ---
-const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
-const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
-filters.forEach((button) => {
+// --- Services (phones): the dot under the carousel follows the card in view; tapping a dot goes to its card ---
+const svcTrack = document.querySelector<HTMLElement>('[data-svc-track]');
+const svcDots = [...document.querySelectorAll<HTMLElement>('[data-svc-dots] span')];
+if (svcTrack && svcDots.length) {
+  const cards = [...svcTrack.children] as HTMLElement[];
+  const mark = (index: number) => svcDots.forEach((dot, i) => dot.classList.toggle('is-on', i === index));
+  const watch = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && mark(cards.indexOf(e.target as HTMLElement))),
+    { root: svcTrack, threshold: 0.6 },
+  );
+  cards.forEach((card) => watch.observe(card));
+  svcDots.forEach((dot, i) => dot.addEventListener('click', () => cards[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })));
+}
+
+// --- Filter: the video categories narrow the film carousel (the photo carousel below is never filtered) ---
+const filmFilters = [...document.querySelectorAll<HTMLButtonElement>('[data-film-filter] [data-filter]')];
+const filmCarousel = document.querySelector<HTMLElement>('[data-panel="films"]');
+filmFilters.forEach((button) => {
   button.addEventListener('click', () => {
     const value = button.dataset.filter;
-    filters.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-    panels.forEach((panel) => {
-      panel.hidden = value !== 'all' && panel.dataset.panel !== value;
+    filmFilters.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+    filmCarousel?.querySelectorAll<HTMLElement>('.tile').forEach((tile) => {
+      tile.hidden = value !== 'all' && tile.dataset.cat !== value;
     });
+    filmCarousel?.dispatchEvent(new Event('mn:filter'));
   });
 });
 
@@ -101,7 +102,8 @@ const nearestIndex = (track: HTMLElement, tiles: HTMLElement[]) => {
 
 document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
   const track = carousel.querySelector<HTMLElement>('[data-track]')!;
-  const tiles = [...track.querySelectorAll<HTMLElement>('.tile')];
+  const allTiles = [...track.querySelectorAll<HTMLElement>('.tile')];
+  let tiles = allTiles; // the tiles not hidden by the category filter
   // Strip mode (film row, desktop with a mouse): no scrolling; `current` is the wide film and the CSS animates the widths.
   let strip = false;
   let current = 0;
@@ -188,12 +190,13 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
     lockedUntil = performance.now() + 950;
     select(i);
   };
-  tiles.forEach((tile, i) => {
+  allTiles.forEach((tile) => {
     tile.addEventListener('pointermove', (e) => {
-      if (!strip || e.pointerType !== 'mouse' || i === current || hoverTimer || performance.now() < lockedUntil) return;
+      const i = tiles.indexOf(tile);
+      if (!strip || e.pointerType !== 'mouse' || i < 0 || i === current || hoverTimer || performance.now() < lockedUntil) return;
       hoverTimer = window.setTimeout(() => {
         hoverTimer = 0;
-        if (tile.matches(':hover')) pick(i);
+        if (tile.matches(':hover')) pick(tiles.indexOf(tile));
       }, 130);
     });
     tile.addEventListener('pointerleave', () => {
@@ -201,7 +204,8 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
       hoverTimer = 0;
     });
     tile.addEventListener('focusin', () => {
-      if (strip && i !== current) select(i);
+      const i = tiles.indexOf(tile);
+      if (strip && i >= 0 && i !== current) select(i);
     });
   });
   const applyMode = () => {
@@ -290,7 +294,18 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => 
   applyMode();
   stripQuery.addEventListener('change', applyMode);
 
-  tiles.forEach((tile) => {
+  // A category was picked: start again from the first film of that category. With fewer than three films the strip centres them.
+  carousel.addEventListener('mn:filter', () => {
+    tiles = allTiles.filter((tile) => !tile.hidden);
+    current = 0;
+    carousel.classList.toggle('is-few', tiles.length < 3);
+    allTiles.forEach((tile) => tile.classList.remove('is-main', 'is-near', 'is-lead'));
+    if (strip) layout();
+    else if (tiles[0]) moveTo(track, tiles[0], 'auto');
+    refresh();
+  });
+
+  allTiles.forEach((tile) => {
     const button = soundButton(tile);
     button.addEventListener('click', () => {
       const video = tile.querySelector('video');

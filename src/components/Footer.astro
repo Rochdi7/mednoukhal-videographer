@@ -1,7 +1,7 @@
 ---
 // Footer as the "end credits" of the page:
 // 1. a closing call to action (big email link, start-a-project and WhatsApp buttons),
-// 2. credits in four columns: brand, pages, direct contact, social channels,
+// 2. credits: the logo centred on its own row, then pages, direct contact and social channels,
 // 3. a bottom bar with copyright, developer credit and a "back to top" rewind,
 // with a giant outlined MN VISUAL title sinking off the bottom edge like a closing card.
 import { Image } from 'astro:assets';
@@ -45,8 +45,8 @@ const icon = brandIcon;
 
   <div class="site-foot__grid wrap">
     <div class="site-foot__brand">
-      <a class="site-foot__mark" href={p('/')} aria-label={`${SITE.logoAlt}: ${s.nav.home}`}>
-        <Image src={LOGO} alt="" width={Math.min(320, LOGO.width)} format="webp" quality={90} loading="lazy" />
+      <a class="site-foot__mark" href={p('/')} aria-label={`${SITE.name}: ${s.nav.home}`}>
+        <Image src={LOGO} alt="" widths={[400, 760]} sizes="(max-width: 560px) min(72vw, 300px), clamp(220px, 26vw, 380px)" format="webp" quality={90} loading="lazy" />
       </a>
       <p>{s.hero.role}</p>
     </div>

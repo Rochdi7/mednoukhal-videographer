@@ -1,4 +1,4 @@
-# Mednoukhal: Apache rules for Hostinger shared hosting
+# Med Noukhal: Apache rules for Hostinger shared hosting
 Options -Indexes -MultiViews
 ErrorDocument 404 /404.html
 

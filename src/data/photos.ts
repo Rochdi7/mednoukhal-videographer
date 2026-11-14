@@ -11,7 +11,11 @@ export interface Photo {
   image: ImageMetadata;
   alt: Localized;
   focus?: string; // CSS object-position, from the focus point set in the dashboard
+  home: boolean; // shown in the homepage photo carousel (ticked per photo in the dashboard)
 }
+
+// Until photos are ticked for the homepage in the dashboard, each album shows its first ones there.
+export const HOME_PHOTOS_DEFAULT = 2;
 
 export interface Album {
   slug: string;
@@ -37,10 +41,11 @@ const LOCAL_ALBUMS: Album[] = albumData.map((a) => ({
   title: a.title,
   category: a.category,
   onHome: true,
-  photos: a.photos.map((p) => {
+  photos: a.photos.map((p, i) => {
     const image = files[`/src/assets/photos/${a.slug}/${p.file}`]?.default;
     if (!image) throw new Error(`photos: src/assets/photos/${a.slug}/${p.file} is missing. Run "npm run media".`);
-    return { image, alt: p.alt };
+    const home = (p as { home?: boolean }).home;
+    return { image, alt: p.alt, home: home ?? i < HOME_PHOTOS_DEFAULT };
   }),
 }));
 
@@ -51,7 +56,7 @@ const CMS_ALBUMS: Album[] | null = cms?.albums.length
       title: cmsLocalized(a.title),
       category: a.category,
       onHome: a.onHome !== false,
-      photos: a.photos.map((p) => ({ image: cmsImage(p), alt: cmsLocalized(p.alt, { en: '', fr: '', ar: '' }), focus: p.focus })),
+      photos: a.photos.map((p, i) => ({ image: cmsImage(p), alt: cmsLocalized(p.alt, { en: '', fr: '', ar: '' }), focus: p.focus, home: p.home ?? i < HOME_PHOTOS_DEFAULT })),
     }))
   : null;
 

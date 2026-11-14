@@ -1,5 +1,5 @@
 # Builds the site and uploads it to Hostinger.
-# Runs on every push to main, when "Publish" is pressed in the dashboard (/admin sends a "cms-publish"
+# Runs on every push to main, when "Publish" is pressed in the dashboard (/mnvisual00.rec/ sends a "cms-publish"
 # repository_dispatch event), and on demand from the Actions tab. Setup: docs/dashboard.md.
 name: Build and deploy
 
@@ -29,12 +29,17 @@ jobs:
 
       - run: npm ci
 
-      # Downloaded dashboard photos and Astro's optimised images are kept between runs, so a rebuild only
+      # ffmpeg makes the 9:16 phone cut of each homepage hero film (scripts/video-portrait.mjs).
+      - name: Install ffmpeg
+        run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+
+      # Downloaded dashboard photos, the hero phone cuts and Astro's optimised images are kept between runs, so a rebuild only
       # fetches and resizes what changed.
       - uses: actions/cache@v6
         with:
           path: |
             src/assets/cms
+            public/media/auto
             node_modules/.astro
           key: media-${{ github.run_id }}
           restore-keys: media-

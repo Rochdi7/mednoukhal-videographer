@@ -1,5 +1,5 @@
 <?php
-// Dashboard API for /admin. One endpoint, ?action=… :
+// Dashboard API for the dashboard at /mnvisual00.rec/ (src/config/admin.ts). One endpoint, ?action=… :
 //   GET  session                     who is signed in (+ CSRF token)
 //   POST login {email, password}     sign in
 //   POST logout                      sign out
@@ -227,6 +227,19 @@ function github(string $method, string $path, ?array $payload = null): array
     return ['status' => $status, 'body' => is_string($response) ? json_decode($response, true) : null];
 }
 
+// ---------------------------------------------------------------- local publish
+// Under `npm run admin:local` (MN_LOCAL_PUBLISH=1) "Publish" rebuilds the site on this computer: the API leaves a
+// request in data_dir, the Node script that serves the site picks it up, builds, and reports in build.json.
+function local_publish(): bool
+{
+    return getenv('MN_LOCAL_PUBLISH') === '1';
+}
+function local_run(): ?array
+{
+    $build = read_json(data_dir() . '/build.json');
+    return $build ? ['status' => (string) ($build['status'] ?? 'completed'), 'conclusion' => $build['conclusion'] ?? null, 'startedAt' => $build['startedAt'] ?? null, 'url' => ''] : null;
+}
+
 // ---------------------------------------------------------------- actions
 $action = $_GET['action'] ?? '';
 
@@ -395,8 +408,10 @@ switch ($action) {
         $content = load_content();
         $state = state();
         $run = null;
-        $runs = github('GET', '/actions/workflows/deploy.yml/runs?per_page=1');
-        if ($runs['status'] === 200 && !empty($runs['body']['workflow_runs'][0])) {
+        $runs = local_publish() ? ['status' => 0] : github('GET', '/actions/workflows/deploy.yml/runs?per_page=1');
+        if (local_publish()) {
+            $run = local_run();
+        } elseif ($runs['status'] === 200 && !empty($runs['body']['workflow_runs'][0])) {
             $r = $runs['body']['workflow_runs'][0];
             $run = ['status' => $r['status'], 'conclusion' => $r['conclusion'], 'startedAt' => $r['run_started_at'] ?? $r['created_at'], 'url' => $r['html_url']];
         }
@@ -405,7 +420,8 @@ switch ($action) {
             'revision' => $content['revision'] ?? 0,
             'publishedRevision' => $state['publishedRevision'] ?? 0,
             'publishedAt' => $state['publishedAt'] ?? null,
-            'canPublish' => cfg('github_token') !== '' && cfg('github_repo') !== '',
+            'canPublish' => local_publish() || (cfg('github_token') !== '' && cfg('github_repo') !== ''),
+            'local' => local_publish(),
             'run' => $run,
         ]);
 
@@ -414,6 +430,12 @@ switch ($action) {
         require_csrf();
         require_user();
         $content = load_content();
+        if (local_publish()) {
+            write_atomic(data_dir() . '/publish-request.json', json_encode(['revision' => $content['revision'] ?? 0, 'at' => gmdate('c')]));
+            write_atomic(data_dir() . '/build.json', json_encode(['status' => 'queued', 'conclusion' => null, 'startedAt' => gmdate('c')]));
+            save_state(['publishedRevision' => $content['revision'] ?? 0, 'publishedAt' => gmdate('c'), 'publishedBy' => $_SESSION['user']] + state());
+            respond(200, ['ok' => true, 'local' => true]);
+        }
         $res = github('POST', '/dispatches', ['event_type' => 'cms-publish', 'client_payload' => ['revision' => $content['revision'] ?? 0]]);
         if ($res['status'] === 0) fail(503, 'publish_not_configured');
         if ($res['status'] !== 204) fail(502, 'github', ['status' => $res['status']]);

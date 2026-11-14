@@ -2,15 +2,15 @@ import type { ImageMetadata } from 'astro';
 import { cms, cmsImage } from './cms';
 import heroImage from '../assets/hero/hero.jpg';
 import heroPortrait from '../assets/hero/hero-portrait.jpg';
-// About photo: a film still until a portrait is set in the dashboard (Homepage hero → About section photo).
-import aboutImage from '../assets/films/about-portrait.jpg';
+// About photo, unless another one is set in the dashboard (Homepage hero → About section photo).
+import aboutImage from '../assets/films/med-noukhal-videographer-behind-the-camera.avif';
 
 // The homepage background films and their stills, from the dashboard (Homepage hero) or the files in the project.
 // `sources` (the first film) go into <video> in order; the browser plays the first whose `media` query matches.
 // `playlist` holds every film: one loops; several play one after another (src/scripts/home.ts).
 export interface HeroMedia {
   poster: ImageMetadata;
-  posterMobile: ImageMetadata;
+  posterMobile: ImageMetadata | null; // null: the page crops the poster to 9:16 for phones
   sources: { src: string; media?: string }[];
   playlist: { src: string; srcMobile?: string }[];
 }
@@ -21,7 +21,7 @@ const home = cms?.home;
 export const HERO: HeroMedia = home?.videos?.length && home.poster
   ? {
       poster: cmsImage(home.poster),
-      posterMobile: home.posterMobile ? cmsImage(home.posterMobile) : cmsImage(home.poster),
+      posterMobile: home.posterMobile ? cmsImage(home.posterMobile) : null,
       sources: [...(home.videos[0].videoMobile ? [{ src: home.videos[0].videoMobile.src, media: PORTRAIT }] : []), { src: home.videos[0].video.src }],
       playlist: home.videos.map((v) => ({ src: v.video.src, ...(v.videoMobile ? { srcMobile: v.videoMobile.src } : {}) })),
     }
@@ -60,4 +60,4 @@ export const CURVE_ITEMS: CurveItem[] | null = cms?.curve?.length
 
 export const ABOUT_PHOTO: { image: ImageMetadata; focus: string } = home?.aboutPhoto
   ? { image: cmsImage(home.aboutPhoto), focus: home.aboutPhoto.focus ?? '50% 40%' }
-  : { image: aboutImage, focus: '50% 40%' };
+  : { image: aboutImage, focus: '62% 30%' };
