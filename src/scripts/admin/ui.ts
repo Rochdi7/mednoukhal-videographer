@@ -1,6 +1,11 @@
 // Small DOM helpers and form fields for the dashboard. Fields write straight into the content object they are
 // given and call `changed()`, so typing never re-renders the page.
+import { createElement, type IconNode } from 'lucide';
 import { upload, videoInfo } from './api';
+
+// A Lucide line icon (the same set the site uses), sized by CSS through the `icon` class.
+export const icon = (node: IconNode, cls = '') =>
+  createElement(node, { class: `icon${cls ? ` ${cls}` : ''}`, 'aria-hidden': 'true', 'stroke-width': 1.75 });
 
 type Child = Node | string | number | false | null | undefined | Child[];
 type Attrs = Record<string, any>;
@@ -38,6 +43,10 @@ export const onChange = (fn: () => void) => (changed = fn);
 
 const LANGS: [keyof L, string][] = [['en', 'EN'], ['fr', 'FR'], ['ar', 'AR']];
 
+// The language of a field, shown with the same flag as the language switch in the site header.
+const FLAGS: Record<keyof L, [src: string, name: string]> = { en: ['/flags/gb.svg', 'English'], fr: ['/flags/fr.svg', 'French'], ar: ['/flags/ma.svg', 'Arabic'] };
+export const flag = (lang: keyof L) => h('b', { class: 'lang__flag' }, h('img', { src: FLAGS[lang][0], alt: FLAGS[lang][1], width: 20, height: 15 }));
+
 // Text in three languages. `multiline` stacks them as paragraphs.
 export function localized(label: string, obj: Record<string, any>, key: string, opts: { multiline?: boolean; help?: string; required?: boolean; placeholder?: L } = {}) {
   if (!obj[key] || typeof obj[key] !== 'object') obj[key] = emptyL();
@@ -57,7 +66,7 @@ export function localized(label: string, obj: Record<string, any>, key: string, 
             changed();
           },
         };
-        return h('label', { class: 'lang' }, opts.multiline ? h('textarea', { ...attrs, rows: 3 }) : h('input', { ...attrs, type: 'text' }), h('b', {}, tag));
+        return h('label', { class: 'lang' }, opts.multiline ? h('textarea', { ...attrs, rows: 3 }) : h('input', { ...attrs, type: 'text' }), flag(lang));
       }),
     ),
     opts.help && h('small', {}, opts.help),

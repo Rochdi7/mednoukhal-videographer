@@ -1,5 +1,5 @@
 // Writes the dashboard's starting content from what the site shows today:
-//   public/api/admin/seed.json   films, albums, both category lists, hero, logo, settings, clients, reviews, advice
+//   public/api/admin/seed.json   films, albums, both category lists, hero, logo, settings, clients, reviews
 //   public/media/seed/…          the images they use, at stable addresses (videos keep their /media/videos/ paths)
 // The dashboard loads seed.json the first time it opens on the server (when it has no content yet), so it starts
 // with every current film and album. Run again after changing the content in the code:  npm run cms:seed
@@ -22,13 +22,12 @@ if (existsSync(join(root, 'src/data/cms.json'))) {
 // Load the site's data modules through Vite, so `import x from './a.jpg'` and import.meta.glob resolve to file paths.
 const vite = await createServer({ root, configFile: false, logLevel: 'error', server: { middlewareMode: true, hmr: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } });
 const load = (path) => vite.ssrLoadModule(path);
-const [{ SITE }, { ALL_FILMS }, { ALBUMS }, { CLIENTS }, reviewsModule, advice] = await Promise.all([
+const [{ SITE }, { ALL_FILMS }, { ALBUMS }, { CLIENTS }, reviewsModule] = await Promise.all([
   load('/src/config/site.ts'),
   load('/src/data/films.ts'),
   load('/src/data/photos.ts'),
   load('/src/data/clients.ts'),
   load('/src/data/reviews.ts'),
-  load('/src/data/advice.json'),
 ]);
 await vite.close();
 
@@ -103,9 +102,6 @@ for (const c of CLIENTS) clients.push({ id: id('client'), name: c.name, tone: !!
 const clientId = new Map(clients.map((c) => [c.name, c.id]));
 const reviews = (reviewsModule.reviews ?? []).map((r) => ({ id: id('review'), clientId: clientId.get(r.client), name: '', logo: null, sector: r.sector, quote: r.quote, rating: r.rating, placeholder: !!r.placeholder }));
 
-const adviceVideos = [];
-for (const a of advice.default ?? advice) adviceVideos.push({ id: id('advice'), title: a.title, video: video('/media/videos/preview.mp4'), poster: await image(`/src/assets/advice/${a.id}.jpg`, 'advice', a.id) });
-
 const seed = {
   settings: {
     name: SITE.name,
@@ -136,8 +132,7 @@ const seed = {
   albums,
   clients,
   reviews,
-  advice: adviceVideos,
 };
 
 writeFileSync(join(root, 'public/api/admin/seed.json'), `${JSON.stringify(seed, null, 2)}\n`);
-console.log(`Seed written: ${films.length} films, ${albums.length} albums, ${clients.length} clients, ${reviews.length} reviews, ${adviceVideos.length} advice videos.`);
+console.log(`Seed written: ${films.length} films, ${albums.length} albums, ${clients.length} clients, ${reviews.length} reviews.`);

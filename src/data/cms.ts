@@ -24,7 +24,6 @@ export interface CmsData {
   clients: { name: string; tone?: boolean; logo: CmsImage | null }[];
   // logo: the review's own logo (replaces the client's); a review may name a client outside the client list.
   reviews: { client: string; sector?: CmsText; quote: string; rating: number; placeholder?: boolean; logo?: CmsImage | null; tone?: boolean }[];
-  advice: { title: string; video: CmsVideo | null; poster: CmsImage | null }[];
 }
 
 const json = import.meta.glob<{ default: CmsData }>('/src/data/cms.json', { eager: true });

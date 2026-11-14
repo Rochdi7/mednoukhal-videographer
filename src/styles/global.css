@@ -675,14 +675,6 @@ html:has(.menu[open]) { overflow: hidden; }
 .lightbox__cap { padding: 6px var(--gutter) 14px; font-size: 14px; color: var(--muted); text-align: center; }
 @media (max-width: 760px) { .lightbox__prev, .lightbox__next { display: none; } .lightbox__stage { padding-inline: 0; } .lightbox__thumb { width: 56px; height: 56px; } .lightbox__cap { font-size: 13px; } }
 
-/* ---------- Advice ---------- */
-.advice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 4vw, 56px) clamp(20px, 2.2vw, 32px); }
-.advice-card__frame { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--tile); border: 1px solid var(--line); }
-.advice-card__frame img, .advice-card__frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
-.advice-card__frame .film__play { z-index: 1; opacity: 1; }
-.advice-card h2 { font-family: var(--sans); font-size: 17px; font-weight: 500; line-height: 1.5; text-transform: none; letter-spacing: 0; margin-block-start: 12px; }
-.advice-card p { color: var(--muted); font-size: 14px; margin-block-start: 2px; }
-@media (max-width: 760px) { .advice-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Forms ---------- */
 /* Contact page: brief + direct lines on one side (sticky on desktop), the form in a framed panel on the other */

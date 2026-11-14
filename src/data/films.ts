@@ -87,7 +87,6 @@ export const FILM_CATEGORIES: FilmCategory[] = (cms?.filmCategories ?? [])
   .map((c) => ({ slug: c.slug, title: cmsLocalized(c.title) }))
   .filter((c) => ALL_FILMS.some((f) => f.category === c.slug));
 
-export const ADVICE_FILM = { ...VIDEO, poster: posters['/src/assets/films/about-portrait.jpg'].default };
 
 export const formatDuration = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 export const isoDuration = (s: number) => `PT${Math.floor(s / 60)}M${s % 60}S`;

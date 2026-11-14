@@ -27,7 +27,6 @@ const POSTERS = {
   showreel: 15.5,
   'coaching-film': 7,
 };
-const ADVICE_FRAMES = { 'preview-01': 6.5, 'preview-02': 8.2, 'preview-03': 11, 'preview-04': 15 };
 
 // The burned-in "Directed + edited" title ends before 4s; it would clash with the hero logo.
 const HERO_START = 4;
@@ -55,13 +54,12 @@ const still = (at, vf, out) => {
   if (!fresh(out)) run('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-ss', String(at), '-i', PREVIEW, '-frames:v', '1', '-vf', vf, '-q:v', '2', '-update', '1', out]);
 };
 
-for (const d of [VIDEO_OUT, ...['films', 'hero', 'photos', 'advice'].map((s) => path.join(ASSETS, s))]) {
+for (const d of [VIDEO_OUT, ...['films', 'hero', 'photos'].map((s) => path.join(ASSETS, s))]) {
   fs.mkdirSync(d, { recursive: true });
 }
 
 // --- Stills ---
 for (const [name, at] of Object.entries(POSTERS)) still(at, 'scale=iw:-2', path.join(ASSETS, 'films', `${name}.jpg`));
-for (const [name, at] of Object.entries(ADVICE_FRAMES)) still(at, 'scale=1280:-2:flags=lanczos', path.join(ASSETS, 'advice', `${name}.jpg`));
 still(HERO_STILL, 'scale=iw:-2', path.join(ASSETS, 'hero/hero.jpg'));
 still(HERO_STILL, PORTRAIT_CROP, path.join(ASSETS, 'hero/hero-portrait.jpg'));
 

@@ -90,7 +90,6 @@ const out = {
   albums: (await all(content.albums, async (a) => ({ slug: a.slug, title: a.title, onHome: a.onHome !== false, category: photoCat.get(a.categoryId), photos: (await all(a.photos, async (p) => ({ ...(await img(p)), alt: p.alt }))).filter((p) => p.file) }))).filter((a) => a.slug && a.photos.length),
   clients: (await all(content.clients, async (c) => ({ name: c.name, tone: !!c.tone, logo: await img(c.logo) }))).filter((c) => c.name && c.logo),
   reviews: (await all(content.reviews, async (r) => ({ client: clientName.get(r.clientId) ?? (r.name || '').trim(), sector: r.sector, quote: r.quote, rating: r.rating, placeholder: !!r.placeholder, logo: await img(r.logo) }))).filter((r) => r.client && r.quote),
-  advice: (await all(content.advice, async (a) => ({ title: a.title, video: vid(a.video), poster: await img(a.poster) }))).filter((a) => a.title && a.video && a.poster),
 };
 
 // Images nothing points to any more (deleted in the dashboard).

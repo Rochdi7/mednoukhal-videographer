@@ -88,5 +88,12 @@ const strings = t(locale);
     <Footer locale={locale} />
     <script src="../scripts/site.ts"></script>
     <script src="../scripts/motion.ts"></script>
+    <script>
+      // Live editing for the signed-in owner: ?edit on any page loads the editor (a separate file, never loaded for
+      // visitors); it stays on while browsing until "Leave edit mode".
+      try {
+        if (new URLSearchParams(location.search).has('edit') || sessionStorage.getItem('mn-edit')) import('../scripts/live-edit');
+      } catch {}
+    </script>
   </body>
 </html>
