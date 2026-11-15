@@ -1,6 +1,6 @@
 const en = {
   meta: {
-    homeTitle: 'Med Noukhal | Videographer & Photographer in Marrakech',
+    homeTitle: 'Med Noukhal',
     homeDesc: 'Med Noukhal, videographer and photographer in Marrakech, Morocco. Commercials, brand and hotel films, music videos, events and luxury photography.',
     filmsTitle: 'Films, Commercials & Music Videos',
     filmsDesc: 'Commercials, brand films, music videos and hotel films shot and edited by Med Noukhal, videographer in Marrakech, Morocco.',
@@ -58,7 +58,7 @@ export type Strings = typeof en;
 
 const fr: Strings = {
   meta: {
-    homeTitle: 'Med Noukhal | Vidéaste et Photographe à Marrakech',
+    homeTitle: 'Med Noukhal',
     homeDesc: "Med Noukhal, vidéaste et photographe à Marrakech, Maroc. Publicités, films de marque et d'hôtel, clips, événements et photographie de luxe.",
     filmsTitle: 'Films, Publicités et Clips',
     filmsDesc: "Publicités, films de marque, clips et films d'hôtel tournés et montés par Med Noukhal, vidéaste à Marrakech, Maroc.",
@@ -114,7 +114,7 @@ const fr: Strings = {
 
 const ar: Strings = {
   meta: {
-    homeTitle: 'Med Noukhal | مصور فيديو ومصور فوتوغرافي في مراكش',
+    homeTitle: 'Med Noukhal',
     homeDesc: 'Med Noukhal، مصور فيديو ومصور فوتوغرافي في مراكش، المغرب. إعلانات وأفلام للعلامات التجارية والفنادق وفيديوهات موسيقية وفعاليات وتصوير فاخر.',
     filmsTitle: 'أفلام وإعلانات وفيديوهات موسيقية',
     filmsDesc: 'إعلانات وأفلام للعلامات التجارية وفيديوهات موسيقية وأفلام فنادق من تصوير ومونتاج Med Noukhal، مصور فيديو في مراكش، المغرب.',
