@@ -2,7 +2,7 @@
 // The dashboard. Everything happens in the browser (src/scripts/admin/), talking to the API in public/api/mnvisual00/ on the server.
 // Its address is set in src/config/admin.ts (not /admin, which bots try first).
 // The built-in texts are embedded so the Texts editor can show them and save only what changes.
-import { LOGO_MARK } from '../../config/site';
+import { FAVICON, LOGO_MARK } from '../../config/site';
 import { strings } from '../../i18n/strings';
 import '../../styles/admin.css';
 
@@ -16,7 +16,7 @@ const defaults = JSON.stringify(strings).replace(/</g, '\\u003c');
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="same-origin" />
     <title>Dashboard · Med Noukhal</title>
-    <link rel="icon" type="image/png" href="/favicon.png?v=2" />
+    <link rel="icon" type="image/png" href={FAVICON.icon} />
   </head>
   <body>
     <div id="app" class="boot" data-logo={LOGO_MARK.src}><p>Loading…</p></div>

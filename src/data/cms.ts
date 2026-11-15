@@ -11,7 +11,7 @@ export interface CmsVideo { src: string; width: number; height: number; duration
 
 export interface CmsData {
   syncedAt: string;
-  settings: { name?: string; jobTitle?: string; logoAlt?: string; email?: string; whatsapp?: string; phone?: string; socials?: { label: string; handle?: string; href: string; icon?: string }[]; logo: CmsImage | null; logoMark: CmsImage | null; logoWordmark?: CmsImage | null } | null;
+  settings: { name?: string; jobTitle?: string; logoAlt?: string; email?: string; whatsapp?: string; phone?: string; socials?: { label: string; handle?: string; href: string; icon?: string }[]; logo: CmsImage | null; logoMark: CmsImage | null; logoWordmark?: CmsImage | null; favicon?: { icon: string; apple: string; large: string } } | null;
   // videos: the hero films, played one after another (a single one loops).
   // videoMobile: the 9:16 cut, made by scripts/video-portrait.mjs during the sync; posterMobile null = cropped from the poster.
   home: { videos: { video: CmsVideo; videoMobile: CmsVideo | null }[]; poster: CmsImage | null; posterMobile: CmsImage | null; aboutPhoto: CmsImage | null } | null;

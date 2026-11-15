@@ -24,7 +24,7 @@ interface Content {
   revision: number;
   updatedAt?: string;
   updatedBy?: string;
-  settings: { name: string; jobTitle: string; logoAlt: string; email: string; whatsapp: string; phone: string; socials: Social[]; logo: Img | null; logoMark: Img | null; logoWordmark: Img | null };
+  settings: { name: string; jobTitle: string; logoAlt: string; email: string; whatsapp: string; phone: string; socials: Social[]; logo: Img | null; logoMark: Img | null; logoWordmark: Img | null; favicon?: Img | null };
   home: { videos: HeroFilm[]; poster: Img | null; posterMobile: Img | null; aboutPhoto: Img | null; video?: Vid | null; videoMobile?: Vid | null };
   curve: { items: CurveCard[] };
   texts: Record<string, any>;
@@ -835,6 +835,7 @@ function settingsScreen(view: HTMLElement) {
       media('Full logo (footer)', s, 'logo', 'image', { required: true, accept: 'image/png,image/webp', help: 'White PNG, ~1000 px wide.' }),
       media('Logo mark (header, menu)', s, 'logoMark', 'image', { required: true, accept: 'image/png,image/webp', help: 'White PNG, ~300 px square.' }),
       media('Hero logo (home page)', s, 'logoWordmark', 'image', { accept: 'image/png,image/webp', help: 'White PNG, ~1500 px wide. Empty: built-in.' }),
+      media('Favicon (browser tab, phone home screen)', s, 'favicon', 'image', { accept: 'image/png,image/webp,image/jpeg', help: 'Square image, 512 px or more. PNG keeps a transparent background. Empty: built-in.' }),
       h('div', { class: 'grid2' }, text('Name', s, 'name', { required: true }), text('Logo text (read by screen readers)', s, 'logoAlt')),
       text('Job title (for Google)', s, 'jobTitle'),
     ),

@@ -38,5 +38,7 @@ export const SITE: typeof DEFAULTS = {
 // The wide logo (footer) and the square mark (header, menu, About badge).
 export const LOGO: ImageMetadata = set?.logo ? cmsImage(set.logo) : lockup;
 export const LOGO_MARK: ImageMetadata = set?.logoMark ? cmsImage(set.logoMark) : mark;
+// Browser tab and phone home-screen icons: the favicon set in the dashboard (cut by scripts/cms-sync.mjs), else the built-in ones.
+export const FAVICON = set?.favicon ?? { icon: '/favicon.png?v=2', apple: '/apple-touch-icon.png?v=2', large: '/icon-512.png' };
 /** The "MED NOUKHAL / VISUALS" wordmark shown large in the homepage hero. */
 export const LOGO_WORDMARK: ImageMetadata = set?.logoWordmark ? cmsImage(set.logoWordmark) : wordmark;

@@ -14,6 +14,7 @@ import { basename, extname, join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import { ROOT } from './cms-lib.mjs';
 import { PORTRAIT_VERSION, hasFfmpeg, portraitCut } from './video-portrait.mjs';
 
@@ -158,6 +159,26 @@ const out = {
   clients: (await all(content.clients, async (c) => ({ name: c.name, tone: !!c.tone, logo: await img(c.logo) }))).filter((c) => c.name && c.logo),
   reviews: (await all(content.reviews, async (r) => ({ client: clientName.get(r.clientId) ?? (r.name || '').trim(), sector: r.sector, quote: r.quote, rating: r.rating, placeholder: !!r.placeholder, logo: await img(r.logo) }))).filter((r) => r.client && r.quote),
 };
+
+// ---------- favicon ----------
+// A favicon set in Brand & contact is cut to the sizes browsers and phones ask for, in public/media/auto/ (shipped
+// with the site). The file names carry a hash of the image, so a new favicon is never hidden by a cached old one.
+const fav = s?.favicon ? await img(s.favicon) : null;
+if (fav && out.settings) {
+  const source = join(IMG_DIR, fav.file);
+  const hash = createHash('sha1').update(readFileSync(source)).digest('hex').slice(0, 10);
+  const icons = {};
+  for (const [key, size] of [['icon', 64], ['apple', 180], ['large', 512]]) {
+    const name = `favicon-${hash}-${size}.png`;
+    keepCuts.add(name);
+    if (!existsSync(join(AUTO_DIR, name))) {
+      const square = sharp(source).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: key === 'apple' ? 1 : 0 } });
+      await (key === 'apple' ? square.flatten({ background: '#000' }) : square).png().toFile(join(AUTO_DIR, name));
+    }
+    icons[key] = `/media/auto/${name}`;
+  }
+  out.settings.favicon = icons;
+}
 
 // Images nothing points to any more (deleted in the dashboard).
 for (const name of readdirSync(IMG_DIR)) if (!keep.has(name)) rmSync(join(IMG_DIR, name), { force: true });
