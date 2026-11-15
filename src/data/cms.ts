@@ -19,7 +19,8 @@ export interface CmsData {
   curve: { kind: 'image' | 'video'; image: CmsImage | null; video: CmsVideo | null; href?: string }[];
   texts: Record<string, unknown> | null;
   filmCategories: { slug: string; title: CmsText }[];
-  films: { slug: string; title: CmsText; description?: CmsText; featured?: boolean; onHome?: boolean; date?: string; category?: string; video: CmsVideo; poster: CmsImage }[];
+  // seoTitle / seoDescription: what Google shows for the film's page; empty = the film's title and description.
+  films: { slug: string; title: CmsText; description?: CmsText; seoTitle?: CmsText; seoDescription?: CmsText; featured?: boolean; onHome?: boolean; date?: string; category?: string; video: CmsVideo; poster: CmsImage }[];
   photoCategories: { slug: string; title: CmsText }[];
   // home: the photo is ticked for the homepage carousel.
   albums: { slug: string; title: CmsText; onHome?: boolean; category?: string; photos: (CmsImage & { alt?: CmsText; home?: boolean })[] }[];

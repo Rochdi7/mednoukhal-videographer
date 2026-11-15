@@ -22,6 +22,9 @@ const s = t(locale);
 const site = Astro.site;
 const title = film.title[locale];
 const description = film.description[locale];
+// Google's title and description: the ones set in the dashboard (Google (SEO)), else built from the film.
+const metaTitle = film.seoTitle?.[locale]?.trim() || `${title} · ${s.film.categoryValue}`;
+const metaDescription = film.seoDescription?.[locale]?.trim() || description;
 const path = `/films/${film.slug}/`;
 const poster = await getImage({ src: film.poster, width: Math.min(1920, film.poster.width), format: 'webp', quality: 74 });
 const posterPh = await blur(film.poster);
@@ -50,7 +53,7 @@ const crumbs = [
 ];
 const portrait = film.height > film.width;
 ---
-<Base locale={locale} title={`${title} · ${s.film.categoryValue}`} description={description} path={path} image={film.poster} type="video.other" jsonLd={[video, breadcrumbNode(site, crumbs)]}>
+<Base locale={locale} title={metaTitle} description={metaDescription} path={path} image={film.poster} type="video.other" jsonLd={[video, breadcrumbNode(site, crumbs)]}>
   <!-- The poster is the first thing on screen: fetch it with the page, not after the player is laid out. -->
   <link slot="head" rel="preload" as="image" href={poster.src} type="image/webp" fetchpriority="high" />
   <article class="film-page wrap">

@@ -10,6 +10,9 @@ export interface Film {
   slug: string;
   title: Localized;
   description: Localized;
+  // What Google shows for the film's page (set in the dashboard, Google (SEO)); empty = title and description.
+  seoTitle?: Partial<Localized>;
+  seoDescription?: Partial<Localized>;
   poster: ImageMetadata;
   src: string;
   preview?: string; // a short 720p cut for the muted previews (homepage carousel, films page hover); the full film otherwise
@@ -81,6 +84,8 @@ const CMS_FILMS: Film[] | null = cms?.films.length
       slug: f.slug,
       title: cmsLocalized(f.title),
       description: cmsLocalized(f.description, { en: '', fr: '', ar: '' }),
+      seoTitle: f.seoTitle,
+      seoDescription: f.seoDescription,
       poster: cmsImage(f.poster),
       focus: f.poster.focus,
       src: versioned(f.video.src),

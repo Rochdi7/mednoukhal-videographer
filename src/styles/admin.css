@@ -228,3 +228,13 @@ img, video { display: block; max-width: 100%; }
   .row__thumb { width: 64px; }
   .row__actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
+
+/* Google (SEO): a search-result preview per page, and character counters under each field. */
+.seo-heading { margin: 32px 0 0; font-family: var(--display); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.serp { padding: 14px 16px; border-radius: 10px; background: #202124; font-family: Arial, sans-serif; }
+.serp p { margin: 0; overflow: hidden; }
+.serp__url { color: #bdc1c6; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.serp__title { margin-top: 4px !important; color: #8ab4f8; font-size: 19px; line-height: 1.3; white-space: nowrap; text-overflow: ellipsis; }
+.serp__desc { margin-top: 4px !important; color: #bdc1c6; font-size: 13.5px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.seo-count { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; text-align: end; font-variant-numeric: tabular-nums; }
+.seo-count[data-tone='over'] { color: var(--danger); }

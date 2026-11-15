@@ -3,12 +3,13 @@
 import { call, upload } from './api';
 import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, Camera, ChevronDown, Clapperboard, Contact, Film, GalleryHorizontalEnd, Handshake, House, Images, KeyRound,
-  Languages, MapPin, MessageSquareQuote, MonitorPlay, Phone, Settings, SquarePen, Star, Tags, Video, type IconNode,
+  Languages, MapPin, MessageSquareQuote, MonitorPlay, Phone, Search, Settings, SquarePen, Star, Tags, Video, type IconNode,
 } from 'lucide';
 import { checkbox, emptyL, flag, h, icon, localized, media, onChange, put, select, slugify, text, textarea, toast, uid, type Img, type L, type Vid } from './ui';
 
 type Cat = { id: string; slug: string; title: L };
-type Film = { id: string; slug: string; title: L; description: L; categoryId: string; featured: boolean; onHome: boolean; date: string; video: Vid | null; poster: Img | null };
+// seoTitle / seoDescription: what Google shows for the film's page; absent or empty = built from the title and description.
+type Film = { id: string; slug: string; title: L; description: L; seoTitle?: L; seoDescription?: L; categoryId: string; featured: boolean; onHome: boolean; date: string; video: Vid | null; poster: Img | null };
 // home: ticked for the homepage photo carousel.
 type Photo = Img & { id: string; alt: L; home: boolean };
 // Albums whose photos were never ticked for the homepage start with their first ones (same rule as the site).
@@ -75,6 +76,7 @@ const NAV: NavItem[] = [
   { group: 'Photography', hash: 'albums', label: 'All albums', icon: Images, where: 'Photography page and home page', link: '/photography/', count: () => state.content!.albums.length },
   { hash: 'photo-categories', label: 'Categories', title: 'Photo categories', icon: Tags, where: 'Photography page, filter tabs', link: '/photography/', count: () => state.content!.photoCategories.length },
   { group: 'Settings', hash: 'texts', label: 'Site texts', icon: Languages, where: 'All pages, 3 languages', link: '/' },
+  { hash: 'seo', label: 'Google (SEO)', title: 'Google titles & descriptions', icon: Search, where: 'Google search results, every page', link: '/' },
   { hash: 'settings', label: 'Brand & contact', icon: Contact, where: 'Header, footer and Contact page', link: '/contact/' },
   { hash: 'account', label: 'Account', icon: KeyRound, where: 'Dashboard only' },
 ];
@@ -184,6 +186,7 @@ function render() {
     home: homeScreen,
     carousel: carouselScreen,
     texts: textsScreen,
+    seo: seoScreen,
     settings: settingsScreen,
     clients: clientsScreen,
     reviews: reviewsScreen,
@@ -888,6 +891,150 @@ const prune = (obj: Record<string, any>) => {
   }
 };
 
+// ---------------------------------------------------------------- Google (SEO)
+// How each page shows in Google: its title (the blue link) and its description, in the three languages.
+// Page titles are kept with the site texts (texts.meta, where the site reads them from);
+// a film page keeps its own on the film (seoTitle / seoDescription), empty = built from the film.
+const SEO_PAGES = [
+  { name: 'Home page', path: '/', title: 'homeTitle', desc: 'homeDesc' },
+  { name: 'Films page', path: '/films/', title: 'filmsTitle', desc: 'filmsDesc' },
+  { name: 'Photography page', path: '/photography/', title: 'photoTitle', desc: 'photoDesc' },
+  { name: 'Reviews page', path: '/reviews/', title: 'reviewsTitle', desc: 'reviewsDesc' },
+  { name: 'Contact page', path: '/contact/', title: 'contactTitle', desc: 'contactDesc' },
+] as const;
+type Lang = 'en' | 'fr' | 'ar';
+type SeoField = 'title' | 'desc';
+const SEO_LANGS: Lang[] = ['en', 'fr', 'ar'];
+// Google shows about this many characters before cutting with "…".
+const SEO_MAX: Record<SeoField, number> = { title: 60, desc: 160 };
+
+function seoScreen(view: HTMLElement) {
+  const c = state.content!;
+  const texts = c.texts;
+  const brand = () => c.settings.name?.trim() || 'Med Noukhal';
+  // The site adds " | Med Noukhal" to every title that does not already hold the name.
+  const fullTitle = (title: string) => (title.includes(brand()) ? title : `${title} | ${brand()}`);
+  const urlOf = (lang: Lang, path: string) => [location.host, ...(lang === 'en' ? [] : [lang]), ...path.split('/').filter(Boolean)].join(' › ');
+
+  // One block per page: a Google preview (in the language of the last field used), then the fields.
+  const block = (opts: {
+    name: string;
+    path: string;
+    value: (lang: Lang, f: SeoField) => string; // what the field holds
+    shown: (lang: Lang, f: SeoField) => string; // what Google gets (an empty field falls back)
+    auto: (lang: Lang, f: SeoField) => string; // greyed placeholder of an empty field
+    set: (lang: Lang, f: SeoField, value: string) => void;
+  }) => {
+    let lang: Lang = 'en';
+    const pUrl = h('p', { class: 'serp__url' });
+    const pTitle = h('p', { class: 'serp__title' });
+    const pDesc = h('p', { class: 'serp__desc' });
+    const preview = h('div', { class: 'serp' }, pUrl, pTitle, pDesc);
+    const counters: { lang: Lang; f: SeoField; el: HTMLElement }[] = [];
+    const refresh = () => {
+      pUrl.textContent = urlOf(lang, opts.path);
+      pTitle.textContent = fullTitle(opts.shown(lang, 'title'));
+      pDesc.textContent = opts.shown(lang, 'desc');
+      preview.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      for (const k of counters) {
+        const n = k.f === 'title' ? fullTitle(opts.shown(k.lang, 'title')).length : opts.shown(k.lang, 'desc').length;
+        k.el.textContent = `${n} / ${SEO_MAX[k.f]}`;
+        k.el.dataset.tone = n > SEO_MAX[k.f] ? 'over' : 'ok';
+      }
+    };
+    const field = (f: SeoField) =>
+      h('div', { class: 'field' },
+        h('span', {}, f === 'title' ? 'Title (the blue link)' : 'Description (the grey lines)'),
+        h('div', { class: `langs${f === 'desc' ? ' langs--stack' : ''}` },
+          SEO_LANGS.map((l) => {
+            const count = h('small', { class: 'seo-count' });
+            counters.push({ lang: l, f, el: count });
+            const attrs = {
+              value: opts.value(l, f),
+              dir: l === 'ar' ? 'rtl' : 'ltr',
+              lang: l,
+              placeholder: opts.auto(l, f),
+              'aria-label': `${opts.name}: ${f === 'title' ? 'title' : 'description'} (${l.toUpperCase()})`,
+              onFocus: () => {
+                lang = l;
+                refresh();
+              },
+              onInput: (e: Event) => {
+                opts.set(l, f, (e.target as HTMLInputElement).value);
+                lang = l;
+                refresh();
+                markDirty();
+              },
+            };
+            return h('label', { class: 'lang' }, f === 'desc' ? h('textarea', { ...attrs, rows: 2 }) : h('input', { ...attrs, type: 'text' }), flag(l), count);
+          }),
+        ),
+        f === 'title' && h('small', {}, opts.path === '/' ? 'Shown exactly as written.' : `“ | ${brand()}” is added after it, unless the title already holds the name.`),
+      );
+    const card = h('section', { class: 'card seo' },
+      h('div', { class: 'toolbar' },
+        h('p', { class: 'card__title grow' }, opts.name),
+        h('a', { class: 'btn btn--sm btn--ghost', href: opts.path, target: '_blank', rel: 'noopener' }, 'View', icon(ArrowUpRight)),
+      ),
+      preview,
+      field('title'),
+      field('desc'),
+    );
+    refresh();
+    return card;
+  };
+
+  // Pages: the field holds the built-in text until changed; going back to it (or emptying it) removes the change.
+  const pageBlock = (page: (typeof SEO_PAGES)[number]) => {
+    const key = (f: SeoField) => (f === 'title' ? page.title : page.desc);
+    const builtIn = (lang: Lang, f: SeoField) => (at(DEFAULTS[lang], ['meta', key(f)]) as string | undefined) ?? '';
+    const value = (lang: Lang, f: SeoField) => (at(texts, ['meta', key(f), lang]) as string | undefined) ?? builtIn(lang, f);
+    return block({
+      name: page.name,
+      path: page.path,
+      value,
+      shown: (lang, f) => value(lang, f).trim() || builtIn(lang, f),
+      auto: builtIn,
+      set: (lang, f, v) => {
+        const node = ((texts.meta ??= {})[key(f)] ??= {});
+        if (v === builtIn(lang, f) || !v.trim()) delete node[lang];
+        else node[lang] = v;
+        prune(texts);
+      },
+    });
+  };
+
+  // Films: empty = "<film title> · <category word>" and the film's description, as the site builds them.
+  const filmBlock = (film: Film) => {
+    const word = (lang: Lang) => ((at(texts, ['film', 'categoryValue', lang]) as string | undefined) || (at(DEFAULTS[lang], ['film', 'categoryValue']) as string | undefined) || '');
+    const auto = (lang: Lang, f: SeoField) =>
+      f === 'title' ? `${film.title[lang] || film.title.en} · ${word(lang)}` : film.description[lang] || film.description.en || '';
+    const prop = (f: SeoField) => (f === 'title' ? 'seoTitle' : 'seoDescription') as 'seoTitle' | 'seoDescription';
+    const value = (lang: Lang, f: SeoField) => film[prop(f)]?.[lang] ?? '';
+    return block({
+      name: film.title.en || 'Untitled film',
+      path: `/films/${film.slug}/`,
+      value,
+      shown: (lang, f) => value(lang, f).trim() || auto(lang, f),
+      auto,
+      set: (lang, f, v) => {
+        const obj = (film[prop(f)] ??= emptyL());
+        obj[lang] = v;
+        if (!obj.en.trim() && !obj.fr.trim() && !obj.ar.trim()) delete film[prop(f)];
+      },
+    });
+  };
+
+  put(view,
+    h('p', { class: 'hint' }, 'How each page appears in Google. The preview follows the language of the field you are typing in. Changes reach the site after Save and Publish; Google then updates its results within days or weeks.'),
+    h('h2', { class: 'seo-heading' }, 'Pages'),
+    SEO_PAGES.map(pageBlock),
+    c.films.length > 0 && h('h2', { class: 'seo-heading' }, 'Film pages'),
+    c.films.length > 0 && h('p', { class: 'hint' }, 'Leave a field empty to use the film’s own title and description (shown greyed in the field).'),
+    c.films.map(filmBlock),
+  );
+}
+
 function textsScreen(view: HTMLElement) {
   const texts = state.content!.texts;
   const langs = ['en', 'fr', 'ar'] as const;
@@ -995,9 +1142,9 @@ function textsScreen(view: HTMLElement) {
       });
     },
   });
-  const entries = Object.entries(DEFAULTS.en).sort(([a], [b]) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99));
+  const entries = Object.entries(DEFAULTS.en).filter(([key]) => key !== 'meta').sort(([a], [b]) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99));
   put(view,
-    h('p', { class: 'hint' }, 'Grouped by page. Empty French or Arabic keeps the current translation.'),
+    h('p', { class: 'hint' }, 'Grouped by page. Empty French or Arabic keeps the current translation. Google titles and descriptions are under ', h('a', { href: '#seo' }, 'Google (SEO)'), '.'),
     search,
     h('div', { class: 'texts' },
       entries.map(([key, value]) => {
